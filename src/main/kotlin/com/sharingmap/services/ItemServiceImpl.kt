@@ -5,8 +5,8 @@ import com.sharingmap.repositories.CategoryRepository
 import com.sharingmap.repositories.CityRepository
 import com.sharingmap.repositories.ItemRepository
 import com.sharingmap.repositories.UserRepository
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class ItemServiceImpl(private val itemRepository: ItemRepository,
@@ -18,13 +18,13 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
 
     override fun getAllItems(categoryId: Long, cityId: Long): List<ItemEntity> {
         if (categoryId != 0L && cityId != 0L) {
-            return itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId).toList()
+            return itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
         } else if (categoryId != 0L) {
-            return itemRepository.findAllByCategoryId(categoryId).toList()
+            return itemRepository.findAllByCategoryId(categoryId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
         } else if (cityId != 0L){
-            return itemRepository.findAllByCityId(cityId).toList()
+            return itemRepository.findAllByCityId(cityId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
         } else {
-            return itemRepository.findAll().toList()
+            return itemRepository.findAll(Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
         }
     }
 
@@ -50,7 +50,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         itemRepository.save(newItem)
     }
 
-    override fun getAllItemsByUserId(userId: Long): List<ItemEntity> = itemRepository.findAllByUserId(userId)
+    override fun getAllItemsByUserId(userId: Long): List<ItemEntity> = itemRepository.findAllByUserId(userId, Sort.by(Sort.Direction.DESC, "updatedAt"))
 
 //    fun <T : Any> Optional<out T>.toList(): List<T> =
 //        if (isPresent) listOf(get()) else emptyList()
