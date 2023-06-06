@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ItemRepository : JpaRepository <ItemEntity, Long> {
-    abstract fun findAllByUserId(userId: Long, sort: Sort): List<ItemEntity>
-    abstract fun findAllByCategoryIdAndCityId(categoryId: Long, cityId: Long, sort: Sort): List<ItemEntity>
-    abstract fun findAllByCategoryId(categoryId: Long, sort: Sort): List<ItemEntity>
-    abstract fun findAllByCityId(cityId: Long, sort: Sort): List<ItemEntity>
+    fun findAllByUserId(userId: Long, sort: Sort): List<ItemEntity>
+    fun findAllByCategoryIdAndCityId(categoryId: Long, cityId: Long, sort: Sort): List<ItemEntity>
+    fun findAllByCategoryId(categoryId: Long, sort: Sort): List<ItemEntity>
+    fun findAllByCityId(cityId: Long, sort: Sort): List<ItemEntity>
 }

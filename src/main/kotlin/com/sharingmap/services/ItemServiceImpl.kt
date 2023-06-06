@@ -17,14 +17,14 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
     override fun getItemById(id: Long): ItemEntity = itemRepository.findById(id).get()
 
     override fun getAllItems(categoryId: Long, cityId: Long): List<ItemEntity> {
-        if (categoryId != 0L && cityId != 0L) {
-            return itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
+        return if (categoryId != 0L && cityId != 0L) {
+            itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
         } else if (categoryId != 0L) {
-            return itemRepository.findAllByCategoryId(categoryId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
+            itemRepository.findAllByCategoryId(categoryId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
         } else if (cityId != 0L){
-            return itemRepository.findAllByCityId(cityId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
+            itemRepository.findAllByCityId(cityId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
         } else {
-            return itemRepository.findAll(Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
+            itemRepository.findAll(Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
         }
     }
 
@@ -41,7 +41,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
     }
 
     override fun updateItem(id: Long, item: ItemEntity) {
-        var newItem = itemRepository.findById(id).get()
+        val newItem = itemRepository.findById(id).get()
         newItem.name = item.name
         //newItem.photo = item.photo
         //newItem.text = item.text
