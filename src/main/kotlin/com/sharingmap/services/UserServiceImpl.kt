@@ -20,8 +20,9 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
     }
 
     override fun updateUser(id: Long, user: UserEntity) {
-        var newUser = userRepository.findById(id).get()
+        val newUser = userRepository.findById(id).get()
         newUser.name = user.name
+        newUser.bio = user.bio
         userRepository.save(newUser)
     }
 

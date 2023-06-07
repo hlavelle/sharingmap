@@ -2,6 +2,8 @@ package com.sharingmap.entities
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
@@ -18,6 +20,7 @@ class ItemEntity {
     var id: Long? = null
 
     @Column(name = "item_name")
+    @get:Size(min=3, max=50)
     var name: String? = null
 
 
@@ -39,11 +42,14 @@ class ItemEntity {
 ////    var photo: ImageEntity? = null
 //
 ////    @Lob @Type(type = "org.hibernate.type.TextType")
-//    var text: String? = null
-//
-//    var address: String? = null
+    @get:Size(min=20, max=300)
+    var text: String? = null
 
-    // номер телефона
+    var address: String? = null
+
+    @field:Pattern(regexp="(^$|[0-9]{10})")
+    var phoneNumber: String? = null
+
     //способ связи
 
 
