@@ -12,18 +12,20 @@ class ItemController(private val itemService: ItemService) {
         return itemService.getItemById(id)
     }
 
-    @GetMapping("{categoryId}/{cityId}/items") //TODO поиск по субкатегориям
+    @GetMapping("{categoryId}/{cityId}/{subcategoryId}/items") //TODO поиск по субкатегориям
     fun getAllItems(@PathVariable(value = "categoryId") categoryId: Long,
-                    @PathVariable(value = "cityId") cityId: Long): List<ItemEntity> {
-        return itemService.getAllItems(categoryId, cityId)
+                    @PathVariable(value = "cityId") cityId: Long,
+                    @PathVariable(value = "subcategoryId") subcategoryId: Long): List<ItemEntity> {
+        return itemService.getAllItems(categoryId, subcategoryId, cityId)
     }
 
-    @PostMapping("/users/{userId}/{categoryId}/{cityId}/items")
+    @PostMapping("/users/{userId}/{categoryId}/{subcategoryId}/{cityId}/items")
     fun createItem(@PathVariable(value = "userId") userId: Long,
                    @PathVariable(value = "categoryId") categoryId: Long,
+                   @PathVariable(value = "subcategoryId") subcategoryId: Long,
                    @PathVariable(value = "cityId") cityId: Long,
                    @RequestBody item: ItemEntity) {
-        itemService.createItem(userId, categoryId, cityId, item)
+        itemService.createItem(userId, categoryId, subcategoryId, cityId, item)
     }
 
     @DeleteMapping("/items/{id}")

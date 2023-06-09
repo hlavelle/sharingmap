@@ -1,22 +1,20 @@
 package com.sharingmap.services
 
 import com.sharingmap.entities.ItemEntity
-import com.sharingmap.repositories.CategoryRepository
-import com.sharingmap.repositories.CityRepository
-import com.sharingmap.repositories.ItemRepository
-import com.sharingmap.repositories.UserRepository
+import com.sharingmap.repositories.*
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
 class ItemServiceImpl(private val itemRepository: ItemRepository,
                       private val categoryRepository: CategoryRepository,
+                      private val subcategoryRepository: SubcategoryRepository,
                       private val cityRepository: CityRepository,
                       private val userRepository: UserRepository) : ItemService {
 
     override fun getItemById(id: Long): ItemEntity = itemRepository.findById(id).get()
 
-    override fun getAllItems(categoryId: Long, cityId: Long): List<ItemEntity> {
+    override fun getAllItems(categoryId: Long, subcategoryId: Long, cityId: Long): List<ItemEntity> { //TODO доделать фильтрацию по субкатегориям
         return if (categoryId != 0L && cityId != 0L) {
             itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
         } else if (categoryId != 0L) {
@@ -28,9 +26,10 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         }
     }
 
-    override fun createItem(userId: Long, categoryId: Long, cityId: Long, item: ItemEntity) {
+    override fun createItem(userId: Long, categoryId: Long, subcategoryId: Long, cityId: Long, item: ItemEntity) {
         item.user = userRepository.findById(userId).get()
         item.category = categoryRepository.findById(categoryId).get()
+        item.subcategory = subcategoryRepository.findById(subcategoryId).get()
         item.city = cityRepository.findById(cityId).get()
         itemRepository.save(item)
         // todo on bad serialize 400

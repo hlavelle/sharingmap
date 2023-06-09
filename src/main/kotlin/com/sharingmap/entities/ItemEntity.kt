@@ -29,10 +29,10 @@ class ItemEntity {
     @JsonIgnore
     var category: CategoryEntity? = null
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "subcategory_id", nullable = false)
-//    @JsonIgnore
-//    private var subCategories: HashSet<SubcategoryEntity> = HashSet()
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "subcategory_id", nullable = false)
+    @JsonIgnore
+    var subcategory: SubcategoryEntity? = null
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "city_id", nullable = false)
@@ -52,6 +52,9 @@ class ItemEntity {
 
     //способ связи
 
+    //var status: Boolean = true //актуальность объявления, лучше сделать категории "в обработке", "актуальный", "архив"
+
+    //дата удаления, если объявление еще актуально. Рассчитывать с даты апдейта
 
     @CreationTimestamp
     var createdAt: LocalDateTime? = null

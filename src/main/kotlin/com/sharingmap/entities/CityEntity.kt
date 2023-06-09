@@ -12,7 +12,7 @@ class CityEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "city_generator")
     var id: Long? = null
 
-    @Column(name = "city_name")
+    @Column(name = "city_name", unique = true)
     var name: String? = null
 
     @CreationTimestamp

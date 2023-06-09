@@ -12,7 +12,7 @@ class CategoryEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_generator")
     var id: Long? = null
 
-    @Column(name = "category_name")
+    @Column(name = "category_name", unique = true)
     var name: String? = null
 
     var description: String? = null
