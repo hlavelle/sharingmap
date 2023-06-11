@@ -5,8 +5,8 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 
-@Entity
-@Table(name = "images")
+//@Entity
+//@Table(name = "images")
 class ImageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_generator")

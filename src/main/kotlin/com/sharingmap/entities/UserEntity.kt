@@ -18,7 +18,7 @@ class UserEntity {
     @Column(name = "username", nullable = false, unique = true, length = 20)
     var name: String? = null
 
-    ////    var profilePicture: ImageEntity? = null
+    //    var profilePicture: ImageEntity? = null
 
     //    @Lob @Type(type = "org.hibernate.type.TextType")
     @get:Size(min=20, max=300)

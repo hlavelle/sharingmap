@@ -13,58 +13,103 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "items")
-class ItemEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_generator")
-    var id: Long? = null
-
+class ItemEntity (
     @Column(name = "item_name")
-    @get:Size(min=3, max=50)
-    var name: String? = null
-
+    @get:Size(min = 3, max = 50)
+    var name: String? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     @JsonIgnore
-    var category: CategoryEntity? = null
+    var category: CategoryEntity? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "subcategory_id", nullable = false)
     @JsonIgnore
-    var subcategory: SubcategoryEntity? = null
+    var subcategory: SubcategoryEntity? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "city_id", nullable = false)
     @JsonIgnore
-    var city: CityEntity? = null
-//
-////    var photo: ImageEntity? = null
-//
-////    @Lob @Type(type = "org.hibernate.type.TextType")
-    @get:Size(min=20, max=300)
-    var text: String? = null
+    var city: CityEntity? = null,
 
-    var address: String? = null
+    @get:Size(min = 20, max = 300)
+    var text: String? = null,
 
-    @field:Pattern(regexp="(^$|[0-9]{10})")
-    var phoneNumber: String? = null
+    var address: String? = null,
 
-    //способ связи
-
-    //var status: Boolean = true //актуальность объявления, лучше сделать категории "в обработке", "актуальный", "архив"
-
-    //дата удаления, если объявление еще актуально. Рассчитывать с даты апдейта
+    @field:Pattern(regexp = "(^$|[0-9]{10})")
+    var phoneNumber: String? = null,
 
     @CreationTimestamp
-    var createdAt: LocalDateTime? = null
+    var createdAt: LocalDateTime? = null,
 
     @UpdateTimestamp
-    var updatedAt: LocalDateTime? = null
+    var updatedAt: LocalDateTime? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     var user: UserEntity? = null
+) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_generator")
+    var id: Long? = null
 }
+
+//{
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_generator")
+//    var id: Long? = null
+//
+//    @Column(name = "item_name")
+//    @get:Size(min=3, max=50)
+//    var name: String? = null
+//
+//
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "category_id", nullable = false)
+//    //@JsonIgnore
+//    var category: CategoryEntity? = null
+//
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "subcategory_id", nullable = false)
+//    //@JsonIgnore
+//    var subcategory: SubcategoryEntity? = null
+//
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "city_id", nullable = false)
+//    //@JsonIgnore
+//    var city: CityEntity? = null
+////
+//////    var photo: ImageEntity? = null
+////
+//////    @Lob @Type(type = "org.hibernate.type.TextType")
+//    @get:Size(min=20, max=300)
+//    var text: String? = null
+//
+//    var address: String? = null
+//
+//    @field:Pattern(regexp="(^$|[0-9]{10})")
+//    var phoneNumber: String? = null
+//
+//    //способ связи
+//
+//    //var status: Boolean = true //актуальность объявления, лучше сделать категории "в обработке", "актуальный", "архив"
+//
+//    //дата удаления, если объявление еще актуально. Рассчитывать с даты апдейта
+//
+//    @CreationTimestamp
+//    var createdAt: LocalDateTime? = null
+//
+//    @UpdateTimestamp
+//    var updatedAt: LocalDateTime? = null
+//
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    //@JsonIgnore
+//    var user: UserEntity? = null
+//}

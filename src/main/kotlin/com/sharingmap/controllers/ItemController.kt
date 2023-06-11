@@ -2,44 +2,82 @@ package com.sharingmap.controllers
 
 import com.sharingmap.entities.ItemEntity
 import com.sharingmap.services.ItemService
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Min
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 class ItemController(private val itemService: ItemService) {
 
     @GetMapping("/items/{id}")
-    fun getItemById(@PathVariable id: Long): ItemEntity {
-        return itemService.getItemById(id)
+    fun getItemById(@PathVariable id: Long): ResponseEntity<Any> {
+        return try {
+            val item = itemService.getItemById(id)
+            ResponseEntity.ok(item)
+        } catch (ex: NoSuchElementException) {
+            val errorResponse = mapOf("error" to "Item not found with ID: $id")
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
+        }
     }
 
-    @GetMapping("{categoryId}/{cityId}/{subcategoryId}/items") //TODO поиск по субкатегориям
+
+    @GetMapping("{categoryId}/{cityId}/{subcategoryId}/items")
     fun getAllItems(@PathVariable(value = "categoryId") categoryId: Long,
                     @PathVariable(value = "cityId") cityId: Long,
-                    @PathVariable(value = "subcategoryId") subcategoryId: Long): List<ItemEntity> {
-        return itemService.getAllItems(categoryId, subcategoryId, cityId)
+                    @PathVariable(value = "subcategoryId") subcategoryId: Long,
+                    @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
+                    @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int
+    ): ResponseEntity<List<ItemEntity>> {
+        val items =  itemService.getAllItems(categoryId, subcategoryId, cityId, page, size)
+        return ResponseEntity.ok(items)
     }
 
     @PostMapping("/users/{userId}/{categoryId}/{subcategoryId}/{cityId}/items")
-    fun createItem(@PathVariable(value = "userId") userId: Long,
+    fun createItem(@PathVariable(value = "userId") @Min(1) userId: Long,
                    @PathVariable(value = "categoryId") categoryId: Long,
                    @PathVariable(value = "subcategoryId") subcategoryId: Long,
                    @PathVariable(value = "cityId") cityId: Long,
-                   @RequestBody item: ItemEntity) {
+                   @RequestBody @Valid item: ItemEntity): ResponseEntity<Unit>  {
         itemService.createItem(userId, categoryId, subcategoryId, cityId, item)
+        return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @DeleteMapping("/items/{id}")
-    fun deleteItem(@PathVariable id: Long) {
-        itemService.deleteItem(id)
+    fun deleteItem(@PathVariable @Min(1) id: Long): ResponseEntity<Unit> {
+        val isDeleted = itemService.deleteItem(id)
+
+        return if (isDeleted) {
+            ResponseEntity.noContent().build()
+        } else {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
     }
 
     @PutMapping("/items/{id}")
-    fun updateItem(@PathVariable id: Long, @RequestBody item: ItemEntity) {
+    fun updateItem(@PathVariable @Min(1) id: Long, @RequestBody item: ItemEntity): ResponseEntity<Unit> {
         itemService.updateItem(id, item)
+        return ResponseEntity.noContent().build()
     }
 
     @GetMapping("/users/{userId}/items")
-    fun getAllItemsByUserId(@PathVariable(value = "userId") userId: Long): List<ItemEntity> {
-        return itemService.getAllItemsByUserId(userId)
+    fun getAllItemsByUserId(@PathVariable(value = "userId") @Min(1) userId: Long):  ResponseEntity<Any> {
+        return try {
+            val items = itemService.getAllItemsByUserId(userId)
+            if (items.isEmpty()) {
+                val errorResponse = mapOf("error" to "No items found for user ID: $userId")
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
+            } else {
+                ResponseEntity.ok(items)
+            }
+        } catch (ex: NoSuchElementException) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        }
+    }
+
+    @ExceptionHandler(value = [IllegalArgumentException::class, NoSuchElementException::class])
+    fun handleException(ex: Exception): ResponseEntity<String> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
     }
 }

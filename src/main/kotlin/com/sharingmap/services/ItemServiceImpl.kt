@@ -2,8 +2,12 @@ package com.sharingmap.services
 
 import com.sharingmap.entities.ItemEntity
 import com.sharingmap.repositories.*
+import org.springframework.dao.DataAccessException
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.transaction.TransactionException
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ItemServiceImpl(private val itemRepository: ItemRepository,
@@ -12,45 +16,86 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
                       private val cityRepository: CityRepository,
                       private val userRepository: UserRepository) : ItemService {
 
-    override fun getItemById(id: Long): ItemEntity = itemRepository.findById(id).get()
+    override fun getItemById(id: Long): ItemEntity {
+        return itemRepository.findById(id).orElseThrow { NoSuchElementException("Item not found with ID: $id") }
+    }
 
-    override fun getAllItems(categoryId: Long, subcategoryId: Long, cityId: Long): List<ItemEntity> { //TODO доделать фильтрацию по субкатегориям
-        return if (categoryId != 0L && cityId != 0L) {
-            itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
-        } else if (categoryId != 0L) {
-            itemRepository.findAllByCategoryId(categoryId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
-        } else if (cityId != 0L){
-            itemRepository.findAllByCityId(cityId, Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
-        } else {
-            itemRepository.findAll(Sort.by(Sort.Direction.DESC, "updatedAt")).toList()
+    override fun getAllItems(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): List<ItemEntity> {
+        val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
+        val pageable = PageRequest.of(page, size, sort)
+
+        return when {
+            categoryId != 0L && subcategoryId != 0L && cityId != 0L ->
+                itemRepository.findAllByCategoryIdAndSubcategoryIdAndCityId(categoryId, subcategoryId, cityId, pageable).toList()
+            categoryId != 0L && subcategoryId != 0L ->
+                itemRepository.findAllByCategoryIdAndSubcategoryId(categoryId, subcategoryId, pageable).toList()
+            categoryId != 0L && cityId != 0L ->
+                itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId, pageable).toList()
+            categoryId != 0L ->
+                itemRepository.findAllByCategoryId(categoryId, pageable).toList()
+            subcategoryId != 0L && cityId != 0L ->
+                itemRepository.findAllBySubcategoryIdAndCityId(subcategoryId, cityId, pageable).toList()
+            subcategoryId != 0L ->
+                itemRepository.findAllBySubcategoryId(subcategoryId, pageable).toList()
+            cityId != 0L ->
+                itemRepository.findAllByCityId(cityId, pageable).toList()
+            else ->
+                itemRepository.findAll(pageable).toList()
         }
     }
 
+    @Transactional
     override fun createItem(userId: Long, categoryId: Long, subcategoryId: Long, cityId: Long, item: ItemEntity) {
-        item.user = userRepository.findById(userId).get()
-        item.category = categoryRepository.findById(categoryId).get()
-        item.subcategory = subcategoryRepository.findById(subcategoryId).get()
-        item.city = cityRepository.findById(cityId).get()
-        itemRepository.save(item)
-        // todo on bad serialize 400
+        try {
+            val user = userRepository.findById(userId).get()
+            val category = categoryRepository.findById(categoryId).get()
+            val subcategory = subcategoryRepository.findById(subcategoryId).get()
+            val city = cityRepository.findById(cityId).get()
+
+            val newItem = ItemEntity(
+                name = item.name,
+                category = category,
+                subcategory = subcategory,
+                city = city,
+                text = item.text,
+                address = item.address,
+                phoneNumber = item.phoneNumber,
+                user = user
+            )
+
+            itemRepository.save(newItem)} catch (ex: DataAccessException) {
+            throw RuntimeException("Error occurred while creating the item.", ex)
+        } catch (ex: TransactionException) {
+            throw RuntimeException("Transaction failed while creating the item.", ex)
+        }
     }
 
-    override fun deleteItem(id: Long) {
-        itemRepository.deleteById(id)
+    override fun deleteItem(id: Long): Boolean {
+        val existingItem = itemRepository.findById(id)
+            .orElseThrow { NoSuchElementException("Item with id $id not found") }
+        itemRepository.delete(existingItem)
+        return true
     }
 
     override fun updateItem(id: Long, item: ItemEntity) {
-        val newItem = itemRepository.findById(id).get()
-        newItem.name = item.name
-        //newItem.photo = item.photo
-        //newItem.text = item.text
-        //newItem.category = item.category
-        //newItem.address = item.address
-        itemRepository.save(newItem)
+        val existingItem = itemRepository.findById(id)
+            .orElseThrow { NoSuchElementException("Item with id $id not found") }
+        existingItem.name = item.name
+       // existingItem.subcategory = item.subcategory
+       // existingItem.city = item.city
+        existingItem.text = item.text
+        existingItem.address = item.address
+        existingItem.phoneNumber = item.phoneNumber
+
+        itemRepository.save(existingItem)
     }
 
-    override fun getAllItemsByUserId(userId: Long): List<ItemEntity> = itemRepository.findAllByUserId(userId, Sort.by(Sort.Direction.DESC, "updatedAt"))
+    override fun getAllItemsByUserId(userId: Long): List<ItemEntity> {
+        val items = itemRepository.findAllByUserId(userId, Sort.by(Sort.Direction.DESC, "updatedAt"))
+        if (items.isEmpty()) {
+            throw NoSuchElementException("No items found for user ID: $userId")
+        }
+        return items
+    }
 
-//    fun <T : Any> Optional<out T>.toList(): List<T> =
-//        if (isPresent) listOf(get()) else emptyList()
 }
