@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository
 interface ItemRepository : JpaRepository <ItemEntity, Long> {
     fun findAllByUserId(userId: Long, sort: Sort): List<ItemEntity>
     fun findAllByCategoryIdAndSubcategoryIdAndCityId(categoryId: Long, subcategoryId: Long, cityId: Long, pageable: PageRequest): List<ItemEntity>
-    abstract fun findAllByCategoryIdAndSubcategoryId(categoryId: Long, subcategoryId: Long, pageable: PageRequest): List<ItemEntity>
-    abstract fun findAllByCategoryIdAndCityId(categoryId: Long, cityId: Long, pageable: PageRequest): List<ItemEntity>
-    abstract fun findAllByCategoryId(categoryId: Long, pageable: PageRequest): List<ItemEntity>
-    abstract fun findAllBySubcategoryIdAndCityId(subcategoryId: Long, cityId: Long, pageable: PageRequest): List<ItemEntity>
-    abstract fun findAllBySubcategoryId(subcategoryId: Long, pageable: PageRequest): List<ItemEntity>
-    abstract fun findAllByCityId(cityId: Long, pageable: PageRequest): List<ItemEntity>
+    fun findAllByCategoryIdAndSubcategoryId(categoryId: Long, subcategoryId: Long, pageable: PageRequest): List<ItemEntity>
+    fun findAllByCategoryIdAndCityId(categoryId: Long, cityId: Long, pageable: PageRequest): List<ItemEntity>
+    fun findAllByCategoryId(categoryId: Long, pageable: PageRequest): List<ItemEntity>
+    fun findAllBySubcategoryIdAndCityId(subcategoryId: Long, cityId: Long, pageable: PageRequest): List<ItemEntity>
+    fun findAllBySubcategoryId(subcategoryId: Long, pageable: PageRequest): List<ItemEntity>
+    fun findAllByCityId(cityId: Long, pageable: PageRequest): List<ItemEntity>
 }
