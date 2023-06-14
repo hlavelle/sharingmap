@@ -81,8 +81,8 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         val existingItem = itemRepository.findById(id)
             .orElseThrow { NoSuchElementException("Item with id $id not found") }
         existingItem.name = item.name
-       // existingItem.subcategory = item.subcategory
-       // existingItem.city = item.city
+        existingItem.subcategory = item.subcategory
+        existingItem.city = item.city
         existingItem.text = item.text
         existingItem.address = item.address
         existingItem.phoneNumber = item.phoneNumber
