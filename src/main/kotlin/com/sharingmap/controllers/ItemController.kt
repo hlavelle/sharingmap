@@ -23,10 +23,10 @@ class ItemController(private val itemService: ItemService) {
     }
 
 
-    @GetMapping("{categoryId}/{cityId}/{subcategoryId}/items")
-    fun getAllItems(@PathVariable(value = "categoryId") categoryId: Long,
-                    @PathVariable(value = "cityId") cityId: Long,
-                    @PathVariable(value = "subcategoryId") subcategoryId: Long,
+    @GetMapping("get/items")
+    fun getAllItems(@RequestParam(value = "categoryId") categoryId: Long,
+                    @RequestParam(value = "cityId") cityId: Long,
+                    @RequestParam(value = "subcategoryId") subcategoryId: Long,
                     @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
                     @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int
     ): ResponseEntity<List<ItemEntity>> {
@@ -34,17 +34,13 @@ class ItemController(private val itemService: ItemService) {
         return ResponseEntity.ok(items)
     }
 
-    @PostMapping("/users/{userId}/{categoryId}/{subcategoryId}/{cityId}/items")
-    fun createItem(@PathVariable(value = "userId") @Min(1) userId: Long,
-                   @PathVariable(value = "categoryId") categoryId: Long,
-                   @PathVariable(value = "subcategoryId") subcategoryId: Long,
-                   @PathVariable(value = "cityId") cityId: Long,
-                   @RequestBody @Valid item: ItemEntity): ResponseEntity<Unit>  {
-        itemService.createItem(userId, categoryId, subcategoryId, cityId, item)
+    @PostMapping("/items/create")
+    fun createItem(@RequestBody @Valid item: ItemEntity): ResponseEntity<Unit>  {
+        itemService.createItem(item)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
-    @DeleteMapping("/items/{id}")
+    @DeleteMapping("/items/delete/{id}")
     fun deleteItem(@PathVariable @Min(1) id: Long): ResponseEntity<Unit> {
         val isDeleted = itemService.deleteItem(id)
 
@@ -55,7 +51,7 @@ class ItemController(private val itemService: ItemService) {
         }
     }
 
-    @PutMapping("/items/{id}")
+    @PutMapping("/items/update/{id}")
     fun updateItem(@PathVariable @Min(1) id: Long, @RequestBody item: ItemEntity): ResponseEntity<Unit> {
         itemService.updateItem(id, item)
         return ResponseEntity.noContent().build()
