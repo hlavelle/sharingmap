@@ -1,6 +1,5 @@
 package com.sharingmap.entities
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
@@ -20,7 +19,6 @@ class ItemEntity (
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
-    @JsonIgnore
     var category: CategoryEntity? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -48,7 +46,6 @@ class ItemEntity (
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     var user: UserEntity? = null
 ) {
     @Id

@@ -1,0 +1,10 @@
+create/item example
+  {
+    "user": {"id": 1},
+    "category": {"id": 1},
+    "city": {"id": 0},
+    "subcategory": {"id": 1},
+    "name": "book",
+    "text": "hi12fsgfdhfjgzhfdgsdzhgxjfhhfgz!",
+    "address": "Moscow"
+  }

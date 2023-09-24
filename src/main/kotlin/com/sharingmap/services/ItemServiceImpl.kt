@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.TransactionException
 import org.springframework.transaction.annotation.Transactional
+import kotlin.NoSuchElementException
 
 @Service
 class ItemServiceImpl(private val itemRepository: ItemRepository,
@@ -45,12 +46,11 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
     }
 
     @Transactional
-    override fun createItem(userId: Long, categoryId: Long, subcategoryId: Long, cityId: Long, item: ItemEntity) {
-        try {
-            val user = userRepository.findById(userId).get()
-            val category = categoryRepository.findById(categoryId).get()
-            val subcategory = subcategoryRepository.findById(subcategoryId).get()
-            val city = cityRepository.findById(cityId).get()
+    override fun createItem(item: ItemEntity): Boolean {
+            val user = item.user?.id?.let { userRepository.getReferenceById(it) }
+            val category = item.category?.id?.let { categoryRepository.getReferenceById(it) }
+            val subcategory = item.subcategory?.id?.let { subcategoryRepository.getReferenceById(it) }
+            val city = item.city?.id?.let { cityRepository.getReferenceById(it) }
 
             val newItem = ItemEntity(
                 name = item.name,
@@ -62,12 +62,14 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
                 phoneNumber = item.phoneNumber,
                 user = user
             )
-
-            itemRepository.save(newItem)} catch (ex: DataAccessException) {
+        try {
+            itemRepository.save(newItem)
+        } catch (ex: DataAccessException) {
             throw RuntimeException("Error occurred while creating the item.", ex)
         } catch (ex: TransactionException) {
             throw RuntimeException("Transaction failed while creating the item.", ex)
         }
+        return true;
     }
 
     override fun deleteItem(id: Long): Boolean {
