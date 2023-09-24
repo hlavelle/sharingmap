@@ -21,12 +21,15 @@ class SubcategoryServiceImpl(private val subcategoryRepository: SubcategoryRepos
         subcategoryRepository.deleteById(id)
     }
 
-    override fun updateSubcategory(id: Long, subcategory: SubcategoryEntity) {
-        var newSubcategory = subcategoryRepository.findById(id).get()
-        newSubcategory.name = subcategory.name
-        newSubcategory.description = subcategory.description
-        newSubcategory.imageUrl = subcategory.imageUrl
-        subcategoryRepository.save(newSubcategory)
+    override fun updateSubcategory(subcategory: SubcategoryEntity) {
+        val subcategoryId = subcategory.id
+        subcategoryId?.let {
+            subcategoryRepository.findById(subcategoryId)
+                .orElseThrow { NoSuchElementException("Subcategory with id $subcategoryId not found") }
+            subcategoryRepository.save(subcategory)
+        } ?: {
+            throw NoSuchElementException("please define item id for id")
+        }
     }
 
 }

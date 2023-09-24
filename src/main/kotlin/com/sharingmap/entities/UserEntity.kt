@@ -6,14 +6,15 @@ import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Entity
 @Table(name = "users")
 class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
-    var id: Long? = null
+    @GeneratedValue(strategy = GenerationType.UUID, generator = "user_generator")
+    var id: UUID? = null
 
     @Column(name = "username", nullable = false, unique = true, length = 20)
     var name: String? = null

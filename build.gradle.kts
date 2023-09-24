@@ -25,6 +25,15 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.reactivestreams:reactive-streams:1.0.0")
+//    implementation("io.reactivex.rxjava2:rxkotlin:2.x.y")
+//    implementation("io.reactivex:rxkotlin:1.x.y")
+//    implementation("io.reactivex.rxjava3:rxkotlin:3.x.y")
+
+    implementation("aws.sdk.kotlin:s3:0.25.0-beta"){
+        exclude("com.squareup.okhttp3:okhttp")
+    }
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
    // testImplementation("org.springframework.security:spring-security-test")

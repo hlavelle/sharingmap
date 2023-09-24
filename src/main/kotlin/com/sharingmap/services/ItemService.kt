@@ -1,12 +1,13 @@
 package com.sharingmap.services
 
 import com.sharingmap.entities.ItemEntity
+import java.util.*
 
 interface ItemService {
-    fun getItemById(id: Long): ItemEntity
+    fun getItemById(id: UUID): ItemEntity
     fun getAllItems(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): List<ItemEntity>
     fun createItem(item: ItemEntity): Boolean
-    fun deleteItem(id: Long): Boolean
-    fun updateItem(id: Long, item: ItemEntity)
-    fun getAllItemsByUserId(userId: Long): List<ItemEntity>
+    fun deleteItem(id: UUID): Boolean
+    fun updateItem(item: ItemEntity)
+    fun getAllItemsByUserId(userId: UUID): List<ItemEntity>
 }

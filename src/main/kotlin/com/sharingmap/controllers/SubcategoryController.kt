@@ -29,8 +29,8 @@ class SubcategoryController(private val subcategoryService: SubcategoryService) 
         subcategoryService.deleteSubcategory(id)
     }
 
-    @PutMapping("/subcategories/{id}")
-    fun updateSubcategory(@PathVariable id: Long, @RequestBody subcategory: SubcategoryEntity) {
-        subcategoryService.updateSubcategory(id, subcategory)
+    @PutMapping("/subcategories")
+    fun updateSubcategory(@RequestBody subcategory: SubcategoryEntity) {
+        subcategoryService.updateSubcategory(subcategory)
     }
 }
