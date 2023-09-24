@@ -17,11 +17,6 @@ class UserController(private val userService: UserService) {
         return userService.getAllUsers()
     }
 
-    @PostMapping("/users")
-    fun createUser(@RequestBody user: UserEntity) {
-        userService.createUser(user)
-    }
-
     @DeleteMapping("/users/{id}")
     fun deleteUser(@PathVariable id: Long) {
         userService.deleteUser(id)

@@ -1,8 +1,13 @@
 package com.sharingmap.services
 
+import com.sharingmap.entities.Role
 import com.sharingmap.entities.UserEntity
 import com.sharingmap.repositories.UserRepository
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+
 
 @Service
 class UserServiceImpl(private val userRepository: UserRepository) : UserService {
@@ -11,9 +16,6 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
 
     override fun getAllUsers(): List<UserEntity> = userRepository.findAll().toList()
 
-    override fun createUser(user: UserEntity) {
-        userRepository.save(user)
-    }
 
     override fun deleteUser(id: Long) {
         userRepository.deleteById(id)
@@ -21,11 +23,12 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
 
     override fun updateUser(id: Long, user: UserEntity) {
         val newUser = userRepository.findById(id).get()
-        newUser.name = user.name
+        //newUser.username = user.username
         newUser.bio = user.bio
         userRepository.save(newUser)
     }
 
-//    fun <T : Any> Optional<out T>.toList(): List<T> =
-//        if (isPresent) listOf(get()) else emptyList()
+    override fun loadUserByUsername(email: String?): UserDetails {
+        return userRepository.findByEmail(email) ?: throw UsernameNotFoundException("User not found")
+    }
 }
