@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.TransactionException
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 import kotlin.NoSuchElementException
 
 @Service
@@ -17,7 +18,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
                       private val cityRepository: CityRepository,
                       private val userRepository: UserRepository) : ItemService {
 
-    override fun getItemById(id: Long): ItemEntity {
+    override fun getItemById(id: UUID): ItemEntity {
         return itemRepository.findById(id).orElseThrow { NoSuchElementException("Item not found with ID: $id") }
     }
 
@@ -72,27 +73,25 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         return true;
     }
 
-    override fun deleteItem(id: Long): Boolean {
+    override fun deleteItem(id: UUID): Boolean {
         val existingItem = itemRepository.findById(id)
             .orElseThrow { NoSuchElementException("Item with id $id not found") }
         itemRepository.delete(existingItem)
         return true
     }
 
-    override fun updateItem(id: Long, item: ItemEntity) {
-        val existingItem = itemRepository.findById(id)
-            .orElseThrow { NoSuchElementException("Item with id $id not found") }
-        existingItem.name = item.name
-        existingItem.subcategory = item.subcategory
-        existingItem.city = item.city
-        existingItem.text = item.text
-        existingItem.address = item.address
-        existingItem.phoneNumber = item.phoneNumber
-
-        itemRepository.save(existingItem)
+    override fun updateItem(item: ItemEntity) {
+        val itemId = item.id
+        itemId?.let {
+            itemRepository.findById(itemId)
+                .orElseThrow { NoSuchElementException("Item with id $itemId not found") }
+            itemRepository.save(item)
+        } ?: {
+            throw NoSuchElementException("please define item id for id")
+        }
     }
 
-    override fun getAllItemsByUserId(userId: Long): List<ItemEntity> {
+    override fun getAllItemsByUserId(userId: UUID): List<ItemEntity> {
         val items = itemRepository.findAllByUserId(userId, Sort.by(Sort.Direction.DESC, "updatedAt"))
         if (items.isEmpty()) {
             throw NoSuchElementException("No items found for user ID: $userId")

@@ -1,5 +1,6 @@
 package com.sharingmap.entities
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
@@ -8,11 +9,16 @@ import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
+import java.util.*
 
 
 @Entity
 @Table(name = "items")
 class ItemEntity (
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID, generator = "item_generator")
+    var id: UUID? = null,
+
     @Column(name = "item_name")
     @get:Size(min = 3, max = 50)
     var name: String? = null,
@@ -37,18 +43,17 @@ class ItemEntity (
     @field:Pattern(regexp = "(^$|[0-9]{10})")
     var phoneNumber: String? = null,
 
-    @CreationTimestamp
-    var createdAt: LocalDateTime? = null,
-
-    @UpdateTimestamp
-    var updatedAt: LocalDateTime? = null,
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     var user: UserEntity? = null
 ) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_generator")
-    var id: Long? = null
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="item")
+    val images: List<ItemImageEntity>? = null
+
+    @CreationTimestamp
+    var createdAt: LocalDateTime? = null
+
+    @UpdateTimestamp
+    var updatedAt: LocalDateTime? = null
 }
