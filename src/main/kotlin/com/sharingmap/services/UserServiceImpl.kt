@@ -7,21 +7,22 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.*
 
 
 @Service
 class UserServiceImpl(private val userRepository: UserRepository) : UserService {
 
-    override fun getUserById(id: Long): UserEntity = userRepository.findById(id).get()
+    override fun getUserById(id: UUID): UserEntity = userRepository.findById(id).get()
 
     override fun getAllUsers(): List<UserEntity> = userRepository.findAll().toList()
 
 
-    override fun deleteUser(id: Long) {
+    override fun deleteUser(id: UUID) {
         userRepository.deleteById(id)
     }
 
-    override fun updateUser(id: Long, user: UserEntity) {
+    override fun updateUser(id: UUID, user: UserEntity) {
         val newUser = userRepository.findById(id).get()
         //newUser.username = user.username
         newUser.bio = user.bio

@@ -9,14 +9,14 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
-
+import java.util.UUID
 
 @Entity
 @Table(name = "users")
 class UserEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
-    var id: Long? = null,
+    @GeneratedValue(strategy = GenerationType.UUID, generator = "user_generator")
+    var id: UUID? = null,
 
     @Column(nullable = false, unique = true, length = 20)
     private var username: String,
