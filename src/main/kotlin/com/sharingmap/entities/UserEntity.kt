@@ -21,12 +21,14 @@ class UserEntity(
     @Column(nullable = false, unique = true, length = 20)
     private var username: String,
 
+    @Column(nullable = false)
     @get:Size(min = 8, message = "Не меньше 8 знаков")
     private var password: String? = null,
 
-    @Transient
-    var passwordConfirm: String? = null,
+//    @Transient
+//    var passwordConfirm: String? = null,
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var role: Role? = null,
 
@@ -36,8 +38,12 @@ class UserEntity(
     var bio: String? = null,
 
     @Column(nullable = false, unique = true)
-    @field:Email(message = "{validation.field.email.invalid-format}")
+    //@field:Email(message = "{validation.field.email.invalid-format}")
     var email: String? = null,
+
+    var locked: Boolean = false,
+
+    var enabled: Boolean = false,
 
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
@@ -58,11 +64,11 @@ class UserEntity(
 
     override fun isAccountNonExpired() = true
 
-    override fun isAccountNonLocked() = true
+    override fun isAccountNonLocked() = !locked
 
     override fun isCredentialsNonExpired() = true
 
-    override fun isEnabled() = true
+    override fun isEnabled() = enabled
     fun assignRole(roleUser: Role) {
         this.role = roleUser
     }

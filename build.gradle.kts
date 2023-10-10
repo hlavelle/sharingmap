@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -27,6 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("io.jsonwebtoken:jjwt:0.2")
     implementation("org.reactivestreams:reactive-streams:1.0.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 //    implementation("io.reactivex.rxjava2:rxkotlin:2.x.y")
 //    implementation("io.reactivex:rxkotlin:1.x.y")
 //    implementation("io.reactivex.rxjava3:rxkotlin:3.x.y")

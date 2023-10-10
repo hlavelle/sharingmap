@@ -5,7 +5,6 @@ import com.sharingmap.entities.ItemImageEntity
 import com.sharingmap.repositories.*
 import org.springframework.stereotype.Service
 import java.util.*
-import kotlin.NoSuchElementException
 import aws.sdk.kotlin.services.s3.presigners.*
 import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.PutObjectRequest
@@ -20,7 +19,7 @@ val BUCKET = "sharing-map-test"
 val ENDPOINT_URL = Url.parse("storage.yandexcloud.net")
 
 @Service
-class ImageServiceImpl(private val imageRepository: ItemImageRepository) : ItemImageService {
+class ItemImageServiceImpl(private val imageRepository: ItemImageRepository) : ItemImageService {
     override fun getPresignedUrls(objectId: UUID, count: Int): List<String> {
         var result: MutableList<String> = mutableListOf()
         val s3Client = runBlocking { S3Client.fromEnvironment { region = REGION; endpointUrl = ENDPOINT_URL}}

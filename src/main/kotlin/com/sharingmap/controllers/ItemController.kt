@@ -28,7 +28,7 @@ class ItemController(private val itemService: ItemService,
     }
 
 
-    @GetMapping("items")
+    @GetMapping("/items")
     fun getAllItems(@RequestParam(value = "categoryId", defaultValue = "1") categoryId: Long,
                     @RequestParam(value = "cityId", defaultValue = "1") cityId: Long,
                     @RequestParam(value = "subcategoryId", defaultValue = "1") subcategoryId: Long,

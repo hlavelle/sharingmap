@@ -1,4 +1,4 @@
-package com.sharingmap.config
+package com.sharingmap.security.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

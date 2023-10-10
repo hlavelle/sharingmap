@@ -7,7 +7,6 @@ import java.util.*
 interface UserService : UserDetailsService {
     abstract fun getUserById(id: UUID): UserEntity
     abstract fun getAllUsers(): List<UserEntity>
-    abstract fun createUser(user: UserEntity)
     abstract fun deleteUser(id: UUID)
     abstract fun updateUser(id: UUID, user: UserEntity)
 }
