@@ -42,8 +42,7 @@ class SecurityConfig
                 authorize("/v3/api-docs.yaml", permitAll)
 
                 authorize("/items", permitAll)
-                authorize("/registration", permitAll)
-                authorize("/signup", permitAll)
+                authorize("/signup/**", permitAll)
                 authorize(anyRequest, authenticated)
             }
             formLogin { }
