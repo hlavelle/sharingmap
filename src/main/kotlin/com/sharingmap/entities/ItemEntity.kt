@@ -35,7 +35,6 @@ class ItemEntity (
     @JoinColumn(name = "city_id", nullable = false)
     var city: CityEntity? = null,
 
-    @get:Size(min = 20, max = 300)
     var text: String? = null,
 
     var address: String? = null,

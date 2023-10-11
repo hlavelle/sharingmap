@@ -39,10 +39,11 @@ class ItemController(private val itemService: ItemService,
         return ResponseEntity.ok(items)
     }
 
-    @PostMapping("/items")
-    fun createItem(@RequestBody @Valid item: ItemEntity): ResponseEntity<Unit>  {
-        itemService.createItem(item)
-        return ResponseEntity.status(HttpStatus.CREATED).build()
+    @PostMapping("/items/create")
+    fun createItem(@RequestBody @Valid item: ItemEntity): ResponseEntity<String>  {
+        val createdItem = itemService.createItem(item)
+        val itemId = createdItem?.id
+        return ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
     }
 
     @DeleteMapping("/items/{id}")
