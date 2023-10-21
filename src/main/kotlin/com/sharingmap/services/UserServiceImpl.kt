@@ -3,6 +3,7 @@ package com.sharingmap.services
 import com.sharingmap.entities.Role
 import com.sharingmap.entities.UserEntity
 import com.sharingmap.repositories.UserRepository
+import org.springframework.security.authentication.CachingUserDetailsService
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -31,5 +32,9 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
 
     override fun loadUserByUsername(email: String?): UserDetails {
         return userRepository.findByEmail(email) ?: throw UsernameNotFoundException("User not found")
+    }
+
+    override fun retrieveFromCache(email: String): UserDetails {
+        return CachingUserDetailsService(this).loadUserByUsername(email)
     }
 }

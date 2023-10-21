@@ -29,6 +29,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt:0.2")
     implementation("org.reactivestreams:reactive-streams:1.0.0")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
 //    implementation("io.reactivex.rxjava2:rxkotlin:2.x.y")
 //    implementation("io.reactivex:rxkotlin:1.x.y")
 //    implementation("io.reactivex.rxjava3:rxkotlin:3.x.y")
