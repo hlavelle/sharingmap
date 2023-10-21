@@ -24,15 +24,17 @@ class ItemImageServiceImpl(private val imageRepository: ItemImageRepository) : I
         var result: MutableList<String> = mutableListOf()
         val s3Client = runBlocking { S3Client.fromEnvironment { region = REGION; endpointUrl = ENDPOINT_URL}}
         for (i in 0 until count) {
-            val newImage = ItemImageEntity(
-                item = ItemEntity(id = objectId)
-            )
-            val unsignedRequest = runBlocking {PutObjectRequest {
-                bucket = BUCKET
-                key = "$objectId/${newImage.id}";
-            }.presign(s3Client.config, 1.hours) }
+            val newImage = ItemImageEntity(item = ItemEntity(id = objectId))
+
             try {
-                imageRepository.save(newImage)
+                val savedImage = imageRepository.save(newImage)
+
+                val unsignedRequest = runBlocking {PutObjectRequest {
+                    bucket = BUCKET
+                    key = "$objectId/${savedImage.id}";
+                }.presign(s3Client.config, 1.hours) }
+                result.add(unsignedRequest.url.toString())
+
             } catch (ex: DataAccessException) {
                 throw RuntimeException("Error occurred while creating the item.", ex)
             } catch (ex: TransactionException) {
@@ -40,7 +42,6 @@ class ItemImageServiceImpl(private val imageRepository: ItemImageRepository) : I
             } catch (ex: Exception) {
                 throw RuntimeException("Unprocessed exception", ex)
             }
-            result.add(unsignedRequest.url.toString())
         }
         return result
     }

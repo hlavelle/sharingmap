@@ -10,15 +10,15 @@ import java.util.*
 @Entity
 @Table(name = "images")
 class ItemImageEntity(
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID, generator = "item_image_generator")
+    var id: UUID? = null,
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="item_id", nullable = false)
     @JsonIgnore
     var item: ItemEntity? = null
 ) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID? = null
-
     @CreationTimestamp
     var createdDate: LocalDateTime? = null
 
