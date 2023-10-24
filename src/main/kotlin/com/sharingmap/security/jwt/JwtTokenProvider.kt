@@ -2,6 +2,8 @@ package com.sharingmap.security.jwt
 
 import aws.sdk.kotlin.runtime.auth.credentials.internal.sts.model.ExpiredTokenException
 import com.sharingmap.entities.Role
+import com.sharingmap.entities.UserEntity
+import com.sharingmap.repositories.UserRepository
 import com.sharingmap.security.AuthenticationService
 import com.sharingmap.services.UserService
 import io.jsonwebtoken.Jwts
@@ -19,7 +21,7 @@ import java.util.Date
 @Component
 class JwtTokenProvider(
     private val userService: UserService,
-    private val authenticationService: AuthenticationService,
+    private val userRepository: UserRepository,
 
     @Value("\${auth.cookie.secret}")
     private var secretKey: String,
@@ -44,6 +46,7 @@ class JwtTokenProvider(
     fun createAuthToken(email:String, role: Role?): String {
         val claims = Jwts.claims().setSubject(email)
         claims["role"] = role
+        claims["user_id"] = userRepository.findByEmail(email)?.id.toString()
         val now = Date()
         val valid = Date(now.time + authExpirationCookie)
         return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(valid)
@@ -53,6 +56,7 @@ class JwtTokenProvider(
     fun createRefreshToken(email:String, role: Role?): String {
         val claims = Jwts.claims().setSubject(email)
         claims["role"] = role
+        claims["user_id"] = userRepository.findByEmail(email)?.id.toString()
         val now = Date()
         val valid = Date(now.time + refreshExpirationCookie)
         return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(valid)

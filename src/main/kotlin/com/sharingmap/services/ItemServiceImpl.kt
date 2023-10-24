@@ -47,7 +47,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
     }
 
     @Transactional
-    override fun createItem(item: ItemEntity): Boolean {
+    override fun createItem(item: ItemEntity): ItemEntity? {
             print("here")
             val user = item.user?.id?.let { userRepository.getReferenceById(it) }
             print(user?.id ?: "NO VALUE")
@@ -68,12 +68,12 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             )
         try {
             itemRepository.save(newItem)
+            return newItem
         } catch (ex: DataAccessException) {
             throw RuntimeException("Error occurred while creating the item.", ex)
         } catch (ex: TransactionException) {
             throw RuntimeException("Transaction failed while creating the item.", ex)
         }
-        return true;
     }
 
     override fun deleteItem(id: UUID): Boolean {
