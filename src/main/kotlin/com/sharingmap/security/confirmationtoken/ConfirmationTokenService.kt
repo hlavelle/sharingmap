@@ -1,4 +1,4 @@
-package com.sharingmap.security.token
+package com.sharingmap.security.confirmationtoken
 
 import java.util.Optional
 import java.util.UUID

@@ -2,14 +2,10 @@ package com.sharingmap.security.jwt
 
 import aws.sdk.kotlin.runtime.auth.credentials.internal.sts.model.ExpiredTokenException
 import com.sharingmap.entities.Role
-import com.sharingmap.entities.UserEntity
 import com.sharingmap.repositories.UserRepository
-import com.sharingmap.security.AuthenticationService
 import com.sharingmap.services.UserService
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.*
 import jakarta.annotation.PostConstruct
-import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -23,17 +19,17 @@ class JwtTokenProvider(
     private val userService: UserService,
     private val userRepository: UserRepository,
 
-    @Value("\${auth.cookie.secret}")
+    @Value("\${sharingmap.app.secret}")
     private var secretKey: String,
-    @Value("\${auth.cookie.auth}")
+    @Value("\${sharingmap.app.auth}")
     val authCookieName: String,
-    @Value("\${auth.cookie.refresh}")
+    @Value("\${sharingmap.app.refresh}")
     val refreshCookieName: String,
-    @Value("\${auth.cookie.expiration-auth}")
+    @Value("\${sharingmap.app.expiration-auth}")
     val authExpirationCookie: Int,
-    @Value("\${auth.cookie.expiration-refresh}")
+    @Value("\${sharingmap.app.expiration-refresh}")
     val refreshExpirationCookie: Int,
-    @Value("\${auth.cookie.path}")
+    @Value("\${sharingmap.app.path}")
     val cookiePath: String,
 ) {
     val LOGGER = LoggerFactory.getLogger(JwtTokenProvider::class.java)
@@ -68,7 +64,15 @@ class JwtTokenProvider(
             val claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
             return claimsJws.body.expiration.after(Date())
         } catch (e: ExpiredTokenException) {
-            LOGGER.error(e.localizedMessage)
+            LOGGER.error("JWT token is expired: {}", e.localizedMessage)
+        }catch (e: SignatureException) {
+            LOGGER.error("Invalid JWT signature: {}", e.localizedMessage)
+        } catch (e: MalformedJwtException) {
+            LOGGER.error("Invalid JWT token: {}", e.localizedMessage)
+        } catch (e: UnsupportedJwtException) {
+            LOGGER.error("JWT token is unsupported: {}", e.localizedMessage)
+        } catch (e: IllegalArgumentException) {
+            LOGGER.error("JWT claims string is empty: {}", e.localizedMessage)
         }
         return false
     }
@@ -80,18 +84,5 @@ class JwtTokenProvider(
 
     fun getUserEmail(token: String): String {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body.subject
-    }
-
-    fun resolveToken(request: HttpServletRequest): String? {
-        val cookies = request.cookies
-        var res: String? = null
-        if (cookies != null) {
-            for (cookie in cookies) {
-                if (cookie.name.equals(authCookieName)) {
-                   res = cookie.value
-                }
-            }
-        }
-        return res
     }
 }

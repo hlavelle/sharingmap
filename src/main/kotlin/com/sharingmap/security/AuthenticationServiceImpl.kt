@@ -4,8 +4,9 @@ import com.sharingmap.entities.Role
 import com.sharingmap.entities.UserEntity
 import com.sharingmap.repositories.UserRepository
 import com.sharingmap.security.email.EmailService
-import com.sharingmap.security.token.ConfirmationTokenEntity
-import com.sharingmap.security.token.ConfirmationTokenService
+import com.sharingmap.security.confirmationtoken.ConfirmationTokenEntity
+import com.sharingmap.security.confirmationtoken.ConfirmationTokenService
+import com.sharingmap.security.email.EmailValidator
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

@@ -2,6 +2,8 @@ package com.sharingmap.security
 
 import com.sharingmap.entities.UserEntity
 import com.sharingmap.security.jwt.JwtTokenProvider
+import com.sharingmap.security.login.LoginRequest
+import com.sharingmap.security.login.LoginService
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -13,7 +15,8 @@ import org.springframework.web.bind.annotation.*
 class AuthenticationController (
     private val authenticationService: AuthenticationService,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val loginService: LoginService) {
+    private val loginService: LoginService
+) {
 
     val LOGGER = LoggerFactory.getLogger(AuthenticationController::class.java)
     @PostMapping("/signup")

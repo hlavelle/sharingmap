@@ -1,4 +1,4 @@
-package com.sharingmap.security
+package com.sharingmap.security.email
 
 import org.springframework.stereotype.Service
 import java.util.function.Predicate

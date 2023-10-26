@@ -1,4 +1,4 @@
-package com.sharingmap.security.token
+package com.sharingmap.security.confirmationtoken
 
 import com.sharingmap.entities.UserEntity
 import jakarta.persistence.*

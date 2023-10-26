@@ -1,7 +1,6 @@
-package com.sharingmap.security.token
+package com.sharingmap.security.confirmationtoken
 
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 import java.util.*
 
 @Service

@@ -1,3 +1,3 @@
-package com.sharingmap.security
+package com.sharingmap.security.login
 
 class LoginRequest (val email: String, val password: String)
