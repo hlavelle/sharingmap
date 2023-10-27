@@ -38,7 +38,7 @@ class AuthenticationController (
             val user = loginService.login(loginRequest.email, loginRequest.password)
             val authToken = setAuthToken(user, response)
             val refreshToken = setRefreshToken(user, response)
-            ResponseEntity.ok(LoginResponse(user.username, user.email, user.enabled, authToken, refreshToken))
+            ResponseEntity.ok(LoginResponse(user.username, user.email, user.enabled, refreshToken, authToken))
         } catch (e: java.lang.Exception) {
             LOGGER.error(e.localizedMessage)
             ResponseEntity.badRequest().body("Login failed")
