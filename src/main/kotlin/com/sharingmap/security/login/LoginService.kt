@@ -5,5 +5,5 @@ import org.springframework.security.core.userdetails.UserDetails
 
 interface LoginService {
 
-    fun login(email: String, password: String): UserEntity?
+    fun login(email: String, password: String): UserEntity
 }

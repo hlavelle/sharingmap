@@ -21,15 +21,15 @@ class UserEntity(
 
     @Column(nullable = false, unique = true)
     //@field:Email(message = "{validation.field.email.invalid-format}")
-    var email: String? = null,
+    var email: String,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var role: Role? = null,
+    var role: Role,
 
     @JsonIgnore
     @Column(nullable = false)
-    private var password: String? = null,
+    private var password: String,
 
 //    @Transient
 //    var passwordConfirm: String? = null,

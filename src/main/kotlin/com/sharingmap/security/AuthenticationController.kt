@@ -3,9 +3,9 @@ package com.sharingmap.security
 import com.sharingmap.entities.UserEntity
 import com.sharingmap.security.jwt.JwtTokenProvider
 import com.sharingmap.security.login.LoginRequest
+import com.sharingmap.security.login.LoginResponse
 import com.sharingmap.security.login.LoginService
 import com.sharingmap.security.registration.RegistrationRequest
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -38,7 +38,7 @@ class AuthenticationController (
             val user = loginService.login(loginRequest.email, loginRequest.password)
             val authToken = setAuthToken(user, response)
             val refreshToken = setRefreshToken(user, response)
-            ResponseEntity.ok("$authToken:$refreshToken")
+            ResponseEntity.ok(LoginResponse(user.username, user.email, user.enabled, authToken, refreshToken))
         } catch (e: java.lang.Exception) {
             LOGGER.error(e.localizedMessage)
             ResponseEntity.badRequest().body("Login failed")
@@ -60,34 +60,12 @@ class AuthenticationController (
         return null
     }
 
-    fun setAuthToken(user: UserEntity?, response: HttpServletResponse): String? {
-        val jwtToken = user?.email?.let { jwtTokenProvider.createAuthToken(it, user.role) }
-//        val cookie = Cookie(jwtTokenProvider.authCookieName, jwtToken)
-//        cookie.path = jwtTokenProvider.cookiePath
-//        cookie.isHttpOnly = true
-//        cookie.maxAge = jwtTokenProvider.authExpirationCookie
-//        response.addCookie(cookie)
-        return jwtToken
+    fun setAuthToken(user: UserEntity, response: HttpServletResponse): String {
+        return user.email.let { jwtTokenProvider.createAuthToken(it, user.role) }
     }
 
-    fun setRefreshToken(user: UserEntity?, response: HttpServletResponse): String? {
-        val jwtToken = user?.email?.let { jwtTokenProvider.createRefreshToken(it, user.role) }
-//        val cookie = Cookie(jwtTokenProvider.refreshCookieName, jwtToken)
-//        cookie.path = jwtTokenProvider.cookiePath
-//        cookie.isHttpOnly = true
-//        cookie.maxAge = jwtTokenProvider.refreshExpirationCookie
-//        response.addCookie(cookie)
-        return jwtToken
+    fun setRefreshToken(user: UserEntity, response: HttpServletResponse): String {
+        return user.email.let { jwtTokenProvider.createRefreshToken(it, user.role) }
     }
-
-//    fun clearAuthAndRefreshTokens(response: HttpServletResponse) {
-//        val authCookie = Cookie(jwtTokenProvider.authCookieName, "-")
-//        authCookie.path = jwtTokenProvider.cookiePath
-//
-//        val refreshCookie = Cookie(jwtTokenProvider.refreshCookieName, "-")
-//        refreshCookie.path = jwtTokenProvider.cookiePath
-//
-//        response.addCookie(authCookie)
-//        response.addCookie(refreshCookie)
-//    }
 }
+
