@@ -48,6 +48,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/login", permitAll)
                 authorize("/items/**", permitAll)
                 authorize("/signup/**", permitAll)
+                authorize("/refreshtoken", permitAll)
                 authorize(anyRequest, authenticated)
             }
             //formLogin { }

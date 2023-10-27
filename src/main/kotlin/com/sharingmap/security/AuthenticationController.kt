@@ -1,12 +1,14 @@
 package com.sharingmap.security
 
 import com.sharingmap.entities.UserEntity
-import com.sharingmap.security.jwt.JwtTokenProvider
+import com.sharingmap.security.jwt.*
 import com.sharingmap.security.login.LoginRequest
 import com.sharingmap.security.login.LoginResponse
 import com.sharingmap.security.login.LoginService
+import com.sharingmap.security.jwt.TokenRefreshResponse
 import com.sharingmap.security.registration.RegistrationRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -17,7 +19,8 @@ import org.springframework.web.bind.annotation.*
 class AuthenticationController (
     private val authenticationService: AuthenticationService,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val loginService: LoginService
+    private val loginService: LoginService,
+    private val refreshTokenService: RefreshTokenService
 ) {
 
     val LOGGER = LoggerFactory.getLogger(AuthenticationController::class.java)
@@ -37,8 +40,11 @@ class AuthenticationController (
         return try {
             val user = loginService.login(loginRequest.email, loginRequest.password)
             val authToken = setAuthToken(user, response)
-            val refreshToken = setRefreshToken(user, response)
-            ResponseEntity.ok(LoginResponse(user.username, user.email, user.enabled, refreshToken, authToken))
+            val refreshToken = user.id?.let { refreshTokenService.createRefreshToken(it) }
+            ResponseEntity.ok(refreshToken?.let {
+                LoginResponse(user.username, user.email, user.enabled,
+                    it, authToken)
+            })
         } catch (e: java.lang.Exception) {
             LOGGER.error(e.localizedMessage)
             ResponseEntity.badRequest().body("Login failed")
@@ -64,8 +70,20 @@ class AuthenticationController (
         return user.email.let { jwtTokenProvider.createAuthToken(it, user.role) }
     }
 
-    fun setRefreshToken(user: UserEntity, response: HttpServletResponse): String {
-        return user.email.let { jwtTokenProvider.createRefreshToken(it, user.role) }
-    }
+    @PostMapping("/refreshtoken")
+    fun refreshtoken(@RequestBody request: @Valid TokenRefreshRequest): ResponseEntity<*>? {
+            val requestRefreshToken: String = request.refreshToken
+            val tokenEntity = refreshTokenService.findByToken(requestRefreshToken)
+            if (tokenEntity != null) {
+                refreshTokenService.verifyExpiration(tokenEntity)
+                val user = tokenEntity.user
+                val accessToken = jwtTokenProvider.createAuthToken(user.email, user.role)
+
+                return ResponseEntity.ok<Any?>(TokenRefreshResponse(requestRefreshToken, accessToken))
+            }
+            throw TokenRefreshException(
+                    requestRefreshToken,
+                    "Refresh token is not in database!")
+            }
 }
 
