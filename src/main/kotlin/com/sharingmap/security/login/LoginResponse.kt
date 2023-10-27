@@ -2,7 +2,7 @@ package com.sharingmap.security.login
 
 import com.sharingmap.entities.UserEntity
 
-class LoginResponse (val name: String,
+class LoginResponse (val username: String,
                      val email: String,
                      val enabled: Boolean,
                      val accessToken: String,
