@@ -4,9 +4,11 @@ import com.sharingmap.entities.UserEntity
 import com.sharingmap.security.jwt.JwtTokenProvider
 import com.sharingmap.security.login.LoginRequest
 import com.sharingmap.security.login.LoginService
+import com.sharingmap.security.registration.RegistrationRequest
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
@@ -20,26 +22,26 @@ class AuthenticationController (
 
     val LOGGER = LoggerFactory.getLogger(AuthenticationController::class.java)
     @PostMapping("/signup")
-    fun createUser(@RequestBody user: UserEntity, response: HttpServletResponse): String {
+    fun createUser(@RequestBody request: RegistrationRequest, response: HttpServletResponse): ResponseEntity<Any> {
         return try {
-            authenticationService.createUser(user)
+            val user = authenticationService.createUser(request)
+            ResponseEntity.ok(user)
         } catch (e: Exception) {
             LOGGER.error(e.localizedMessage)
-            "error"
+            ResponseEntity.badRequest().body("Registration failed. Wrong format email or email already exists")
         }
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody loginRequest: LoginRequest, response: HttpServletResponse): String{
+    fun login(@RequestBody loginRequest: LoginRequest, response: HttpServletResponse): ResponseEntity<Any> {
         return try {
             val user = loginService.login(loginRequest.email, loginRequest.password)
             val authToken = setAuthToken(user, response)
             val refreshToken = setRefreshToken(user, response)
-            "$authToken:$refreshToken"
+            ResponseEntity.ok("$authToken:$refreshToken")
         } catch (e: java.lang.Exception) {
             LOGGER.error(e.localizedMessage)
-            clearAuthAndRefreshTokens(response)
-            "error"
+            ResponseEntity.badRequest().body("Login failed")
         }
     }
 
@@ -60,32 +62,32 @@ class AuthenticationController (
 
     fun setAuthToken(user: UserEntity?, response: HttpServletResponse): String? {
         val jwtToken = user?.email?.let { jwtTokenProvider.createAuthToken(it, user.role) }
-        val cookie = Cookie(jwtTokenProvider.authCookieName, jwtToken)
-        cookie.path = jwtTokenProvider.cookiePath
-        cookie.isHttpOnly = true
-        cookie.maxAge = jwtTokenProvider.authExpirationCookie
-        response.addCookie(cookie)
+//        val cookie = Cookie(jwtTokenProvider.authCookieName, jwtToken)
+//        cookie.path = jwtTokenProvider.cookiePath
+//        cookie.isHttpOnly = true
+//        cookie.maxAge = jwtTokenProvider.authExpirationCookie
+//        response.addCookie(cookie)
         return jwtToken
     }
 
     fun setRefreshToken(user: UserEntity?, response: HttpServletResponse): String? {
         val jwtToken = user?.email?.let { jwtTokenProvider.createRefreshToken(it, user.role) }
-        val cookie = Cookie(jwtTokenProvider.refreshCookieName, jwtToken)
-        cookie.path = jwtTokenProvider.cookiePath
-        cookie.isHttpOnly = true
-        cookie.maxAge = jwtTokenProvider.refreshExpirationCookie
-        response.addCookie(cookie)
+//        val cookie = Cookie(jwtTokenProvider.refreshCookieName, jwtToken)
+//        cookie.path = jwtTokenProvider.cookiePath
+//        cookie.isHttpOnly = true
+//        cookie.maxAge = jwtTokenProvider.refreshExpirationCookie
+//        response.addCookie(cookie)
         return jwtToken
     }
 
-    fun clearAuthAndRefreshTokens(response: HttpServletResponse) {
-        val authCookie = Cookie(jwtTokenProvider.authCookieName, "-")
-        authCookie.path = jwtTokenProvider.cookiePath
-
-        val refreshCookie = Cookie(jwtTokenProvider.refreshCookieName, "-")
-        refreshCookie.path = jwtTokenProvider.cookiePath
-
-        response.addCookie(authCookie)
-        response.addCookie(refreshCookie)
-    }
+//    fun clearAuthAndRefreshTokens(response: HttpServletResponse) {
+//        val authCookie = Cookie(jwtTokenProvider.authCookieName, "-")
+//        authCookie.path = jwtTokenProvider.cookiePath
+//
+//        val refreshCookie = Cookie(jwtTokenProvider.refreshCookieName, "-")
+//        refreshCookie.path = jwtTokenProvider.cookiePath
+//
+//        response.addCookie(authCookie)
+//        response.addCookie(refreshCookie)
+//    }
 }

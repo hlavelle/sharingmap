@@ -12,9 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.savedrequest.RequestCacheAwareFilter
-import org.springframework.web.servlet.config.annotation.CorsRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 
 @Configuration
@@ -29,12 +27,10 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .addFilterAfter(jwtTokenFilter, RequestCacheAwareFilter::class.java)
+            .addFilterAfter(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling().authenticationEntryPoint(authEntryPointJwt)
-            .and().csrf().disable()
+            .and().cors().and().csrf().disable()
 
-
-            //.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
             .invoke {
             authorizeHttpRequests {
                 authorize("/cities", hasAuthority("ROLE_USER")) //для теста, поменять на админа потом

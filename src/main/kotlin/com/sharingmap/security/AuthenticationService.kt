@@ -1,9 +1,10 @@
 package com.sharingmap.security
 
 import com.sharingmap.entities.UserEntity
+import com.sharingmap.security.registration.RegistrationRequest
 
 interface AuthenticationService {
-    fun createUser(user: UserEntity): String
+    fun createUser(request: RegistrationRequest): UserEntity
 
     fun confirmToken(token: String): String
 }

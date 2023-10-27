@@ -7,6 +7,7 @@ import com.sharingmap.security.email.EmailService
 import com.sharingmap.security.confirmationtoken.ConfirmationTokenEntity
 import com.sharingmap.security.confirmationtoken.ConfirmationTokenService
 import com.sharingmap.security.email.EmailValidator
+import com.sharingmap.security.registration.RegistrationRequest
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,17 +22,16 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
                                 private val emailService: EmailService
 ) : AuthenticationService {
 
-    override fun createUser(user: UserEntity): String {
-        val isValidEmail = user.email?.let { emailValidator.test(it) }
-        if (!isValidEmail!!) throw IllegalStateException("email isn't valid") //TODO сделать нормальные исключения
+    override fun createUser(request: RegistrationRequest): UserEntity {
+        val isValidEmail = request.email.let { emailValidator.test(it) }
+        if (!isValidEmail) throw IllegalStateException("email isn't valid") //TODO сделать нормальные исключения
 
-        val userFromDB: UserEntity? = userRepository.findByEmail(user.email)
+        val userFromDB: UserEntity? = userRepository.findByEmail(request.email)
 
         if (userFromDB != null) {
             throw IllegalStateException("email already taken") //TODO сделать нормальные исключения
         }
-        user.assignRole(Role.ROLE_USER)
-        user.setPassword(bCryptPasswordEncoder.encode(user.password))
+        val user = UserEntity(request.username, request.email, Role.ROLE_USER, bCryptPasswordEncoder.encode(request.password))
         userRepository.save(user)
 
         val token = UUID.randomUUID().toString()
@@ -42,7 +42,7 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
         confirmationTokenService.saveConfirmationToken(confirmationToken)
         val link = "http://localhost:8080/signup/confirm?token=$token"
         buildEmail(user.username, link)?.let { emailService.send(user.email!!, it) }
-        return token
+        return user
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.sharingmap.entities
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.Size
@@ -14,32 +15,29 @@ import java.util.UUID
 @Entity
 @Table(name = "users")
 class UserEntity(
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID, generator = "user_generator")
-    var id: UUID? = null,
 
     @Column(nullable = false, unique = true, length = 20)
     private var username: String,
 
-    @Column(nullable = false)
-    @get:Size(min = 8, message = "Не меньше 8 знаков")
-    private var password: String? = null,
-
-//    @Transient
-//    var passwordConfirm: String? = null,
+    @Column(nullable = false, unique = true)
+    //@field:Email(message = "{validation.field.email.invalid-format}")
+    var email: String? = null,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var role: Role? = null,
 
+    @JsonIgnore
+    @Column(nullable = false)
+    private var password: String? = null,
+
+//    @Transient
+//    var passwordConfirm: String? = null,
+
     //    var profilePicture: ImageEntity? = null
 
     //@get:Size(min = 20, max = 300)
     var bio: String? = null,
-
-    @Column(nullable = false, unique = true)
-    //@field:Email(message = "{validation.field.email.invalid-format}")
-    var email: String? = null,
 
     var locked: Boolean = false,
 
@@ -49,7 +47,11 @@ class UserEntity(
     var createdAt: LocalDateTime? = null,
 
     @UpdateTimestamp
-    var updatedAt: LocalDateTime? = null
+    var updatedAt: LocalDateTime? = null,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID, generator = "user_generator")
+    var id: UUID? = null
 ) : UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority?>? {
