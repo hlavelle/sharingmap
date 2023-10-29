@@ -8,6 +8,7 @@ import com.sharingmap.security.confirmationtoken.ConfirmationTokenEntity
 import com.sharingmap.security.confirmationtoken.ConfirmationTokenService
 import com.sharingmap.security.email.EmailValidator
 import com.sharingmap.security.registration.RegistrationRequest
+import com.sharingmap.services.UserService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,7 +20,7 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
                                 private val bCryptPasswordEncoder: BCryptPasswordEncoder,
                                 private val emailValidator: EmailValidator,
                                 private val confirmationTokenService: ConfirmationTokenService,
-                                private val emailService: EmailService
+                                private val userService: UserService
 ) : AuthenticationService {
 
     override fun createUser(request: RegistrationRequest): UserEntity {
@@ -29,7 +30,11 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
         val userFromDB: UserEntity? = userRepository.findByEmail(request.email)
 
         if (userFromDB != null) {
-            throw IllegalStateException("email already taken") //TODO сделать нормальные исключения
+            if (!userFromDB.enabled) {
+                userFromDB.id?.let { userService.deleteUser(it) }
+            } else {
+                throw IllegalStateException("email already taken") //TODO сделать нормальные исключения
+            }
         }
         val user = UserEntity(request.username, request.email, Role.ROLE_USER, bCryptPasswordEncoder.encode(request.password))
         userRepository.save(user)

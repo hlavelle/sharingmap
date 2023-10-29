@@ -1,19 +1,30 @@
 package com.sharingmap.security.confirmationtoken
 
 import com.sharingmap.entities.UserEntity
+import com.sharingmap.repositories.UserRepository
 import com.sharingmap.security.email.EmailService
+import com.sharingmap.services.UserService
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: ConfirmationTokenRepository,
-                                   private val emailService: EmailService
+                                   private val emailService: EmailService,
+                                   private val userRepository: UserRepository
 )
     : ConfirmationTokenService {
 
     override fun saveConfirmationToken(token: ConfirmationTokenEntity) {
         confirmationTokenRepository.save(token)
+    }
+
+    override fun resendToken(email: String): ConfirmationTokenEntity? {
+        val user: UserEntity? = userRepository.findByEmail(email)
+        val oldTokenId = user?.let { confirmationTokenRepository.deleteByUser(it) }
+        val confirmationToken = user?.let { createConfirmationToken(it) }
+
+        return confirmationToken
     }
 
     override fun createConfirmationToken(user: UserEntity): ConfirmationTokenEntity {
@@ -35,6 +46,10 @@ class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: Conf
     override fun deleteToken(id: UUID): String {
         confirmationTokenRepository.deleteById(id)
         return "token deleted"
+    }
+
+    override fun deleteConfirmationTokenByUser(user: UserEntity) {
+        confirmationTokenRepository.deleteByUser(user)
     }
 
     override fun getRandomString() : String {

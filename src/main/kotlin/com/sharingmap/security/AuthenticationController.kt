@@ -12,6 +12,7 @@ import com.sharingmap.security.registration.RegistrationRequest
 import com.sharingmap.security.registration.RegistrationResponse
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
+import okhttp3.internal.http.HTTP_NOT_FOUND
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -35,8 +36,6 @@ class AuthenticationController (
             val user = authenticationService.createUser(request)
             val confirmationToken = confirmationTokenService.createConfirmationToken(user)
             ResponseEntity.ok(RegistrationResponse(
-                email = user.email,
-                enabled = user.enabled,
                 confirmationTokenId = confirmationToken.id.toString()
             ))
         } catch (e: Exception) {
@@ -49,7 +48,7 @@ class AuthenticationController (
     fun login(@RequestBody loginRequest: LoginRequest, response: HttpServletResponse): ResponseEntity<Any> {
         return try {
             val user = loginService.login(loginRequest.email, loginRequest.password)
-            val authToken = setAuthToken(user, response)
+            val authToken = jwtTokenProvider.createAuthToken(user.email, user.role)
             val refreshToken = user.id?.let { refreshTokenService.createRefreshToken(it) }
             ResponseEntity.ok(refreshToken?.let {
                 LoginResponse(user.username, user.email, user.enabled,
@@ -66,6 +65,17 @@ class AuthenticationController (
         return authenticationService.confirmToken(request.token, request.tokenId)
     }
 
+    @GetMapping("/signup/confirm/resentConfirmationToken")
+    fun resendConfirmationToken(@RequestParam("email") email: String): Any {
+        val confirmationToken = confirmationTokenService.resendToken(email)
+        if (confirmationToken != null) {
+            return ResponseEntity.ok(RegistrationResponse(
+                confirmationTokenId = confirmationToken.id.toString()
+            ))
+        }
+        return ResponseEntity.status(HTTP_NOT_FOUND)
+    }
+
     @GetMapping("/current")
     fun current(): UserEntity? {
         try {
@@ -76,12 +86,8 @@ class AuthenticationController (
         return null
     }
 
-    fun setAuthToken(user: UserEntity, response: HttpServletResponse): String {
-        return user.email.let { jwtTokenProvider.createAuthToken(it, user.role) }
-    }
-
-    @PostMapping("/refreshtoken")
-    fun refreshtoken(@RequestBody request: @Valid TokenRefreshRequest): ResponseEntity<*>? {
+    @PostMapping("/refreshToken")
+    fun refreshToken(@RequestBody request: @Valid TokenRefreshRequest): ResponseEntity<*>? {
             val requestRefreshToken: String = request.refreshToken
             val tokenEntity = refreshTokenService.findByToken(requestRefreshToken)
         return if (tokenEntity != null) {
