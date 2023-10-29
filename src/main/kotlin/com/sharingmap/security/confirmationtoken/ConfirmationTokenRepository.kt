@@ -8,6 +8,5 @@ import java.util.*
 @Repository
 @Transactional(readOnly = true)
 interface ConfirmationTokenRepository: JpaRepository<ConfirmationTokenEntity, UUID> {
-
-    fun findByToken(token: String) : Optional<ConfirmationTokenEntity>
+//    override fun findById(tokenId: UUID) : ConfirmationTokenEntity?
 }

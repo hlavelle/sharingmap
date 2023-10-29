@@ -46,8 +46,6 @@ class JwtTokenProvider(
         try {
             val claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
             return claimsJws.body.expiration.after(Date())
-        } catch (e: ExpiredJwtException) {
-            LOGGER.error("JWT token is expired: {}", e.localizedMessage)
         }catch (e: SignatureException) {
             LOGGER.error("Invalid JWT signature: {}", e.localizedMessage)
         } catch (e: MalformedJwtException) {

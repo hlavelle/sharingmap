@@ -13,7 +13,7 @@ import java.util.*
 class ConfirmationTokenEntity(
 
     @Column(nullable = false)
-    var token: String? = null,
+    var token: String,
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -29,5 +29,5 @@ class ConfirmationTokenEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID, generator = "token_generator")
-    var id: UUID? = null,
+    var id: UUID? = null
     )
