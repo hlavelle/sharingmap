@@ -19,7 +19,7 @@ class LoginServiceImpl(
     override fun login(email: String, password: String): UserEntity {
         authenticationProvider.authenticate(UsernamePasswordAuthenticationToken(email, password))
 
-        return userService.retrieveFromCache(email) as UserEntity
+        return userService.loadUserByUsername(email) as UserEntity
     }
 
 }
