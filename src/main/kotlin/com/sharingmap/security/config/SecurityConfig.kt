@@ -33,9 +33,24 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
 
             .invoke {
             authorizeHttpRequests {
-                authorize("/cities", hasAuthority("ROLE_USER")) //для теста, поменять на админа потом
-                authorize("/categories", hasAuthority("ROLE_ADMIN"))
-                authorize("/subcategories", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/update/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/create", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/{id}", permitAll)
+                authorize("/cities/all", permitAll)
+
+                authorize("/categories/update/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/categories/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/categories/create", hasAuthority("ROLE_ADMIN"))
+                authorize("/categories/{id}", permitAll)
+                authorize("/categories/all", permitAll)
+
+                authorize("/subcategories/update/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/subcategories/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/subcategories/create", hasAuthority("ROLE_ADMIN"))
+                authorize("/subcategories/{id}", permitAll)
+                authorize("/subcategories/all", permitAll)
+
                 authorize("/users", hasAuthority("ROLE_ADMIN"))
 
                 //Документация. Потом убрать под админа

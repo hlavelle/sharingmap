@@ -13,17 +13,17 @@ class UserController(private val userService: UserService) {
         return userService.getUserById(id)
     }
 
-    @GetMapping("/users")
+    @GetMapping("/users/all")
     fun getAllUsers(): List<UserEntity> {
         return userService.getAllUsers()
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/users/delete/{id}")
     fun deleteUser(@PathVariable id: UUID) {
         userService.deleteUser(id)
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/users/update/{id}")
     fun updateUser(@PathVariable id: UUID, @RequestBody user: UserEntity) {
         userService.updateUser(id, user)
     }

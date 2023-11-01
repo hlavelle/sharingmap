@@ -14,22 +14,22 @@ class SubcategoryController(private val subcategoryService: SubcategoryService) 
         return subcategoryService.getSubcategoryById(id)
     }
 
-    @GetMapping("/subcategories")
+    @GetMapping("/subcategories/all")
     fun getAllSubcategories(): List<SubcategoryEntity> {
         return subcategoryService.getAllSubcategories()
     }
 
-    @PostMapping("/subcategories")
+    @PostMapping("/subcategories/create")
     fun createSubcategory(@RequestBody subcategory: SubcategoryEntity) {
         subcategoryService.createSubcategory(subcategory)
     }
 
-    @DeleteMapping("/subcategories/{id}")
+    @DeleteMapping("/subcategories/delete/{id}")
     fun deleteSubcategory(@PathVariable id: Long) {
         subcategoryService.deleteSubcategory(id)
     }
 
-    @PutMapping("/subcategories")
+    @PutMapping("/subcategories/update")
     fun updateSubcategory(@RequestBody subcategory: SubcategoryEntity) {
         subcategoryService.updateSubcategory(subcategory)
     }
