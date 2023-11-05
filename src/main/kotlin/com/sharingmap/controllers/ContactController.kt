@@ -13,22 +13,22 @@ class ContactController(private val contactService: ContactService) {
         return contactService.getContactById(id)
     }
 
-    @GetMapping("/contacts/all")
+    @GetMapping("/contacts/all") //TODO сделать проверку юзера и админ
     fun getAllUserContacts(@PathVariable userId: UUID): List<ContactEntity> {
         return contactService.getAllUserContacts(userId)
     }
 
-    @PostMapping("/contacts/create")
+    @PostMapping("/contacts/create") //TODO сделать проверку юзера и админ
     fun createContact(@RequestBody contact: ContactEntity) {
         contactService.createContact(contact)
     }
 
-    @DeleteMapping("/contacts/delete/{id}")
+    @DeleteMapping("/contacts/delete/{id}") //TODO сделать проверку юзера и админ
     fun deleteContact(@PathVariable id: UUID) {
         contactService.deleteContact(id)
     }
 
-    @PutMapping("/contacts/update/{id}")
+    @PutMapping("/contacts/update/{id}") //TODO сделать проверку юзера и админ
     fun updateContact(@PathVariable id: UUID, @RequestBody contact: ContactEntity) {
         contactService.updateContact(id, contact)
     }

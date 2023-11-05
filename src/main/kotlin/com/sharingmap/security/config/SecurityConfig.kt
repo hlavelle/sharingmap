@@ -69,6 +69,10 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/items/all", permitAll)
                 authorize("/items/{id}", authenticated)
 
+                authorize("/contacts/{id}", authenticated)
+
+                //TODO ItemImage
+
                 //Документация. Потом убрать под админа
                 authorize("/swagger-ui.html", permitAll)
                 authorize("/swagger-ui/**", permitAll)
