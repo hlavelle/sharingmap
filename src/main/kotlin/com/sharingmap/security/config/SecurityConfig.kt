@@ -24,6 +24,17 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
 {
 
     @Bean
+    fun securityUserFilterChain(http: HttpSecurity, userSecurity: UserSecurity): SecurityFilterChain {
+        http.authorizeHttpRequests{ auth ->
+            auth
+                .requestMatchers("/users/{id}/delete").access(userSecurity)
+                .requestMatchers("/users/{id}/update").access(userSecurity)
+        }
+
+        return http.build()
+    }
+
+    @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
@@ -51,7 +62,12 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/subcategories/{id}", permitAll)
                 authorize("/subcategories/all", permitAll)
 
-                authorize("/users", hasAuthority("ROLE_ADMIN"))
+                authorize("/users/all", hasAuthority("ROLE_ADMIN"))
+                authorize("/users/{id}", authenticated)
+                authorize("/items/create", authenticated)
+
+                authorize("/items/all", permitAll)
+                authorize("/items/{id}", authenticated)
 
                 //Документация. Потом убрать под админа
                 authorize("/swagger-ui.html", permitAll)
@@ -62,16 +78,16 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/current", permitAll)
                 authorize("/login", permitAll)
                 authorize("/logout", permitAll)//
-                authorize("/items/**", permitAll)
+
+
                 authorize("/signup/**", permitAll)
                 authorize("/resetPassword/**", permitAll)
                 authorize("/refreshToken", permitAll)
                 authorize(anyRequest, authenticated)
-            }
-            //formLogin { }
-            logout { }
-            //httpBasic { }
 
+            }
+
+            logout { }
         }
         return http.build()
     }

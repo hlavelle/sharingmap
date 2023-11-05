@@ -30,7 +30,7 @@ class AuthenticationController (
 ) {
 
     val LOGGER = LoggerFactory.getLogger(AuthenticationController::class.java)
-    @PostMapping("/signup")
+    @PostMapping("/signup") //TODO для анонима или админа
     fun createUser(@RequestBody request: RegistrationRequest, response: HttpServletResponse): ResponseEntity<Any> {
         return try {
             val user = authenticationService.createUser(request)

@@ -28,7 +28,7 @@ class ItemController(private val itemService: ItemService,
     }
 
 
-    @GetMapping("/items")
+    @GetMapping("/items/all")
     fun getAllItems(@RequestParam(value = "categoryId", defaultValue = "1") categoryId: Long,
                     @RequestParam(value = "cityId", defaultValue = "1") cityId: Long,
                     @RequestParam(value = "subcategoryId", defaultValue = "1") subcategoryId: Long,
@@ -46,7 +46,7 @@ class ItemController(private val itemService: ItemService,
         return ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
     }
 
-    @DeleteMapping("/items/{id}")
+    @DeleteMapping("/items/{id}/delete")
     fun deleteItem(@PathVariable @Min(1) id: UUID): ResponseEntity<Unit> {
         val isDeleted = itemService.deleteItem(id)
 
@@ -57,7 +57,7 @@ class ItemController(private val itemService: ItemService,
         }
     }
 
-    @PutMapping("/items/{id}")
+    @PutMapping("/items/{id}/update")
     fun updateItem(@RequestBody item: ItemEntity): ResponseEntity<Unit> {
         itemService.updateItem(item)
         return ResponseEntity.noContent().build()
