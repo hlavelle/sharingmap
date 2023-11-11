@@ -1,55 +1,76 @@
-package com.sharingmap.security.confirmationtoken
+package com.sharingmap.security.resetpassword
 
 import com.sharingmap.entities.UserEntity
-import com.sharingmap.repositories.UserRepository
 import com.sharingmap.security.email.EmailService
-import com.sharingmap.services.UserService
+import com.sharingmap.security.email.EmailServiceImpl
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.*
 
 @Service
-class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: ConfirmationTokenRepository,
-                                   private val emailService: EmailService,
-                                   private val userRepository: UserRepository
-)
-    : ConfirmationTokenService {
+class PasswordTokenServiceImpl(
+    private val emailService: EmailService,
+    private val passwordTokenRepository: PasswordTokenRepository
+): PasswordTokenService {
 
-    override fun saveConfirmationToken(token: ConfirmationTokenEntity) {
-        confirmationTokenRepository.save(token)
-    }
+    val logger = LoggerFactory.getLogger(EmailServiceImpl::class.java)
 
-    override fun resendToken(email: String): ConfirmationTokenEntity? {
-        val user: UserEntity? = userRepository.findByEmail(email)
-        user?.let { confirmationTokenRepository.deleteByUser(it) }
-        val confirmationToken = user?.let { createConfirmationToken(it) }
-
-        return confirmationToken
-    }
-
-    override fun createConfirmationToken(user: UserEntity): ConfirmationTokenEntity {
+    override fun createPasswordToken(user: UserEntity): PasswordTokenEntity {
+        if (passwordTokenRepository.findByUser(user).isPresent) {
+            deletePasswordTokenByUser(user)
+            logger.info("old password token was deleted")
+        }
         val token = getRandomString()
 
-        val confirmationToken =  ConfirmationTokenEntity(token, LocalDateTime.now(),
+        val passwordToken =  PasswordTokenEntity(token, LocalDateTime.now(),
             LocalDateTime.now().plusMinutes(15), user)
 
-        saveConfirmationToken(confirmationToken)
+        savePasswordToken(passwordToken)
 
         buildEmail(user.username, token).let { emailService.send(user.email, it) }
-        return confirmationToken
+        logger.info("mail with reset password code was sent")
+        return passwordToken
     }
 
-    override fun getToken(tokenId: UUID): Optional<ConfirmationTokenEntity> {
-        return confirmationTokenRepository.findById(tokenId)
+    override fun savePasswordToken(token: PasswordTokenEntity) {
+        passwordTokenRepository.save(token)
+        logger.info("token was created and saved")
+    }
+
+    @Transactional
+    override fun confirmToken(token: String, tokenId: String): String {
+        val confirmationToken = getToken(UUID.fromString(tokenId))
+
+        return if (confirmationToken.isPresent && confirmationToken.get().token == token) {
+            val user: UserEntity = confirmationToken.get().user
+            val expiredAt: LocalDateTime? = confirmationToken.get().expiresAt
+            if (expiredAt != null) {
+                check(!expiredAt.isBefore(LocalDateTime.now())) { "token expired" }
+            }
+            user.enabled = true
+
+            deleteToken(UUID.fromString(tokenId))
+
+            "confirmed"
+        } else {
+            "can't confirm"
+        }
+    }
+
+    override fun getToken(tokenId: UUID): Optional<PasswordTokenEntity> {
+        return passwordTokenRepository.findById(tokenId)
     }
 
     override fun deleteToken(id: UUID): String {
-        confirmationTokenRepository.deleteById(id)
+        passwordTokenRepository.deleteById(id)
+        logger.info("token was deleted")
         return "token deleted"
     }
 
-    override fun deleteConfirmationTokenByUser(user: UserEntity) {
-        confirmationTokenRepository.deleteByUser(user)
+    override fun deletePasswordTokenByUser(user: UserEntity) {
+        passwordTokenRepository.deleteByUser(user)
     }
 
     override fun getRandomString() : String {
@@ -59,7 +80,7 @@ class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: Conf
             .joinToString("")
     }
 
-    private fun buildEmail(name: String, confirmationCode: String): String {
+    private fun buildEmail(name: String, code: String): String {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
@@ -115,7 +136,7 @@ class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: Conf
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
                 "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> " + confirmationCode + " </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Please click on the below link to change your password: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> " + code + " </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
                 "        \n" +
                 "      </td>\n" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
@@ -127,4 +148,5 @@ class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: Conf
                 "\n" +
                 "</div></div>"
     }
+
 }

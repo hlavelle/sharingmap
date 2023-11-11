@@ -6,10 +6,9 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import java.util.*
 
 interface UserService : UserDetailsService {
-    abstract fun getUserById(id: UUID): UserEntity
-    abstract fun getAllUsers(): List<UserEntity>
-    abstract fun deleteUser(id: UUID)
-    abstract fun updateUser(id: UUID, user: UserEntity)
-
-    fun retrieveFromCache(email: String): UserDetails
+    fun getUserById(id: UUID): UserEntity
+    fun getAllUsers(): List<UserEntity>
+    fun deleteUser(id: UUID)
+    fun updateUser(id: UUID, user: UserEntity)
+    fun changePassword(id: UUID, password: String)
 }

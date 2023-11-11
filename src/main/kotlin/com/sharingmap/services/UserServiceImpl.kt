@@ -12,7 +12,10 @@ import java.util.*
 
 
 @Service
-class UserServiceImpl(private val userRepository: UserRepository) : UserService {
+class UserServiceImpl(
+    private val userRepository: UserRepository,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder
+    ) : UserService {
 
     override fun getUserById(id: UUID): UserEntity = userRepository.findById(id).get()
 
@@ -30,11 +33,13 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
         userRepository.save(newUser)
     }
 
-    override fun loadUserByUsername(email: String?): UserDetails {
-        return userRepository.findByEmail(email) ?: throw UsernameNotFoundException("User not found")
+    override fun changePassword(id: UUID, password: String) {
+        val newUser = userRepository.findById(id).get()
+        newUser.password = bCryptPasswordEncoder.encode(password)
+        userRepository.save(newUser)
     }
 
-    override fun retrieveFromCache(email: String): UserDetails {
-        return CachingUserDetailsService(this).loadUserByUsername(email)
+    override fun loadUserByUsername(email: String?): UserDetails {
+        return userRepository.findByEmail(email) ?: throw UsernameNotFoundException("User not found")
     }
 }
