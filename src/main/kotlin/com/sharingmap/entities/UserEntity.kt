@@ -64,6 +64,10 @@ class UserEntity(
     override fun getPassword() = password
     override fun getUsername() = username
 
+    fun setUsername(username: String) {
+        this.username = username
+    }
+
     override fun isAccountNonExpired() = true
 
     override fun isAccountNonLocked() = !locked

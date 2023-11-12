@@ -1,16 +1,23 @@
 package com.sharingmap.controllers
 
+import com.sharingmap.dto.UserDto
 import com.sharingmap.entities.UserEntity
 import com.sharingmap.services.UserService
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import java.security.Principal
 import java.util.UUID
 
 @RestController
 class UserController(private val userService: UserService) {
 
-    @GetMapping("/users/{id}") //TODO сделать возвращение юзеру всей инфы о себе и частичной о других юзерах.
-    fun getUserById(@PathVariable id: UUID, principal: Principal): UserEntity {
+    @GetMapping("/users/id")
+    fun getUserInfoById(@RequestParam id: UUID): UserDto {
+        val user = userService.getUserById(id)
+        return UserDto(user.username, user.bio)
+    }
+
+    @GetMapping("/users/admin/id")
+    fun getUserByIdForAdmin(@RequestParam id: UUID): UserEntity {
         return userService.getUserById(id)
     }
 
@@ -19,13 +26,15 @@ class UserController(private val userService: UserService) {
         return userService.getAllUsers()
     }
 
-    @DeleteMapping("/users/{id}/delete") //TODO сделать проверку юзера
-    fun deleteUser(@PathVariable id: UUID, principal: Principal) {
+    @DeleteMapping("/users/delete")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    fun deleteUser(@RequestParam id: UUID) {
         userService.deleteUser(id)
     }
 
-    @PutMapping("/users/{id}/update") //TODO сделать проверку юзера
-    fun updateUser(@PathVariable id: UUID, @RequestBody user: UserEntity, principal: Principal) {
-        userService.updateUser(id, user)
+    @PutMapping("/users/update")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    fun updateUser(@RequestParam id: UUID, @RequestBody userDto: UserDto) {
+        userService.updateUser(id, userDto)
     }
 }

@@ -1,5 +1,6 @@
 package com.sharingmap.services
 
+import com.sharingmap.dto.UserDto
 import com.sharingmap.entities.Role
 import com.sharingmap.entities.UserEntity
 import com.sharingmap.repositories.UserRepository
@@ -26,10 +27,10 @@ class UserServiceImpl(
         userRepository.deleteById(id)
     }
 
-    override fun updateUser(id: UUID, user: UserEntity) {
+    override fun updateUser(id: UUID, userDto: UserDto) {
         val newUser = userRepository.findById(id).get()
-        //newUser.username = user.username
-        newUser.bio = user.bio
+        if (userDto.username != null) newUser.username = userDto.username!!
+        newUser.bio = userDto.bio
         userRepository.save(newUser)
     }
 

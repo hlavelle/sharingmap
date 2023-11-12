@@ -76,7 +76,7 @@ class AuthenticationController (
         return ResponseEntity.status(HTTP_NOT_FOUND)
     }
 
-    @GetMapping("/current")
+    @GetMapping("/current") //TODO подумать, что с этим делать
     fun current(): UserEntity? {
         try {
             return SecurityContextHolder.getContext().authentication.principal as UserEntity
@@ -103,7 +103,7 @@ class AuthenticationController (
         }
     }
 
-    @GetMapping("/logout")
+    @GetMapping("/logout")  //TODO  посмотреть, как нормально логаут сделать
     fun logout(@RequestParam("id") userId: UUID) : ResponseEntity<Any>{
         refreshTokenService.deleteByUserId(userId)
         return ResponseEntity.ok().body("You logged out")
