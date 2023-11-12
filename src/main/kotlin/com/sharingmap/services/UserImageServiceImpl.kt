@@ -14,7 +14,7 @@ import org.springframework.transaction.TransactionException
 import kotlin.time.Duration.Companion.hours
 
 @Service
-class ItemImageServiceImpl(private val imageRepository: ItemImageRepository) : ItemImageService {
+class UserImageServiceImpl(private val imageRepository: UserImageRepository) : UserImageService {
     val REGION = "ru-central1"
     val BUCKET = "sharing-map-test"
     val ENDPOINT_URL = Url.parse("storage.yandexcloud.net")
@@ -23,8 +23,7 @@ class ItemImageServiceImpl(private val imageRepository: ItemImageRepository) : I
         var result: MutableList<String> = mutableListOf()
         val s3Client = runBlocking { S3Client.fromEnvironment { region = REGION; endpointUrl = ENDPOINT_URL}}
         for (i in 0 until count) {
-            val newImage = ItemImageEntity(entity = ItemEntity(id = objectId))
-
+            val newImage = UserImageEntity(entity = UserEntity(id = objectId, username = "", password = "", email = "", role = Role.ROLE_USER))
             try {
                 val savedImage = imageRepository.save(newImage)
 
@@ -44,15 +43,9 @@ class ItemImageServiceImpl(private val imageRepository: ItemImageRepository) : I
         }
         return result
     }
-
-    override fun getItemImages(itemId: UUID): List<ItemImageEntity> {
-        return imageRepository.findAllByEntityId(itemId)
-    }
-
     override fun setImageUploaded(imageId: UUID): Boolean {
 //        val result = imageRepository.setImageUploaded(imageId)
 //        return result == 1
         return true
     }
 }
-

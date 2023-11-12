@@ -54,6 +54,9 @@ class UserEntity(
     var id: UUID? = null
 ) : UserDetails {
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy="entity")
+    val image: UserImageEntity? = null
+
     override fun getAuthorities(): Collection<GrantedAuthority?>? {
         return listOf(SimpleGrantedAuthority(role!!.name))
     }
