@@ -1,6 +1,6 @@
 package com.sharingmap.repositories
 
-import com.sharingmap.entities.ItemImageEntity
+import com.sharingmap.entities.UserImageEntity
 import org.hibernate.annotations.SQLUpdate
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface ItemImageRepository : JpaRepository<ItemImageEntity, UUID> {
-    fun findAllByEntityId(itemId: UUID): List<ItemImageEntity>
+interface UserImageRepository : JpaRepository<UserImageEntity, UUID> {
+    fun findAllByEntityId(itemId: UUID): List<UserImageEntity>
 
 //    @Query("UPDATE images SET is_loaded = true WHERE item_id = ?itemId")
 //    fun setImageUploaded(itemId: UUID): Int
