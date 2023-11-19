@@ -3,6 +3,7 @@ INSERT INTO subcategories VALUES (1, now(), 'subcat desc', 'url', 'subcat name',
 INSERT INTO cities VALUES (1, now(), 'city_2', now()) ON CONFLICT DO NOTHING;
 INSERT INTO users VALUES ('dc94023b-8658-42e6-bcdc-2c810feb07af', 'i am user', now(), 'user@mail.com', true, false, '$2a$12$X3Ci24kRUjPtChLrk6KTaOR02PooC2FnIe76QdhwRCggaXSvci1YO', 'ROLE_USER', now(), 'username') ON CONFLICT DO NOTHING;
 INSERT INTO users VALUES ('0bae6c74-23bf-4703-873c-82ac8ca89f80', 'i am admin', now(), 'admin@mail.com', true, false, '$2a$12$X3Ci24kRUjPtChLrk6KTaOR02PooC2FnIe76QdhwRCggaXSvci1YO', 'ROLE_ADMIN', now(), 'admin') ON CONFLICT DO NOTHING;
+INSERT INTO users VALUES ('60747caf-d37d-424b-9daf-30096fa2c061', 'There are some info', now(), 'thereis@mail.com', true, false, '$2a$12$X3Ci24kRUjPtChLrk6KTaOR02PooC2FnIe76QdhwRCggaXSvci1YO', 'ROLE_ADMIN', now(), 'other_username') ON CONFLICT DO NOTHING;
 
 INSERT INTO items VALUES ('b0d569d5-5a7f-41d2-af3a-1cfe4478a97f', 'adr1', now(), 'item1', '81111111111', 'desc1', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
 INSERT INTO items VALUES ('114cce42-278f-47cf-b551-dfbb0a6bd1d5', 'adr2', now(), 'item2', '81111111111', 'desc2', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
@@ -14,3 +15,5 @@ INSERT INTO item_images VALUES ('074abbf3-33cb-49dc-b022-764704d5a935', now(), f
 
 INSERT INTO item_images VALUES ('09070b0b-bf77-4438-a868-aae569e10e0c', now(), false, now(),'b0d569d5-5a7f-41d2-af3a-1cfe4478a97f') ON CONFLICT DO NOTHING;
 INSERT INTO item_images VALUES ('45239f5c-dee9-4672-9132-15dfad3868a1', now(), false, now(),'b0d569d5-5a7f-41d2-af3a-1cfe4478a97f') ON CONFLICT DO NOTHING;
+
+INSERT INTO user_images VALUES ('60747caf-d37d-424b-9daf-30096fa2c061', now(), false, now(),'60747caf-d37d-424b-9daf-30096fa2c061') ON CONFLICT DO NOTHING;

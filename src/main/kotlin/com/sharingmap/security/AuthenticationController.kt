@@ -86,6 +86,19 @@ class AuthenticationController (
         return null
     }
 
+    @GetMapping("/is_auth")
+    fun isAuth(): ResponseEntity<Any>? {
+        try {
+            if (SecurityContextHolder.getContext().authentication.isAuthenticated) {
+                ResponseEntity.ok()
+            }
+            ResponseEntity.badRequest()
+        } catch (e: NullPointerException) {
+            LOGGER.error(e.localizedMessage)
+        }
+        return null
+    }
+
     @PostMapping("/refreshToken")
     fun refreshToken(@RequestBody request: @Valid TokenRefreshRequest): ResponseEntity<*>? {
             val requestRefreshToken: String = request.refreshToken

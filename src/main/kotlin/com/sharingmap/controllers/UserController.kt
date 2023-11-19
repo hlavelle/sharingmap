@@ -1,8 +1,11 @@
 package com.sharingmap.controllers
 
 import com.sharingmap.dto.UserDto
+import com.sharingmap.dto.UserInfoDto
+import com.sharingmap.dto.UserUpdateDto
 import com.sharingmap.entities.UserEntity
 import com.sharingmap.services.UserService
+import org.apache.catalina.User
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
@@ -10,10 +13,15 @@ import java.util.UUID
 @RestController
 class UserController(private val userService: UserService) {
 
-    @GetMapping("/users/id")
-    fun getUserInfoById(@RequestParam id: UUID): UserDto {
+    @GetMapping("/users/info")
+    fun getUserInfoById(@RequestParam id: UUID): UserInfoDto {
         val user = userService.getUserById(id)
-        return UserDto(user.username, user.bio)
+
+        return UserInfoDto(username = user.username,
+            bio = user.bio?:"",
+            id = user.id!!,
+            email = user.email,
+            hasImage = user.image != null)
     }
 
     @GetMapping("/users/admin/id")
@@ -34,7 +42,8 @@ class UserController(private val userService: UserService) {
 
     @PutMapping("/users/update")
     @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    fun updateUser(@RequestParam id: UUID, @RequestBody userDto: UserDto) {
-        userService.updateUser(id, userDto)
+    fun updateUser(@RequestBody userUpdateDto: UserUpdateDto) {
+        var userDto: UserDto = UserDto(bio = userUpdateDto.bio, username = userUpdateDto.username)
+        userService.updateUser(userUpdateDto.id, userDto)
     }
 }

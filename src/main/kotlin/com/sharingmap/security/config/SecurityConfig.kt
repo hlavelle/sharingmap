@@ -55,7 +55,8 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/subcategories/all", permitAll)
 
                 authorize("/users/all", hasAuthority("ROLE_ADMIN"))
-                authorize("/users/id", authenticated)
+                authorize("/users/update", authenticated)
+                authorize("/users/info", permitAll)
                 authorize("/users/admin/id", hasAuthority("ROLE_ADMIN"))
 
 
