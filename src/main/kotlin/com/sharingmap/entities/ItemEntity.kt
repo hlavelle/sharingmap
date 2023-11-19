@@ -42,12 +42,12 @@ class ItemEntity (
     @field:Pattern(regexp = "(^$|[0-9]{10})")
     var phoneNumber: String? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     var user: UserEntity? = null
 ) {
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="item")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="entity")
     val images: List<ItemImageEntity>? = null
 
     @CreationTimestamp

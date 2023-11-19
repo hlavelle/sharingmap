@@ -16,7 +16,7 @@ import java.util.UUID
 @Table(name = "users")
 class UserEntity(
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, unique = false, length = 20)
     private var username: String,
 
     @Column(nullable = false, unique = true)
@@ -53,6 +53,9 @@ class UserEntity(
     @GeneratedValue(strategy = GenerationType.UUID, generator = "user_generator")
     var id: UUID? = null
 ) : UserDetails {
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy="entity")
+    val image: UserImageEntity? = null
 
     override fun getAuthorities(): Collection<GrantedAuthority?>? {
         return listOf(SimpleGrantedAuthority(role!!.name))

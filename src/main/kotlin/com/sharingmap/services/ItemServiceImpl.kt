@@ -48,14 +48,10 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
 
     @Transactional
     override fun createItem(item: ItemEntity): ItemEntity? {
-            print("here")
             val user = item.user?.id?.let { userRepository.getReferenceById(it) }
-            print(user?.id ?: "NO VALUE")
-            print(item.user?.id ?: " NO ITEM ID")
             val category = item.category?.id?.let { categoryRepository.getReferenceById(it) }
             val subcategory = item.subcategory?.id?.let { subcategoryRepository.getReferenceById(it) }
             val city = item.city?.id?.let { cityRepository.getReferenceById(it) }
-
             val newItem = ItemEntity(
                 name = item.name,
                 category = category,
