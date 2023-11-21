@@ -5,6 +5,7 @@ import com.sharingmap.security.jwt.JwtTokenFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
@@ -16,27 +17,58 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 
 @Configuration
+@EnableMethodSecurity
 @EnableWebSecurity(debug = true)
 class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                      private val bCryptPasswordEncoder: BCryptPasswordEncoder,
                      private val userDetailsService: UserDetailsService,
                      private val authEntryPointJwt: AuthEntryPointJwt)
 {
-
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .addFilterAfter(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling().authenticationEntryPoint(authEntryPointJwt)
-            .and().cors().and().csrf().disable()
+            .and()
+            .cors().and()
+            .csrf().disable()
 
             .invoke {
             authorizeHttpRequests {
-                authorize("/cities", hasAuthority("ROLE_USER")) //для теста, поменять на админа потом
-                authorize("/categories", hasAuthority("ROLE_ADMIN"))
-                authorize("/subcategories", hasAuthority("ROLE_ADMIN"))
-                authorize("/users", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/update/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/create", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/{id}", permitAll)
+                authorize("/cities/all", permitAll)
+
+                authorize("/categories/update/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/categories/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/categories/create", hasAuthority("ROLE_ADMIN"))
+                authorize("/categories/{id}", permitAll)
+                authorize("/categories/all", permitAll)
+
+                authorize("/subcategories/update/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/subcategories/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/subcategories/create", hasAuthority("ROLE_ADMIN"))
+                authorize("/subcategories/{id}", permitAll)
+                authorize("/subcategories/all", permitAll)
+
+                authorize("/users/all", hasAuthority("ROLE_ADMIN"))
+                authorize("/users/update", authenticated)
+                authorize("/users/info", permitAll)
+                authorize("/users/admin/id", hasAuthority("ROLE_ADMIN"))
+
+
+                authorize("/items/create", authenticated)
+
+
+                authorize("/items/all", permitAll)
+                authorize("/items/{id}", authenticated)
+
+                authorize("/contacts/{id}", authenticated)
+
+                //TODO ItemImage
 
                 //Документация. Потом убрать под админа
                 authorize("/swagger-ui.html", permitAll)
@@ -47,16 +79,16 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/current", permitAll)
                 authorize("/login", permitAll)
                 authorize("/logout", permitAll)//
-                authorize("/items/**", permitAll)
+
+
                 authorize("/signup/**", permitAll)
                 authorize("/resetPassword/**", permitAll)
                 authorize("/refreshToken", permitAll)
                 authorize(anyRequest, authenticated)
-            }
-            //formLogin { }
-            logout { }
-            //httpBasic { }
 
+            }
+
+            logout { }
         }
         return http.build()
     }

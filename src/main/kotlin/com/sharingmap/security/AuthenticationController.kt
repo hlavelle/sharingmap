@@ -30,7 +30,7 @@ class AuthenticationController (
 ) {
 
     val LOGGER = LoggerFactory.getLogger(AuthenticationController::class.java)
-    @PostMapping("/signup")
+    @PostMapping("/signup") //TODO для анонима или админа
     fun createUser(@RequestBody request: RegistrationRequest, response: HttpServletResponse): ResponseEntity<Any> {
         return try {
             val user = authenticationService.createUser(request)
@@ -76,10 +76,23 @@ class AuthenticationController (
         return ResponseEntity.status(HTTP_NOT_FOUND)
     }
 
-    @GetMapping("/current")
+    @GetMapping("/current") //TODO подумать, что с этим делать
     fun current(): UserEntity? {
         try {
             return SecurityContextHolder.getContext().authentication.principal as UserEntity
+        } catch (e: NullPointerException) {
+            LOGGER.error(e.localizedMessage)
+        }
+        return null
+    }
+
+    @GetMapping("/is_auth")
+    fun isAuth(): ResponseEntity<Any>? {
+        try {
+            if (SecurityContextHolder.getContext().authentication.isAuthenticated) {
+                ResponseEntity.ok()
+            }
+            ResponseEntity.badRequest()
         } catch (e: NullPointerException) {
             LOGGER.error(e.localizedMessage)
         }
@@ -103,7 +116,7 @@ class AuthenticationController (
         }
     }
 
-    @GetMapping("/logout")
+    @GetMapping("/logout")  //TODO  посмотреть, как нормально логаут сделать
     fun logout(@RequestParam("id") userId: UUID) : ResponseEntity<Any>{
         refreshTokenService.deleteByUserId(userId)
         return ResponseEntity.ok().body("You logged out")
