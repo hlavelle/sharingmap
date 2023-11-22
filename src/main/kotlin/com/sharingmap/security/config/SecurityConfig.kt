@@ -36,6 +36,13 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
 
             .invoke {
             authorizeHttpRequests {
+                authorize("/settings/all", permitAll)
+                authorize("/settings/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/settings/create", hasAuthority("ROLE_ADMIN"))
+                authorize("/settings/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/settings/update/{id}", hasAuthority("ROLE_ADMIN"))
+
+
                 authorize("/cities/update/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/cities/delete/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/cities/create", hasAuthority("ROLE_ADMIN"))
@@ -88,7 +95,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
 
             }
 
-            logout { }
+                // logout { }
         }
         return http.build()
     }
