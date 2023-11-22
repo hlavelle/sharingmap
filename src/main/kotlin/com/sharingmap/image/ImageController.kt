@@ -1,7 +1,6 @@
 package com.sharingmap.image
 
 import com.sharingmap.user.UserEntity
-import com.sharingmap.services.*
 import com.sharingmap.user.UserService
 import jakarta.validation.constraints.Min
 import org.springframework.http.HttpStatus
