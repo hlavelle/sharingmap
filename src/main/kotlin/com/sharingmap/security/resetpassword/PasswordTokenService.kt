@@ -1,6 +1,6 @@
 package com.sharingmap.security.resetpassword
 
-import com.sharingmap.entities.UserEntity
+import com.sharingmap.user.UserEntity
 import java.util.*
 
 interface PasswordTokenService {

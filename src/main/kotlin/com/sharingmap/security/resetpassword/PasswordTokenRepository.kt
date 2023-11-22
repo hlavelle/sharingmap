@@ -1,7 +1,6 @@
 package com.sharingmap.security.resetpassword
 
-import com.sharingmap.entities.UserEntity
-import com.sharingmap.security.confirmationtoken.ConfirmationTokenEntity
+import com.sharingmap.user.UserEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional

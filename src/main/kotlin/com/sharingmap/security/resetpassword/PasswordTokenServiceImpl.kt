@@ -1,6 +1,6 @@
 package com.sharingmap.security.resetpassword
 
-import com.sharingmap.entities.UserEntity
+import com.sharingmap.user.UserEntity
 import com.sharingmap.security.email.EmailService
 import com.sharingmap.security.email.EmailServiceImpl
 import org.slf4j.LoggerFactory

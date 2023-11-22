@@ -1,6 +1,6 @@
 package com.sharingmap.security.resetpassword
 
-import com.sharingmap.entities.UserEntity
+import com.sharingmap.user.UserEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.OnDelete
