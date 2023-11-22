@@ -1,14 +1,13 @@
 package com.sharingmap.security
 
-import com.sharingmap.entities.Role
-import com.sharingmap.entities.UserEntity
-import com.sharingmap.repositories.UserRepository
-import com.sharingmap.security.email.EmailService
+import com.sharingmap.user.Role
+import com.sharingmap.user.UserEntity
+import com.sharingmap.user.UserRepository
 import com.sharingmap.security.confirmationtoken.ConfirmationTokenEntity
 import com.sharingmap.security.confirmationtoken.ConfirmationTokenService
 import com.sharingmap.security.email.EmailValidator
 import com.sharingmap.security.registration.RegistrationRequest
-import com.sharingmap.services.UserService
+import com.sharingmap.user.UserService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

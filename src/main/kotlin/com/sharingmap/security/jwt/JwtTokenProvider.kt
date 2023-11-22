@@ -1,8 +1,8 @@
 package com.sharingmap.security.jwt
 
-import com.sharingmap.entities.Role
-import com.sharingmap.repositories.UserRepository
-import com.sharingmap.services.UserService
+import com.sharingmap.user.Role
+import com.sharingmap.user.UserRepository
+import com.sharingmap.user.UserService
 import io.jsonwebtoken.*
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory

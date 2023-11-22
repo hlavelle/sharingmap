@@ -1,9 +1,8 @@
 package com.sharingmap.security.confirmationtoken
 
-import com.sharingmap.entities.UserEntity
-import com.sharingmap.repositories.UserRepository
+import com.sharingmap.user.UserEntity
+import com.sharingmap.user.UserRepository
 import com.sharingmap.security.email.EmailService
-import com.sharingmap.services.UserService
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*

@@ -1,10 +1,10 @@
 package com.sharingmap.security.resetpassword
 
-import com.sharingmap.entities.UserEntity
-import com.sharingmap.repositories.UserRepository
+import com.sharingmap.user.UserEntity
+import com.sharingmap.user.UserRepository
 import com.sharingmap.security.email.EmailServiceImpl
 import com.sharingmap.security.email.EmailValidator
-import com.sharingmap.services.UserService
+import com.sharingmap.user.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

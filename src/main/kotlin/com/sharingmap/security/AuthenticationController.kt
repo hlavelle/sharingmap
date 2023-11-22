@@ -1,6 +1,6 @@
 package com.sharingmap.security
 
-import com.sharingmap.entities.UserEntity
+import com.sharingmap.user.UserEntity
 import com.sharingmap.security.confirmationtoken.ConfirmationRequest
 import com.sharingmap.security.confirmationtoken.ConfirmationTokenService
 import com.sharingmap.security.jwt.*

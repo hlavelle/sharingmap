@@ -1,6 +1,6 @@
 package com.sharingmap.security.jwt
 
-import com.sharingmap.repositories.UserRepository
+import com.sharingmap.user.UserRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

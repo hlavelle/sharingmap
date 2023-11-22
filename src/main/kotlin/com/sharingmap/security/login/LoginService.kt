@@ -1,7 +1,6 @@
 package com.sharingmap.security.login
 
-import com.sharingmap.entities.UserEntity
-import org.springframework.security.core.userdetails.UserDetails
+import com.sharingmap.user.UserEntity
 
 interface LoginService {
 

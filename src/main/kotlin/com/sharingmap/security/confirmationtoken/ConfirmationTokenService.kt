@@ -1,6 +1,6 @@
 package com.sharingmap.security.confirmationtoken
 
-import com.sharingmap.entities.UserEntity
+import com.sharingmap.user.UserEntity
 import java.util.Optional
 import java.util.UUID
 
