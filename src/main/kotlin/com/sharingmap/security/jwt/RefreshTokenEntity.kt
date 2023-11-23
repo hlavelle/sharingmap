@@ -19,8 +19,10 @@ public class RefreshTokenEntity (
     var user: UserEntity,
 
     @Column(nullable = false)
-    val expiryDate: Instant,
+    val expiryDate: Instant) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID, generator = "user_generator")
-    var id: UUID? = null)
+    var id: UUID? = null
+}
+

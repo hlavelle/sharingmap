@@ -6,8 +6,14 @@ import com.sharingmap.user.UserRepository
 import com.sharingmap.security.confirmationtoken.ConfirmationTokenEntity
 import com.sharingmap.security.confirmationtoken.ConfirmationTokenService
 import com.sharingmap.security.email.EmailValidator
+import com.sharingmap.security.jwt.JwtTokenProvider
+import com.sharingmap.security.jwt.RefreshTokenService
+import com.sharingmap.security.login.LoginResponse
 import com.sharingmap.security.registration.RegistrationRequest
 import com.sharingmap.user.UserService
+import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,7 +25,10 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
                                 private val bCryptPasswordEncoder: BCryptPasswordEncoder,
                                 private val emailValidator: EmailValidator,
                                 private val confirmationTokenService: ConfirmationTokenService,
-                                private val userService: UserService
+                                private val userService: UserService,
+                                private val authenticationProvider: AuthenticationProvider,
+                                private val jwtTokenProvider: JwtTokenProvider,
+                                private val refreshTokenService: RefreshTokenService
 ) : AuthenticationService {
 
     override fun createUser(request: RegistrationRequest): UserEntity {
@@ -41,7 +50,7 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
     }
 
     @Transactional
-    override fun confirmToken(token: String, tokenId: String): String {
+    override fun confirmToken(token: String, tokenId: String): Any {
         val confirmationToken: Optional<ConfirmationTokenEntity> = confirmationTokenService.getToken(UUID.fromString(tokenId))
 
         return if (confirmationToken.isPresent && confirmationToken.get().token == token) {
@@ -51,12 +60,22 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
                 check(!expiredAt.isBefore(LocalDateTime.now())) { "token expired" }
             }
             user.enabled = true
+            val authentication = UsernamePasswordAuthenticationToken(user.email, null, user.authorities)
+            SecurityContextHolder.getContext().authentication = authentication
+
+            val authToken = jwtTokenProvider.createAuthToken(user.email, user.role)
+            val refreshToken = user.id?.let { refreshTokenService.createRefreshToken(it) }
 
             confirmationTokenService.deleteToken(UUID.fromString(tokenId))
 
-            "confirmed"
+            if (refreshToken != null) {
+                LoginResponse(user.username, user.email, user.enabled,
+                    refreshToken, authToken)
+            } else {
+                throw IllegalStateException("refresh token didn't create")
+            }
         } else {
-            "can't confirm"
+            throw IllegalStateException("can't confirm")
         }
     }
 }
