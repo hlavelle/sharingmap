@@ -61,8 +61,9 @@ class AuthenticationController (
     }
 
     @PostMapping("/signup/confirm")
-    fun confirmEmailToken(@RequestBody request: ConfirmationRequest): String {
-        return authenticationService.confirmToken(request.token, request.tokenId)
+    fun confirmEmailToken(@RequestBody request: ConfirmationRequest): ResponseEntity<Any> {
+        val response = authenticationService.confirmToken(request.token, request.tokenId)
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/signup/confirm/resentConfirmationToken")
