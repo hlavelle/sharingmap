@@ -35,7 +35,7 @@ class UserController(private val userService: UserService) {
     }
 
     @PutMapping("/users/update")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+//    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     fun updateUser(@RequestBody userUpdateDto: UserUpdateDto) {
         var userDto: UserDto = UserDto(bio = userUpdateDto.bio, username = userUpdateDto.username)
         userService.updateUser(userUpdateDto.id, userDto)
