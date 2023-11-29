@@ -37,47 +37,14 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
             .invoke {
             authorizeHttpRequests {
                 authorize("/settings/all", permitAll)
-                authorize("/settings/{id}", hasAuthority("ROLE_ADMIN"))
-                authorize("/settings/create", hasAuthority("ROLE_ADMIN"))
-                authorize("/settings/delete/{id}", hasAuthority("ROLE_ADMIN"))
-                authorize("/settings/update/{id}", hasAuthority("ROLE_ADMIN"))
-
-
-                authorize("/cities/update/{id}", hasAuthority("ROLE_ADMIN"))
-                authorize("/cities/delete/{id}", hasAuthority("ROLE_ADMIN"))
-                authorize("/cities/create", hasAuthority("ROLE_ADMIN"))
                 authorize("/cities/{id}", permitAll)
                 authorize("/cities/all", permitAll)
-
-                authorize("/categories/update/{id}", hasAuthority("ROLE_ADMIN"))
-                authorize("/categories/delete/{id}", hasAuthority("ROLE_ADMIN"))
-                authorize("/categories/create", hasAuthority("ROLE_ADMIN"))
                 authorize("/categories/{id}", permitAll)
                 authorize("/categories/all", permitAll)
-
-                authorize("/subcategories/update/{id}", hasAuthority("ROLE_ADMIN"))
-                authorize("/subcategories/delete/{id}", hasAuthority("ROLE_ADMIN"))
-                authorize("/subcategories/create", hasAuthority("ROLE_ADMIN"))
                 authorize("/subcategories/{id}", permitAll)
                 authorize("/subcategories/all", permitAll)
-
-                authorize("/users/all", hasAuthority("ROLE_ADMIN"))
-                authorize("/users/update", authenticated)
                 authorize("/users/info", permitAll)
-                authorize("/users/admin/id", hasAuthority("ROLE_ADMIN"))
-
-
-                authorize("/items/create", authenticated)
-
-
                 authorize("/items/all", permitAll)
-                authorize("/items/{id}", authenticated)
-
-                authorize("/contacts/{id}", authenticated)
-
-                //TODO ItemImage
-
-                //Документация. Потом убрать под админа
                 authorize("/swagger-ui.html", permitAll)
                 authorize("/swagger-ui/**", permitAll)
                 authorize("/v3/api-docs/**", permitAll)
@@ -91,6 +58,39 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/signup/**", permitAll)
                 authorize("/resetPassword/**", permitAll)
                 authorize("/refreshToken", permitAll)
+
+                authorize("{id}/image/urls", authenticated)
+                authorize("user/image/urls", authenticated)
+                authorize("/users/update", authenticated)
+
+                authorize("/settings/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/settings/create", hasAuthority("ROLE_ADMIN"))
+                authorize("/settings/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/settings/update/{id}", hasAuthority("ROLE_ADMIN"))
+
+
+                authorize("/cities/update/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/cities/create", hasAuthority("ROLE_ADMIN"))
+
+                authorize("/categories/update/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/categories/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/categories/create", hasAuthority("ROLE_ADMIN"))
+
+                authorize("/subcategories/update/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/subcategories/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/subcategories/create", hasAuthority("ROLE_ADMIN"))
+
+                authorize("/users/all", hasAuthority("ROLE_ADMIN"))
+                authorize("/users/admin/id", hasAuthority("ROLE_ADMIN"))
+
+
+                authorize("/items/create", authenticated)
+
+                authorize("/items/{id}", authenticated)
+
+                authorize("/contacts/{id}", authenticated)
+
                 authorize(anyRequest, authenticated)
 
             }

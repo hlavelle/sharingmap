@@ -1,9 +1,11 @@
 package com.sharingmap.item
 
+import com.sharingmap.user.UserEntity
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import kotlin.NoSuchElementException
 import java.util.UUID
@@ -35,7 +37,12 @@ class ItemController(private val itemService: ItemService) {
     }
 
     @PostMapping("/items/create")
-    fun createItem(@RequestBody @Valid item: ItemEntity): ResponseEntity<String>  {
+    fun createItem(@RequestBody item: ItemEntity): ResponseEntity<String>  {
+        val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
+        if (user.id == null) {
+            ResponseEntity.notFound()
+        }
+        item.user = user
         val createdItem = itemService.createItem(item)
         val itemId = createdItem?.id
         return ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
