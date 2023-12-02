@@ -61,7 +61,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
 
                 authorize("{id}/image/urls", authenticated)
                 authorize("user/image/urls", authenticated)
-                authorize("/users/update", authenticated)
+                authorize("/users/update", authenticated) //
 
                 authorize("/settings/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/settings/create", hasAuthority("ROLE_ADMIN"))
@@ -84,10 +84,10 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/users/all", hasAuthority("ROLE_ADMIN"))
                 authorize("/users/admin/id", hasAuthority("ROLE_ADMIN"))
 
-
+                authorize("/items/{id}", authenticated)
                 authorize("/items/create", authenticated)
 
-                authorize("/items/{id}", authenticated)
+
 
                 authorize("/contacts/{id}", authenticated)
 

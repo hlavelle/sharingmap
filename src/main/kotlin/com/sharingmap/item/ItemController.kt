@@ -15,7 +15,7 @@ class ItemController(private val itemService: ItemService) {
     @GetMapping("/items/{id}")
     fun getItemById(@PathVariable id: UUID): ResponseEntity<Any> {
         return try {
-            val item = itemService.getItemById(id)
+            val item = toItemDto(itemService.getItemById(id))
             ResponseEntity.ok(item)
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to "Item not found with ID: $id")
@@ -30,9 +30,10 @@ class ItemController(private val itemService: ItemService) {
                     @RequestParam(value = "subcategoryId", defaultValue = "1") subcategoryId: Long,
                     @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
                     @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int
-    ): ResponseEntity<List<ItemEntity>> {
+    ): ResponseEntity<List<ItemDto>> {
         val items =  itemService.getAllItems(categoryId, subcategoryId, cityId, page, size)
-        return ResponseEntity.ok(items)
+        val itemDtos = items.map { toItemDto(it) }
+        return ResponseEntity.ok(itemDtos)
     }
 
     @PostMapping("/items/create")
@@ -72,7 +73,8 @@ class ItemController(private val itemService: ItemService) {
                 val errorResponse = mapOf("error" to "No items found for user ID: $userId")
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
             } else {
-                ResponseEntity.ok(items)
+                val itemDtos = items.map { toItemDto(it) }
+                ResponseEntity.ok(itemDtos)
             }
         } catch (ex: NoSuchElementException) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).build()
@@ -82,5 +84,21 @@ class ItemController(private val itemService: ItemService) {
     @ExceptionHandler(value = [IllegalArgumentException::class, NoSuchElementException::class])
     fun handleException(ex: Exception): ResponseEntity<String> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
+    }
+
+    private fun toItemDto(itemEntity: ItemEntity): ItemDto {
+        return ItemDto(
+            id = itemEntity.id,
+            name = itemEntity.name,
+            text = itemEntity.text,
+            address = itemEntity.address,
+            imagesId = itemEntity.images?.mapNotNull { it.id } ?: listOf(),
+            createdAt = itemEntity.createdAt,
+            updatedAt = itemEntity.updatedAt,
+            categoryId = itemEntity.category?.id,
+            subcategoryId = itemEntity.subcategory?.id,
+            cityId = itemEntity.city?.id,
+            userId = itemEntity.user?.id
+        )
     }
 }

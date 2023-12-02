@@ -57,6 +57,7 @@ class ItemEntity (
     @OnDelete(action = OnDeleteAction.CASCADE)
     var user: UserEntity? = null
 ) {
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy="entity")
     val images: List<ItemImageEntity>? = null
 
