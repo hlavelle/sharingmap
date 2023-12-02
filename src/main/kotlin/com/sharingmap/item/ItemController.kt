@@ -2,6 +2,7 @@ package com.sharingmap.item
 
 import com.sharingmap.user.UserEntity
 import jakarta.validation.constraints.Min
+import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -30,7 +31,7 @@ class ItemController(private val itemService: ItemService) {
                     @RequestParam(value = "subcategoryId", defaultValue = "1") subcategoryId: Long,
                     @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
                     @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int
-    ): ResponseEntity<List<ItemDto>> {
+    ): ResponseEntity<Page<ItemDto>> {
         val items =  itemService.getAllItems(categoryId, subcategoryId, cityId, page, size)
         val itemDtos = items.map { toItemDto(it) }
         return ResponseEntity.ok(itemDtos)

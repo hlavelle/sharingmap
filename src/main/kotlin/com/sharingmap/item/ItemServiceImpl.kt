@@ -5,6 +5,7 @@ import com.sharingmap.city.CityRepository
 import com.sharingmap.subcategory.SubcategoryRepository
 import com.sharingmap.user.UserRepository
 import org.springframework.dao.DataAccessException
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -25,27 +26,27 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         return itemRepository.findById(id).orElseThrow { NoSuchElementException("Item not found with ID: $id") }
     }
 
-    override fun getAllItems(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): List<ItemEntity> {
+    override fun getAllItems(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): Page<ItemEntity> {
         val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
         val pageable = PageRequest.of(page, size, sort)
 
         return when {
             categoryId != 0L && subcategoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoryIdAndSubcategoryIdAndCityId(categoryId, subcategoryId, cityId, pageable).toList()
+                itemRepository.findAllByCategoryIdAndSubcategoryIdAndCityId(categoryId, subcategoryId, cityId, pageable)
             categoryId != 0L && subcategoryId != 0L ->
-                itemRepository.findAllByCategoryIdAndSubcategoryId(categoryId, subcategoryId, pageable).toList()
+                itemRepository.findAllByCategoryIdAndSubcategoryId(categoryId, subcategoryId, pageable)
             categoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId, pageable).toList()
+                itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId, pageable)
             categoryId != 0L ->
-                itemRepository.findAllByCategoryId(categoryId, pageable).toList()
+                itemRepository.findAllByCategoryId(categoryId, pageable)
             subcategoryId != 0L && cityId != 0L ->
-                itemRepository.findAllBySubcategoryIdAndCityId(subcategoryId, cityId, pageable).toList()
+                itemRepository.findAllBySubcategoryIdAndCityId(subcategoryId, cityId, pageable)
             subcategoryId != 0L ->
-                itemRepository.findAllBySubcategoryId(subcategoryId, pageable).toList()
+                itemRepository.findAllBySubcategoryId(subcategoryId, pageable)
             cityId != 0L ->
-                itemRepository.findAllByCityId(cityId, pageable).toList()
+                itemRepository.findAllByCityId(cityId, pageable)
             else ->
-                itemRepository.findAll(pageable).toList()
+                itemRepository.findAll(pageable)
         }
     }
 
