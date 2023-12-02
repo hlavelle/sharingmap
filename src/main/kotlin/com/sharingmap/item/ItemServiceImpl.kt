@@ -2,7 +2,6 @@ package com.sharingmap.item
 
 import com.sharingmap.category.CategoryRepository
 import com.sharingmap.city.CityRepository
-import com.sharingmap.image.ItemRepository
 import com.sharingmap.subcategory.SubcategoryRepository
 import com.sharingmap.user.UserRepository
 import org.springframework.dao.DataAccessException

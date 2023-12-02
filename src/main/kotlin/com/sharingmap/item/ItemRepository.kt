@@ -1,4 +1,4 @@
-package com.sharingmap.image
+package com.sharingmap.item
 
 import com.sharingmap.item.ItemEntity
 import org.springframework.data.domain.PageRequest
