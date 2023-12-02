@@ -35,9 +35,9 @@ class UserController(private val userService: UserService) {
     }
 
     @PutMapping("/users/update")
-//    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    fun updateUser(@RequestBody userUpdateDto: UserUpdateDto) {
-        var userDto: UserDto = UserDto(bio = userUpdateDto.bio, username = userUpdateDto.username)
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id") // TODO think about id
+    fun updateUser(@RequestParam id: UUID, @RequestBody userUpdateDto: UserUpdateDto) {
+        val userDto: UserDto = UserDto(bio = userUpdateDto.bio, username = userUpdateDto.username)
         userService.updateUser(userUpdateDto.id, userDto)
     }
 }

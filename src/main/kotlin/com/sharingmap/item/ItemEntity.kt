@@ -2,6 +2,7 @@ package com.sharingmap.item
 
 import com.sharingmap.category.CategoryEntity
 import com.sharingmap.city.CityEntity
+import com.sharingmap.contact.ContactEntity
 import com.sharingmap.image.ItemImageEntity
 import com.sharingmap.subcategory.SubcategoryEntity
 import com.sharingmap.user.UserEntity
@@ -45,6 +46,11 @@ class ItemEntity (
 
     @field:Pattern(regexp = "(^$|[0-9]{10})")
     var phoneNumber: String? = null,
+
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "contact_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    var contact: ContactEntity,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "user_id", nullable = false)

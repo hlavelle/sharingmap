@@ -13,7 +13,10 @@ import java.util.*
 @Table(name = "contacts")
 class ContactEntity(
     var contact: String,
-    var type: String,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var type: TypeContact,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

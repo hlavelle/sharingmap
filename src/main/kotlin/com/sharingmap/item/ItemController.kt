@@ -1,7 +1,6 @@
 package com.sharingmap.item
 
 import com.sharingmap.user.UserEntity
-import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
