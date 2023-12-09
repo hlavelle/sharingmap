@@ -94,8 +94,10 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         }
     }
 
-    override fun getAllItemsByUserId(userId: UUID): List<ItemEntity> {
-        val items = itemRepository.findAllByUserId(userId, Sort.by(Sort.Direction.DESC, "updatedAt"))
+    override fun getAllItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity> {
+        val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
+        val pageable = PageRequest.of(page, size, sort)
+        val items = itemRepository.findAllByUserId(userId, pageable)
         if (items.isEmpty()) {
             throw NoSuchElementException("No items found for user ID: $userId")
         }

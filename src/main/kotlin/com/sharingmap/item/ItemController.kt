@@ -26,7 +26,7 @@ class ItemController(private val itemService: ItemService) {
 
 
     @GetMapping("/items/all")
-    fun getAllItems(@RequestParam(value = "categoryId", defaultValue = "1") categoryId: Long,
+    fun getAllItems(@RequestParam(value = "categoryId", defaultValue = "0") categoryId: Long,
                     @RequestParam(value = "cityId", defaultValue = "1") cityId: Long,
                     @RequestParam(value = "subcategoryId", defaultValue = "1") subcategoryId: Long,
                     @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
@@ -67,9 +67,12 @@ class ItemController(private val itemService: ItemService) {
     }
 
     @GetMapping("/users/{userId}/items")
-    fun getAllItemsByUserId(@PathVariable(value = "userId") @Min(1) userId: UUID):  ResponseEntity<Any> {
+    fun getAllItemsByUserId(@PathVariable(value = "userId") @Min(1) userId: UUID,
+                            @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
+                            @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int):
+            ResponseEntity<Any> {
         return try {
-            val items = itemService.getAllItemsByUserId(userId)
+            val items = itemService.getAllItemsByUserId(userId, page, size)
             if (items.isEmpty()) {
                 val errorResponse = mapOf("error" to "No items found for user ID: $userId")
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
