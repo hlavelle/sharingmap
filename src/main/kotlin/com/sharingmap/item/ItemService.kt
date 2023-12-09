@@ -9,5 +9,5 @@ interface ItemService {
     fun createItem(item: ItemEntity): ItemEntity?
     fun deleteItem(id: UUID): Boolean
     fun updateItem(item: ItemEntity)
-    fun getAllItemsByUserId(userId: UUID): List<ItemEntity>
+    fun getAllItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity>
 }
