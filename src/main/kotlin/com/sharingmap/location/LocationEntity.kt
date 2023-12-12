@@ -1,0 +1,37 @@
+package com.sharingmap.location
+
+import com.sharingmap.city.CityEntity
+import com.sharingmap.user.Role
+import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
+import org.hibernate.annotations.UpdateTimestamp
+import java.time.LocalDateTime
+
+@Entity
+@Table(name = "locations")
+class LocationEntity(
+    @Column(name = "location_name", unique = true)
+    var name: String,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var type: LocationType,
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "city_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    var city: CityEntity
+
+) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "location_generator")
+    var id: Long? = null
+
+    @CreationTimestamp
+    var createdAt: LocalDateTime? = null
+
+    @UpdateTimestamp
+    var updatedAt: LocalDateTime? = null
+}

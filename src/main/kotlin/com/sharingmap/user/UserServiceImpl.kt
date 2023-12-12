@@ -13,7 +13,9 @@ class UserServiceImpl(
     private val bCryptPasswordEncoder: BCryptPasswordEncoder
     ) : UserService {
 
-    override fun getUserById(id: UUID): UserEntity = userRepository.findById(id).get()
+    override fun getUserById(id: UUID): UserEntity {
+        return userRepository.findById(id).orElseThrow { UserNotFoundException("User not found with ID: $id") }
+    }
 
     override fun getAllUsers(): List<UserEntity> = userRepository.findAll().toList()
 
@@ -25,7 +27,7 @@ class UserServiceImpl(
     override fun updateUser(id: UUID, userDto: UserDto) {
         val newUser = userRepository.findById(id).get()
         if (userDto.username != null) newUser.username = userDto.username!!
-        newUser.bio = userDto.bio
+        if (userDto.bio != null) newUser.bio = userDto.bio
         userRepository.save(newUser)
     }
 

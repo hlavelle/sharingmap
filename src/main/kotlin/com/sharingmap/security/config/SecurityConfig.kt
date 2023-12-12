@@ -37,14 +37,20 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
             .invoke {
             authorizeHttpRequests {
                 authorize("/settings/all", permitAll)
+
                 authorize("/cities/{id}", permitAll)
                 authorize("/cities/all", permitAll)
+
                 authorize("/categories/{id}", permitAll)
                 authorize("/categories/all", permitAll)
+
                 authorize("/subcategories/{id}", permitAll)
                 authorize("/subcategories/all", permitAll)
+
                 authorize("/users/info", permitAll)
+
                 authorize("/items/all", permitAll)
+
                 authorize("/swagger-ui.html", permitAll)
                 authorize("/swagger-ui/**", permitAll)
                 authorize("/v3/api-docs/**", permitAll)
@@ -88,7 +94,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/items/create", authenticated)
 
 
-
+                authorize("/users/{userId}/contacts", authenticated)
                 authorize("/contacts/{id}", authenticated)
 
                 authorize(anyRequest, authenticated)
