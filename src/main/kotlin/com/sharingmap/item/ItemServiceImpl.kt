@@ -62,8 +62,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
                 subcategory = subcategory,
                 city = city,
                 text = item.text,
-                address = item.address,
-                phoneNumber = item.phoneNumber,
+                location = item.location,
                 user = user
             )
         try {
