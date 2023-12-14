@@ -5,7 +5,10 @@ import org.springframework.stereotype.Service
 @Service
 class SubcategoryServiceImpl(private val subcategoryRepository: SubcategoryRepository) : SubcategoryService {
 
-    override fun getSubcategoryById(id: Long): SubcategoryEntity = subcategoryRepository.findById(id).get()
+    override fun getSubcategoryById(id: Long): SubcategoryEntity {
+        return subcategoryRepository.findById(id)
+            .orElseThrow { java.util.NoSuchElementException("Subcategory not found with ID: $id") }
+    }
 
     override fun getAllSubcategories(): List<SubcategoryEntity> = subcategoryRepository.findAll().toList()
 

@@ -1,5 +1,6 @@
 package com.sharingmap.item
 
+import com.sharingmap.user.UserNotFoundException
 import jakarta.validation.constraints.Min
 import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
@@ -7,8 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.transaction.TransactionException
 import org.springframework.web.bind.annotation.*
-import kotlin.NoSuchElementException
-import java.util.UUID
+import java.util.*
 
 @RestController
 class ItemController(private val itemService: ItemService) {
@@ -48,11 +48,6 @@ class ItemController(private val itemService: ItemService) {
     @PostMapping("/items/create")
     @PreAuthorize("#id == principal.id")
     fun createItem(@RequestParam id: UUID, @RequestBody item: ItemCreateDto): ResponseEntity<Any>  {
-//        val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-//        if (user.id == null) {
-//            ResponseEntity.notFound()
-//        }
-//        item.user = user
         return try {
             val createdItem = itemService.createItem(id, item)
             val itemId = createdItem?.id
@@ -66,27 +61,36 @@ class ItemController(private val itemService: ItemService) {
         }
     }
 
-    @DeleteMapping("/items/{id}/delete")
+    @DeleteMapping("/items/{itemId}/delete")
     @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    fun deleteItem(@PathVariable @Min(1) id: UUID): ResponseEntity<Unit> {
-        val isDeleted = itemService.deleteItem(id)
-
-        return if (isDeleted) {
-            ResponseEntity.noContent().build()
-        } else {
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+    fun deleteItem(@RequestParam id: UUID, @PathVariable itemId: UUID): ResponseEntity<Any> {
+        return try {
+            itemService.deleteItem(itemId)
+            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+        } catch (ex: NoSuchElementException) {
+            val errorResponse = mapOf("error" to "Item not found with ID: $itemId")
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
+        } catch (ex: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")
         }
     }
 
-    @PutMapping("/items/{id}/update")
+    @PutMapping("/items/{itemId}/update")
     @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    fun updateItem(@RequestBody item: ItemEntity): ResponseEntity<Unit> {
-        itemService.updateItem(item)
-        return ResponseEntity.noContent().build()
+    fun updateItem(@RequestParam id: UUID, @PathVariable itemId: UUID, @RequestBody item: ItemUpdateDto): ResponseEntity<Any> {
+        return try {
+            itemService.updateItem(itemId, item)
+            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+        } catch (ex: NoSuchElementException) {
+            val errorResponse = mapOf("error" to ex.message)
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
+        } catch (ex: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")
+        }
     }
 
     @GetMapping("/users/{userId}/items")
-    fun getAllItemsByUserId(@PathVariable(value = "userId") @Min(1) userId: UUID,
+    fun getAllItemsByUserId(@PathVariable(value = "userId") userId: UUID,
                             @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
                             @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int):
             ResponseEntity<Any> {
@@ -99,14 +103,12 @@ class ItemController(private val itemService: ItemService) {
                 val itemDtos = items.map { toItemDto(it) }
                 ResponseEntity.ok(itemDtos)
             }
+        } catch (ex: UserNotFoundException) {
+            val errorResponse = mapOf("error" to ex.message)
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
         } catch (ex: NoSuchElementException) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         }
-    }
-
-    @ExceptionHandler(value = [IllegalArgumentException::class, NoSuchElementException::class])
-    fun handleException(ex: Exception): ResponseEntity<String> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
     }
 
     private fun toItemDto(itemEntity: ItemEntity): ItemDto {

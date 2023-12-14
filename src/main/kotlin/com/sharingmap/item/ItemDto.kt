@@ -25,3 +25,11 @@ data class ItemCreateDto(
     val cityId: Long,
     val locationId: Long
     )
+
+data class ItemUpdateDto(
+    val name: String?,
+    val text: String?,
+    val categoryId: Long?,
+    val cityId: Long?,
+    val locationId: Long?
+)

@@ -4,6 +4,7 @@ import com.sharingmap.category.CategoryService
 import com.sharingmap.city.CityService
 import com.sharingmap.location.LocationService
 import com.sharingmap.subcategory.SubcategoryService
+import com.sharingmap.user.UserNotFoundException
 import com.sharingmap.user.UserService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -70,29 +71,36 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         return newItem
     }
 
-    override fun deleteItem(id: UUID): Boolean {
-        val existingItem = itemRepository.findById(id)
-            .orElseThrow { NoSuchElementException("Item with id $id not found") }
-        itemRepository.delete(existingItem)
-        return true
+    override fun deleteItem(id: UUID) {
+        itemRepository.findById(id).orElseThrow { NoSuchElementException("Item not found with ID: $id") }
+        itemRepository.deleteById(id)
     }
 
-    override fun updateItem(item: ItemEntity) {
-        val itemId = item.id
-        itemId?.let {
-            itemRepository.findById(itemId)
-                .orElseThrow { NoSuchElementException("Item with id $itemId not found") }
-            itemRepository.save(item)
-        } ?: {
-            throw NoSuchElementException("please define item id for id")
+    override fun updateItem(itemId: UUID, item: ItemUpdateDto) {
+        val newItem = itemRepository.findById(itemId)
+            .orElseThrow { java.util.NoSuchElementException("Item not found with ID: $itemId") }
+        if (item.name != null) newItem.name = item.name
+        if (item.text != null) newItem.text = item.text
+        if (item.categoryId != null) {
+            val category = categoryService.getCategoryById(item.categoryId)
+            newItem.category = category
+        }
+        if (item.cityId != null) {
+            val city = cityService.getCityById(item.cityId)
+            newItem.city = city
+        }
+        if (item.locationId != null) {
+            val location = locationService.getLocationById(item.locationId)
+            newItem.location = location
         }
     }
 
     override fun getAllItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity> {
+        userService.getUserById(userId)
         val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
         val pageable = PageRequest.of(page, size, sort)
         val items = itemRepository.findAllByUserId(userId, pageable)
-        if (items.isEmpty()) {
+        if (items.isEmpty) {
             throw NoSuchElementException("No items found for user ID: $userId")
         }
         return items

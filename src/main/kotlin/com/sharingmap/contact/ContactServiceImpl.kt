@@ -33,6 +33,7 @@ class ContactServiceImpl(private val contactRepository: ContactRepository,
     }
 
     override fun deleteContact(id: UUID) {
+        contactRepository.findById(id).orElseThrow { NoSuchElementException("Contact not found with ID: $id") }
         contactRepository.deleteById(id)
     }
 

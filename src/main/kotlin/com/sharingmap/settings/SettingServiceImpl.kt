@@ -1,13 +1,16 @@
 package com.sharingmap.settings
 
 import org.springframework.stereotype.Service
+import java.util.NoSuchElementException
 
 @Service
 class SettingServiceImpl(private val settingRepository: SettingRepository): SettingService {
 
     override fun getAllSettings(): List<SettingEntity> = settingRepository.findAll().toList()
 
-    override fun getSettingById(id: Long): SettingEntity = settingRepository.findById(id).get()
+    override fun getSettingById(id: Long): SettingEntity {
+        return settingRepository.findById(id).orElseThrow { NoSuchElementException("Setting not found with ID: $id") }
+    }
 
     override fun createSetting(setting: SettingEntity) {
         settingRepository.save(setting)
