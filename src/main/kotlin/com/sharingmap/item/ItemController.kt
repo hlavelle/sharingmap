@@ -1,6 +1,7 @@
 package com.sharingmap.item
 
 import com.sharingmap.user.UserNotFoundException
+import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
@@ -47,11 +48,14 @@ class ItemController(private val itemService: ItemService) {
 
     @PostMapping("/items/create")
     @PreAuthorize("#id == principal.id")
-    fun createItem(@RequestParam id: UUID, @RequestBody item: ItemCreateDto): ResponseEntity<Any>  {
+    fun createItem(@RequestParam id: UUID, @Valid @RequestBody item: ItemCreateDto): ResponseEntity<Any>  {
         return try {
             val createdItem = itemService.createItem(id, item)
             val itemId = createdItem?.id
             ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
+        } catch (ex: NoSuchElementException) {
+            val errorResponse = mapOf("error" to ex.message)
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
         } catch (ex: DataAccessException) {
             throw RuntimeException("Error occurred while creating the item.", ex)
         } catch (ex: TransactionException) {

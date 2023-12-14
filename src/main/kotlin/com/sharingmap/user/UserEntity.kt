@@ -19,7 +19,6 @@ class UserEntity(
     private var username: String,
 
     @Column(nullable = false, unique = true)
-    //@field:Email(message = "{validation.field.email.invalid-format}")
     var email: String,
 
     @Column(nullable = false)
@@ -30,12 +29,6 @@ class UserEntity(
     @Column(nullable = false)
     private var password: String,
 
-//    @Transient
-//    var passwordConfirm: String? = null,
-
-    //    var profilePicture: ImageEntity? = null
-
-    //@get:Size(min = 20, max = 300)
     var bio: String? = null,
 
     var locked: Boolean = false,

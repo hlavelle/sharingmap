@@ -25,7 +25,7 @@ class UserServiceImpl(
     }
 
     override fun updateUser(id: UUID, userDto: UserDto) {
-        val newUser = userRepository.findById(id).get()
+        val newUser = getUserById(id)
         if (userDto.username != null) newUser.username = userDto.username!!
         if (userDto.bio != null) newUser.bio = userDto.bio
         userRepository.save(newUser)

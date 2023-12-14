@@ -96,7 +96,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/locations/update/{id}", hasAuthority("ROLE_ADMIN"))
 
                 authorize("/users/all", hasAuthority("ROLE_ADMIN"))
-                authorize("/users/admin/id", hasAuthority("ROLE_ADMIN"))
+                authorize("/users/admin/{id}", hasAuthority("ROLE_ADMIN"))
 
 
                 authorize("/items/create", authenticated)
