@@ -5,7 +5,6 @@ import com.sharingmap.user.UserNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -50,9 +49,6 @@ class ContactController(private val contactService: ContactService) {
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
-        } catch (ex: MethodArgumentNotValidException) {
-            val errors = ex.bindingResult.fieldErrors.map { it.defaultMessage }
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("error" to errors))
         } catch (ex: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")
         }
@@ -82,9 +78,6 @@ class ContactController(private val contactService: ContactService) {
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to "Contact not found with ID: $contactId")
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
-        } catch (ex: MethodArgumentNotValidException) {
-            val errors = ex.bindingResult.fieldErrors.map { it.defaultMessage }
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("error" to errors))
         } catch (ex: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")
         }

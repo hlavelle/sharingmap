@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service
 @Service
 class CityServiceImpl(private val cityRepository: CityRepository) : CityService {
 
-    override fun getCityById(id: Long): CityEntity = cityRepository.findById(id).get()
+    override fun getCityById(id: Long): CityEntity {
+        return cityRepository.findById(id).orElseThrow { CityNotFoundException("City not found with ID: $id") }
+    }
 
     override fun getAllCities(): List<CityEntity> = cityRepository.findAll().toList()
 
@@ -18,7 +20,7 @@ class CityServiceImpl(private val cityRepository: CityRepository) : CityService 
     }
 
     override fun updateCity(id: Long, city: CityEntity) {
-        var newCity = cityRepository.findById(id).get()
+        val newCity = cityRepository.findById(id).get()
         newCity.name = city.name
         cityRepository.save(newCity)
     }

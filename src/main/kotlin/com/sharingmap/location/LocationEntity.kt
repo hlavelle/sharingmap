@@ -1,18 +1,18 @@
 package com.sharingmap.location
 
 import com.sharingmap.city.CityEntity
-import com.sharingmap.user.Role
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
+import java.util.*
 
 @Entity
 @Table(name = "locations")
 class LocationEntity(
-    @Column(name = "location_name", unique = true)
+    @Column(name = "location_name", unique = false)
     var name: String,
 
     @Column(nullable = false)

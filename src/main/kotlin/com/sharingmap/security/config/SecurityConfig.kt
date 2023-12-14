@@ -87,6 +87,12 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/subcategories/delete/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/subcategories/create", hasAuthority("ROLE_ADMIN"))
 
+                authorize("/locations/{id}", permitAll)
+                authorize("/locations/{cityId}/all", permitAll)
+                authorize("/locations/create", hasAuthority("ROLE_ADMIN"))
+                authorize("/locations/delete/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/locations/update/{id}", hasAuthority("ROLE_ADMIN"))
+
                 authorize("/users/all", hasAuthority("ROLE_ADMIN"))
                 authorize("/users/admin/id", hasAuthority("ROLE_ADMIN"))
 

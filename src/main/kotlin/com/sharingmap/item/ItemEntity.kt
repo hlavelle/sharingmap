@@ -47,11 +47,6 @@ class ItemEntity (
     @field:Pattern(regexp = "(^$|[0-9]{10})")
     var phoneNumber: String? = null,
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "contact_id", nullable = false)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    var contact: ContactEntity,
-
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

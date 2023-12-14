@@ -12,7 +12,7 @@ import java.util.*
 @Entity
 @Table(name = "contacts")
 class ContactEntity(
-    var contact: String,
+    var contact: String, //TODO validation of phone number or telegram nickname
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
