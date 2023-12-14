@@ -11,32 +11,40 @@ INSERT INTO categories VALUES (9, now(), 'Разное', 'url', 'other', now()) 
 
 
 INSERT INTO subcategories VALUES (1, now(), 'subcat desc', 'url', 'subcat name', now()) ON CONFLICT DO NOTHING;
-INSERT INTO cities VALUES (1, now(), 'city_2', now()) ON CONFLICT DO NOTHING;
+
+INSERT INTO cities VALUES (1, now(), 'Москва', now()) ON CONFLICT DO NOTHING;
+INSERT INTO cities VALUES (2, now(), 'Санкт-Петербург', now()) ON CONFLICT DO NOTHING;
+
 INSERT INTO users VALUES ('dc94023b-8658-42e6-bcdc-2c810feb07af', 'i am user', now(), 'user@mail.com', true, false, '$2a$12$X3Ci24kRUjPtChLrk6KTaOR02PooC2FnIe76QdhwRCggaXSvci1YO', 'ROLE_USER', now(), 'username') ON CONFLICT DO NOTHING;
 INSERT INTO users VALUES ('0bae6c74-23bf-4703-873c-82ac8ca89f80', 'i am admin', now(), 'admin@mail.com', true, false, '$2a$12$X3Ci24kRUjPtChLrk6KTaOR02PooC2FnIe76QdhwRCggaXSvci1YO', 'ROLE_ADMIN', now(), 'admin') ON CONFLICT DO NOTHING;
 INSERT INTO users VALUES ('60747caf-d37d-424b-9daf-30096fa2c061', 'There are some info', now(), 'thereis@mail.com', true, false, '$2a$12$X3Ci24kRUjPtChLrk6KTaOR02PooC2FnIe76QdhwRCggaXSvci1YO', 'ROLE_ADMIN', now(), 'other_username') ON CONFLICT DO NOTHING;
 
-INSERT INTO items VALUES ('b0d569d5-5a7f-41d2-af3a-1cfe4478a97f', 'adr1', now(), 'item1', '81111111111', 'desc1', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES ('114cce42-278f-47cf-b551-dfbb0a6bd1d5', 'adr2', now(), 'item2', '81111111111', 'desc2', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'where it was located the locatino', now(), 'Item with long long lon long long long name', '81111111111', 'The description of the name', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr3', now(), 'item3', '81111111111', 'desc3', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr4', now(), 'item4', '81111111111', 'desc4', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr4', now(), 'item4', '81111111111', 'desc4', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr4', now(), 'item4', '81111111111', 'desc4', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr4', now(), 'item4', '81111111111', 'desc4', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr4', now(), 'item4', '81111111111', 'desc4', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr4', now(), 'item4', '81111111111', 'desc4', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr4', now(), 'item4', '81111111111', 'desc4', now(), 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), 'adr5', now(), 'item_item', 'sdfbsdfbs', 'therdescdesc', now(), 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO locations VALUES (1, now(), 'Шаболовская', 'METRO', now(), 1) ON CONFLICT DO NOTHING;
+INSERT INTO locations VALUES (2, now(), 'Беляево', 'METRO', now(), 1) ON CONFLICT DO NOTHING;
+INSERT INTO locations VALUES (3, now(), 'Площадь Восстания', 'METRO', now(), 2) ON CONFLICT DO NOTHING;
+INSERT INTO locations VALUES (4, now(), 'Невский Проспект', 'METRO', now(), 2) ON CONFLICT DO NOTHING;
+
+INSERT INTO items VALUES ('b0d569d5-5a7f-41d2-af3a-1cfe4478a97f', now(), 'item1', 'desc1', now(), 1, 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('114cce42-278f-47cf-b551-dfbb0a6bd1d5', now(), 'item2', 'desc2', now(), 1, 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'Item with long long lon long long long name', 'The description of the name', now(), 1, 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item3', 'desc3', now(), 1, 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 2, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 2, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 2, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 2, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 2, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 2, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 2, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 2, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1, 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
 
 
 INSERT INTO item_images VALUES ('71a2c9da-dca7-4044-986d-1504eaa1ed13', now(), false, now(),'114cce42-278f-47cf-b551-dfbb0a6bd1d5') ON CONFLICT DO NOTHING;

@@ -4,6 +4,7 @@ import com.sharingmap.category.CategoryEntity
 import com.sharingmap.city.CityEntity
 import com.sharingmap.contact.ContactEntity
 import com.sharingmap.image.ItemImageEntity
+import com.sharingmap.location.LocationEntity
 import com.sharingmap.subcategory.SubcategoryEntity
 import com.sharingmap.user.UserEntity
 import jakarta.persistence.*
@@ -42,10 +43,9 @@ class ItemEntity (
 
     var text: String? = null,
 
-    var address: String? = null,
-
-    @field:Pattern(regexp = "(^$|[0-9]{10})")
-    var phoneNumber: String? = null,
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "location_id", nullable = false)
+    var location: LocationEntity? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "user_id", nullable = false)

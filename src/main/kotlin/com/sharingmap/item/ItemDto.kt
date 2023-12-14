@@ -8,7 +8,7 @@ data class ItemDto(
     val id: UUID?,
     val name: String?,
     val text: String?,
-    val address: String?,
+    val locationId: Long?,
     val imagesId: List<UUID>?,
     val createdAt: LocalDateTime?,
     val updatedAt: LocalDateTime?,
