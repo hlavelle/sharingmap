@@ -16,3 +16,12 @@ data class ItemDto(
     val subcategoryId: Long?,
     val cityId: Long?,
     val userId: UUID?)
+
+data class ItemCreateDto(
+    val name: String,
+    val text: String,
+    val categoryId: Long,
+    val subcategoryId: Long,
+    val cityId: Long,
+    val locationId: Long
+    )

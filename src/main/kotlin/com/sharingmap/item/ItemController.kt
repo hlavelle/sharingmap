@@ -1,11 +1,11 @@
 package com.sharingmap.item
 
-import com.sharingmap.user.UserEntity
 import jakarta.validation.constraints.Min
-import org.springframework.data.domain.Page
+import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.transaction.TransactionException
 import org.springframework.web.bind.annotation.*
 import kotlin.NoSuchElementException
 import java.util.UUID
@@ -21,6 +21,9 @@ class ItemController(private val itemService: ItemService) {
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to "Item not found with ID: $id")
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
+        } catch (ex: Exception) {
+            val errorResponse = mapOf("error" to "Internal Server Error")
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse)
         }
     }
 
@@ -31,25 +34,40 @@ class ItemController(private val itemService: ItemService) {
                     @RequestParam(value = "subcategoryId", defaultValue = "1") subcategoryId: Long,
                     @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
                     @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int
-    ): ResponseEntity<Page<ItemDto>> {
-        val items =  itemService.getAllItems(categoryId, subcategoryId, cityId, page, size)
-        val itemDtos = items.map { toItemDto(it) }
-        return ResponseEntity.ok(itemDtos)
+    ): ResponseEntity<Any> {
+        return try {
+            val items = itemService.getAllItems(categoryId, subcategoryId, cityId, page, size)
+            val itemDtos = items.map { toItemDto(it) }
+            ResponseEntity.ok(itemDtos)
+        } catch (ex: Exception) {
+            val errorResponse = mapOf("error" to "Internal Server Error")
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse)
+        }
     }
 
     @PostMapping("/items/create")
-    fun createItem(@RequestBody item: ItemEntity): ResponseEntity<String>  {
-        val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-        if (user.id == null) {
-            ResponseEntity.notFound()
+    @PreAuthorize("#id == principal.id")
+    fun createItem(@RequestParam id: UUID, @RequestBody item: ItemCreateDto): ResponseEntity<Any>  {
+//        val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
+//        if (user.id == null) {
+//            ResponseEntity.notFound()
+//        }
+//        item.user = user
+        return try {
+            val createdItem = itemService.createItem(id, item)
+            val itemId = createdItem?.id
+            ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
+        } catch (ex: DataAccessException) {
+            throw RuntimeException("Error occurred while creating the item.", ex)
+        } catch (ex: TransactionException) {
+            throw RuntimeException("Transaction failed while creating the item.", ex)
+        } catch (ex: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")
         }
-        item.user = user
-        val createdItem = itemService.createItem(item)
-        val itemId = createdItem?.id
-        return ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
     }
 
     @DeleteMapping("/items/{id}/delete")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     fun deleteItem(@PathVariable @Min(1) id: UUID): ResponseEntity<Unit> {
         val isDeleted = itemService.deleteItem(id)
 
@@ -61,6 +79,7 @@ class ItemController(private val itemService: ItemService) {
     }
 
     @PutMapping("/items/{id}/update")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     fun updateItem(@RequestBody item: ItemEntity): ResponseEntity<Unit> {
         itemService.updateItem(item)
         return ResponseEntity.noContent().build()
@@ -73,7 +92,7 @@ class ItemController(private val itemService: ItemService) {
             ResponseEntity<Any> {
         return try {
             val items = itemService.getAllItemsByUserId(userId, page, size)
-            if (items.isEmpty()) {
+            if (items.isEmpty) {
                 val errorResponse = mapOf("error" to "No items found for user ID: $userId")
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
             } else {

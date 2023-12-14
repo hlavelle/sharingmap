@@ -40,8 +40,8 @@ class ContactController(private val contactService: ContactService) {
         }
     }
 
-    @PostMapping("/contacts/create")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id") //TODO проверка на одинаковый контакт
+    @PostMapping("/contacts/create") //TODO проверка на одинаковый контакт
+    @PreAuthorize("#id == principal.id")
     fun createContact(@RequestParam id: UUID, @RequestBody contact: ContactDto): ResponseEntity<Any> {
         return try {
             contactService.createContact(id, contact)

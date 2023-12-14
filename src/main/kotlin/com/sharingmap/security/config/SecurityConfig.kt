@@ -50,6 +50,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/users/info", permitAll)
 
                 authorize("/items/all", permitAll)
+                authorize("/items/{id}", permitAll)
 
                 authorize("/swagger-ui.html", permitAll)
                 authorize("/swagger-ui/**", permitAll)
@@ -96,7 +97,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/users/all", hasAuthority("ROLE_ADMIN"))
                 authorize("/users/admin/id", hasAuthority("ROLE_ADMIN"))
 
-                authorize("/items/{id}", authenticated)
+
                 authorize("/items/create", authenticated)
 
 

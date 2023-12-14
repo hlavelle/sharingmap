@@ -1,25 +1,25 @@
 package com.sharingmap.item
 
-import com.sharingmap.category.CategoryRepository
-import com.sharingmap.city.CityRepository
-import com.sharingmap.subcategory.SubcategoryRepository
-import com.sharingmap.user.UserRepository
-import org.springframework.dao.DataAccessException
+import com.sharingmap.category.CategoryService
+import com.sharingmap.city.CityService
+import com.sharingmap.location.LocationService
+import com.sharingmap.subcategory.SubcategoryService
+import com.sharingmap.user.UserService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import org.springframework.transaction.TransactionException
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 import kotlin.NoSuchElementException
 
 @Service
 class ItemServiceImpl(private val itemRepository: ItemRepository,
-                      private val categoryRepository: CategoryRepository,
-                      private val subcategoryRepository: SubcategoryRepository,
-                      private val cityRepository: CityRepository,
-                      private val userRepository: UserRepository
+                      private val categoryService: CategoryService,
+                      private val subcategoryService: SubcategoryService,
+                      private val cityService: CityService,
+                      private val userService: UserService,
+                      private val locationService: LocationService
 ) : ItemService {
 
     override fun getItemById(id: UUID): ItemEntity {
@@ -51,28 +51,23 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
     }
 
     @Transactional
-    override fun createItem(item: ItemEntity): ItemEntity? {
-            val user = item.user?.id?.let { userRepository.getReferenceById(it) }
-            val category = item.category?.id?.let { categoryRepository.getReferenceById(it) }
-            val subcategory = item.subcategory?.id?.let { subcategoryRepository.getReferenceById(it) }
-            val city = item.city?.id?.let { cityRepository.getReferenceById(it) }
-            val newItem = ItemEntity(
+    override fun createItem(id: UUID, item: ItemCreateDto): ItemEntity? {
+        val user = userService.getUserById(id)
+        val category = categoryService.getCategoryById(item.categoryId)
+        val subcategory = subcategoryService.getSubcategoryById(item.subcategoryId)
+        val city = cityService.getCityById(item.cityId)
+        val location = locationService.getLocationById(item.locationId)
+        val newItem = ItemEntity(
                 name = item.name,
                 category = category,
                 subcategory = subcategory,
                 city = city,
                 text = item.text,
-                location = item.location,
+                location = location,
                 user = user
             )
-        try {
-            itemRepository.save(newItem)
-            return newItem
-        } catch (ex: DataAccessException) {
-            throw RuntimeException("Error occurred while creating the item.", ex)
-        } catch (ex: TransactionException) {
-            throw RuntimeException("Transaction failed while creating the item.", ex)
-        }
+        itemRepository.save(newItem)
+        return newItem
     }
 
     override fun deleteItem(id: UUID): Boolean {
