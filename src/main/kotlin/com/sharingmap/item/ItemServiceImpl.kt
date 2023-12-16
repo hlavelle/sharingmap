@@ -33,13 +33,13 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
 
         return when {
             categoryId != 0L && subcategoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoryIdAndSubcategoryIdAndCityId(categoryId, subcategoryId, cityId, pageable)
+                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndCityId(categoryId, subcategoryId, cityId, pageable)
             categoryId != 0L && subcategoryId != 0L ->
-                itemRepository.findAllByCategoryIdAndSubcategoryId(categoryId, subcategoryId, pageable)
+                itemRepository.findAllByCategoriesIdAndSubcategoryId(categoryId, subcategoryId, pageable)
             categoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoryIdAndCityId(categoryId, cityId, pageable)
+                itemRepository.findAllByCategoriesIdAndCityId(categoryId, cityId, pageable)
             categoryId != 0L ->
-                itemRepository.findAllByCategoryId(categoryId, pageable)
+                itemRepository.findAllByCategoriesId(categoryId, pageable)
             subcategoryId != 0L && cityId != 0L ->
                 itemRepository.findAllBySubcategoryIdAndCityId(subcategoryId, cityId, pageable)
             subcategoryId != 0L ->
@@ -54,13 +54,13 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
     @Transactional
     override fun createItem(id: UUID, item: ItemCreateDto): ItemEntity? {
         val user = userService.getUserById(id)
-        val category = categoryService.getCategoryById(item.categoryId)
+        val categories = item.categoriesId.map {  categoryService.getCategoryById(it) }
         val subcategory = subcategoryService.getSubcategoryById(item.subcategoryId)
         val city = cityService.getCityById(item.cityId)
         val location = locationService.getLocationById(item.locationId)
         val newItem = ItemEntity(
                 name = item.name,
-                category = category,
+                categories = categories.toMutableSet(),
                 subcategory = subcategory,
                 city = city,
                 text = item.text,
@@ -81,9 +81,9 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             .orElseThrow { java.util.NoSuchElementException("Item not found with ID: $itemId") }
         if (item.name != null) newItem.name = item.name
         if (item.text != null) newItem.text = item.text
-        if (item.categoryId != null) {
-            val category = categoryService.getCategoryById(item.categoryId)
-            newItem.category = category
+        if (item.categoriesId != null) {
+            val categories = item.categoriesId.map { categoryService.getCategoryById(it) }
+            newItem.categories = categories.toMutableSet()
         }
         if (item.cityId != null) {
             val city = cityService.getCityById(item.cityId)

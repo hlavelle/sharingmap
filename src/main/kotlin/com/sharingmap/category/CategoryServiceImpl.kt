@@ -21,10 +21,9 @@ class CategoryServiceImpl(private val categoryRepository: CategoryRepository) : 
     }
 
     override fun updateCategory(id: Long, category: CategoryEntity) {
-        var newCategory = categoryRepository.findById(id).get()
+        val newCategory = categoryRepository.findById(id).get()
         newCategory.name = category.name
         newCategory.description = category.description
-        newCategory.imageUrl = category.imageUrl
         categoryRepository.save(newCategory)
     }
 

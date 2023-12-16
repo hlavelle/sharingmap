@@ -124,7 +124,7 @@ class ItemController(private val itemService: ItemService) {
             imagesId = itemEntity.images?.mapNotNull { it.id } ?: listOf(),
             createdAt = itemEntity.createdAt,
             updatedAt = itemEntity.updatedAt,
-            categoryId = itemEntity.category?.id,
+            categoriesId = itemEntity.categories.mapNotNull { it.id },
             subcategoryId = itemEntity.subcategory?.id,
             cityId = itemEntity.city?.id,
             userId = itemEntity.user?.id

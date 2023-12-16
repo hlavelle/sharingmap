@@ -29,9 +29,17 @@ class ItemEntity (
     @get:Size(min = 3, max = 50)
     var name: String? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
-    var category: CategoryEntity? = null,
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "category_id", nullable = false)
+//    var category: CategoryEntity? = null,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "item_category",
+        joinColumns = [JoinColumn(name = "item_id")],
+        inverseJoinColumns = [JoinColumn(name = "category_id")]
+    )
+    var categories: Set<CategoryEntity> = HashSet(),
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "subcategory_id", nullable = false)
