@@ -21,7 +21,8 @@ class UserServiceImpl(
 
 
     override fun deleteUser(id: UUID) {
-        userRepository.deleteById(id)
+        val user = getUserById(id)
+        userRepository.delete(user)
     }
 
     override fun updateUser(id: UUID, userDto: UserDto) {

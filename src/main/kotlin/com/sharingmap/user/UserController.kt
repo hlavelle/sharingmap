@@ -3,6 +3,7 @@ package com.sharingmap.user
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import java.util.NoSuchElementException
 import java.util.UUID
@@ -11,10 +12,15 @@ import java.util.UUID
 class UserController(private val userService: UserService) {
 
     @GetMapping("/users/myself")
-    @PreAuthorize("#id == principal.id")
-    fun getMyInfoById(@RequestParam id: UUID): ResponseEntity<Any> {
+    fun getMyInfoById(): ResponseEntity<Any> {
         return try {
-            val user = userService.getUserById(id)
+            if (!SecurityContextHolder.getContext().authentication.isAuthenticated) {
+                ResponseEntity.badRequest()
+            }
+            val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
+            if (user.id == null) {
+                ResponseEntity.notFound()
+            }
             val info = UserInfoDto(
             username = user.username,
             bio = user.bio ?: "",
@@ -81,6 +87,9 @@ class UserController(private val userService: UserService) {
         return try {
             userService.deleteUser(id)
             ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+        } catch (ex: UserNotFoundException) {
+            val errorResponse = mapOf("error" to ex.message)
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
         } catch (ex: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")
         }

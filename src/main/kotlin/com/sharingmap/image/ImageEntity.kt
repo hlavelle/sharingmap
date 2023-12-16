@@ -5,6 +5,8 @@ import com.sharingmap.item.ItemEntity
 import com.sharingmap.user.UserEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 import java.util.*
@@ -18,6 +20,7 @@ class ItemImageEntity(
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="item_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
 //    @Column(name = "entity_id", unique = false, nullable = false)
     var entity: ItemEntity? = null
@@ -40,6 +43,7 @@ class UserImageEntity(
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="entity_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     var entity: UserEntity? = null
 ) {

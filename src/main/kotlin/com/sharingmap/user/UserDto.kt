@@ -2,11 +2,6 @@ package com.sharingmap.user
 
 import java.util.*
 
-data class UserUpdateDto(
-    var id: UUID,
-    var username: String,
-    var bio: String
-)
 data class UserInfoDto (
     var username: String,
     var id: UUID,
