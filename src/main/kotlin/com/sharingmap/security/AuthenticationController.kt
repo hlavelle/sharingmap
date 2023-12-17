@@ -1,5 +1,6 @@
 package com.sharingmap.security
 
+import com.sharingmap.city.CityNotFoundException
 import com.sharingmap.user.UserEntity
 import com.sharingmap.security.confirmationtoken.ConfirmationRequest
 import com.sharingmap.security.confirmationtoken.ConfirmationTokenService
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import okhttp3.internal.http.HTTP_NOT_FOUND
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
@@ -38,6 +40,9 @@ class AuthenticationController (
             ResponseEntity.ok(RegistrationResponse(
                 confirmationTokenId = confirmationToken.id.toString()
             ))
+        } catch (e: IllegalStateException) {
+            LOGGER.error(e.localizedMessage)
+            ResponseEntity.badRequest().body("Registration failed. ${e.localizedMessage}")
         } catch (e: Exception) {
             LOGGER.error(e.localizedMessage)
             ResponseEntity.badRequest().body("Registration failed. Wrong format email or email already exists")

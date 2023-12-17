@@ -5,8 +5,9 @@ import java.util.function.Predicate
 
 @Service
 class EmailValidator : Predicate<String> {
-    override fun test(t: String): Boolean {
-        //TODO: Regex to validate email
-        return true
+    private val emailRegex: Regex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$".toRegex()
+
+    override fun test(email: String): Boolean {
+        return emailRegex.matches(email)
     }
 }

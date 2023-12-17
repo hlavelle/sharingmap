@@ -26,14 +26,13 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
                                 private val emailValidator: EmailValidator,
                                 private val confirmationTokenService: ConfirmationTokenService,
                                 private val userService: UserService,
-                                private val authenticationProvider: AuthenticationProvider,
                                 private val jwtTokenProvider: JwtTokenProvider,
                                 private val refreshTokenService: RefreshTokenService
 ) : AuthenticationService {
 
     override fun createUser(request: RegistrationRequest): UserEntity {
         val isValidEmail = request.email.let { emailValidator.test(it) }
-        if (!isValidEmail) throw IllegalStateException("email isn't valid") //TODO сделать нормальные исключения
+        if (!isValidEmail) throw IllegalStateException("Email isn't valid.")
 
         val userFromDB: UserEntity? = userRepository.findByEmail(request.email)
 
@@ -41,7 +40,7 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
             if (!userFromDB.enabled) {
                 userFromDB.id?.let { userService.deleteUser(it) }
             } else {
-                throw IllegalStateException("email already taken") //TODO сделать нормальные исключения
+                throw IllegalStateException("Email already taken.") //TODO сделать нормальные исключения
             }
         }
         val user = UserEntity(request.username, request.email, Role.ROLE_USER, bCryptPasswordEncoder.encode(request.password))
