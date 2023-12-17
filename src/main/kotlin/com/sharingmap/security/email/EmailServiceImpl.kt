@@ -12,13 +12,28 @@ import org.springframework.stereotype.Service
 class EmailServiceImpl(private val javaMailSender: JavaMailSender): EmailService {
 
     val LOGGER = LoggerFactory.getLogger(EmailServiceImpl::class.java)
-    override fun send(to: String, email: String) {
+    override fun sendConfirmationLetter(to: String, email: String) {
         try {
             val mimeMessage = javaMailSender.createMimeMessage()
             val helper = MimeMessageHelper(mimeMessage, "utf-8")
             helper.setText(email, true)
             helper.setTo(to)
-            helper.setSubject("Confirm your email")
+            helper.setSubject("Подтверждение почты SharingMap")
+            helper.setFrom("hello@sharingmap.com")
+            javaMailSender.send(mimeMessage)
+        } catch (e: MessagingException) {
+            LOGGER.error("failed to send email", e)
+            throw IllegalStateException("failed to send email")
+        }
+    }
+
+    override fun sendResetPasswordLetter(to: String, email: String) {
+        try {
+            val mimeMessage = javaMailSender.createMimeMessage()
+            val helper = MimeMessageHelper(mimeMessage, "utf-8")
+            helper.setText(email, true)
+            helper.setTo(to)
+            helper.setSubject("Забыли пароль SharingMap")
             helper.setFrom("hello@sharingmap.com")
             javaMailSender.send(mimeMessage)
         } catch (e: MessagingException) {

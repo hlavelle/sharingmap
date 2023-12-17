@@ -1,5 +1,7 @@
 package com.sharingmap.security.email
 
 interface EmailService {
-    fun send(to: String, email: String)
+    fun sendConfirmationLetter(to: String, email: String)
+
+    fun sendResetPasswordLetter(to: String, email: String)
 }

@@ -34,7 +34,7 @@ class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: Conf
 
         saveConfirmationToken(confirmationToken)
 
-        buildEmail(user.username, token).let { emailService.send(user.email, it) }
+        buildEmail(user.username, token).let { emailService.sendConfirmationLetter(user.email, it) }
         return confirmationToken
     }
 
@@ -128,12 +128,16 @@ class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: Conf
                 "                <p style=\"Margin: 0 0 10px 0; font-size: 16px; line-height: 1.315789474; color: #0b0c0c\">\n" +
                 "                    команда SharingMap\n" +
                 "                </p>\n" +
-                "                <p style=\"Margin: 0 0 10px 0; font-size: 16px; line-height: 1.315789474; color: #0b0c0c\">\n" +
-                "                    SharingMap.ru\n" +
+                "                <p style=\"Margin: 0 0 10px 0; font-size: 16px; line-height: 1.315789474;\"> \n" +
+                "    <a href=\"https://sharingmap.ru\" style=\"color: #4CAF50; text-decoration: none;\" target=\"_blank\">\n" +
+                "        SharingMap.ru\n" +
+                "    </a>\n" +
                 "                </p>\n" +
-                "                <p style=\"Margin: 0 0 10px 0; font-size: 16px; line-height: 1.315789474; color: #0b0c0c\">\n" +
-                "                    <a href=\"mailto:sharingmapru@gmail.com\" style=\"text-decoration: none; color: #0b0c0c;\">sharingmapru@gmail.com</a>\n" +
-                "                </p>\n" +
+                "                <p style=\"Margin: 0 0 10px 0; font-size: 16px; line-height: 1.315789474; color: #4CAF50;\">\n" +
+                "    <a href=\"mailto:sharingmapru@gmail.com\" style=\"color: #4CAF50; text-decoration: none;\">\n" +
+                "        sharingmapru@gmail.com\n" +
+                "    </a>\n" +
+                "</p>\n" +
                 "            </td>\n" +
                 "            <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "        </tr>\n" +
