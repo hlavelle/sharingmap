@@ -47,7 +47,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/subcategories/{id}", permitAll)
                 authorize("/subcategories/all", permitAll)
 
-                authorize("/users/info", permitAll)
+                authorize("/users/{id}", permitAll)
                 authorize("/users/{userId}/items", permitAll)
 
                 authorize("/items/all", permitAll)
