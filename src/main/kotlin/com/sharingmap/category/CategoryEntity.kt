@@ -1,5 +1,6 @@
 package com.sharingmap.category
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.sharingmap.item.ItemEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -14,6 +15,7 @@ class CategoryEntity(
 
     var description: String,
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "categories")
     val items: Set<ItemEntity> = HashSet()
 ) {

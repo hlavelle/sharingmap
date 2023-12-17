@@ -44,6 +44,9 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/categories/{id}", permitAll)
                 authorize("/categories/all", permitAll)
 
+                authorize("/locations/{id}", permitAll)
+                authorize("/locations/{cityId}/all", permitAll)
+
                 authorize("/subcategories/{id}", permitAll)
                 authorize("/subcategories/all", permitAll)
 
@@ -76,7 +79,6 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/settings/delete/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/settings/update/{id}", hasAuthority("ROLE_ADMIN"))
 
-
                 authorize("/cities/update/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/cities/delete/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/cities/create", hasAuthority("ROLE_ADMIN"))
@@ -89,8 +91,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/subcategories/delete/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/subcategories/create", hasAuthority("ROLE_ADMIN"))
 
-                authorize("/locations/{id}", permitAll)
-                authorize("/locations/{cityId}/all", permitAll)
+
                 authorize("/locations/create", hasAuthority("ROLE_ADMIN"))
                 authorize("/locations/delete/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/locations/update/{id}", hasAuthority("ROLE_ADMIN"))

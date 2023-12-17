@@ -1,5 +1,6 @@
 package com.sharingmap.location
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.sharingmap.city.CityEntity
 import com.sharingmap.item.ItemEntity
 import jakarta.persistence.*
@@ -25,6 +26,7 @@ class LocationEntity(
     @OnDelete(action = OnDeleteAction.CASCADE)
     var city: CityEntity,
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "locations")
     val items: Set<ItemEntity> = HashSet()
 
