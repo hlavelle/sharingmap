@@ -10,7 +10,7 @@ data class ItemDto(
     val id: UUID?,
     val name: String?,
     val text: String?,
-    val locationId: Long?,
+    val locationsId: List<Long>?,
     val imagesId: List<UUID>?,
     val createdAt: LocalDateTime?,
     val updatedAt: LocalDateTime?,
@@ -20,18 +20,12 @@ data class ItemDto(
     val userId: UUID?)
 
 data class ItemCreateDto(
-    @field:NotBlank(message = "Name is required")
     val name: String,
-    @field:NotBlank(message = "Text is required")
     val text: String,
-    @field:NotNull(message = "CategoryId is required")
     val categoriesId: List<Long>,
-    @field:NotNull(message = "SubcategoryId is required")
     val subcategoryId: Long,
-    @field:NotNull(message = "CityId is required")
     val cityId: Long,
-    @field:NotNull(message = "LocationId is required")
-    val locationId: Long
+    val locationsId: List<Long>
     )
 
 data class ItemUpdateDto(
@@ -39,5 +33,5 @@ data class ItemUpdateDto(
     val text: String?,
     val categoriesId: List<Long>?,
     val cityId: Long?,
-    val locationId: Long?
+    val locationsId: List<Long>?
 )

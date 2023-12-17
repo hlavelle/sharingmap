@@ -29,10 +29,6 @@ class ItemEntity (
     @get:Size(min = 3, max = 50)
     var name: String? = null,
 
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "category_id", nullable = false)
-//    var category: CategoryEntity? = null,
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "item_category",
@@ -51,9 +47,13 @@ class ItemEntity (
 
     var text: String? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "location_id", nullable = false)
-    var location: LocationEntity? = null,
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "item_location",
+        joinColumns = [JoinColumn(name = "item_id")],
+        inverseJoinColumns = [JoinColumn(name = "location_id")]
+    )
+    var locations: Set<LocationEntity> = HashSet(),
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "user_id", nullable = false)

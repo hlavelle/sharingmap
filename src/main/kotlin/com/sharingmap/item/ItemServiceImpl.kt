@@ -57,14 +57,14 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         val categories = item.categoriesId.map {  categoryService.getCategoryById(it) }
         val subcategory = subcategoryService.getSubcategoryById(item.subcategoryId)
         val city = cityService.getCityById(item.cityId)
-        val location = locationService.getLocationById(item.locationId)
+        val locations = item.locationsId.map { locationService.getLocationById(it) }
         val newItem = ItemEntity(
                 name = item.name,
                 categories = categories.toMutableSet(),
                 subcategory = subcategory,
                 city = city,
                 text = item.text,
-                location = location,
+                locations = locations.toMutableSet(),
                 user = user
             )
         itemRepository.save(newItem)
@@ -81,7 +81,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             .orElseThrow { java.util.NoSuchElementException("Item not found with ID: $itemId") }
         if (item.name != null) newItem.name = item.name
         if (item.text != null) newItem.text = item.text
-        if (item.categoriesId != null) {
+        if (!item.categoriesId.isNullOrEmpty()) {
             val categories = item.categoriesId.map { categoryService.getCategoryById(it) }
             newItem.categories = categories.toMutableSet()
         }
@@ -89,10 +89,11 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             val city = cityService.getCityById(item.cityId)
             newItem.city = city
         }
-        if (item.locationId != null) {
-            val location = locationService.getLocationById(item.locationId)
-            newItem.location = location
+        if (!item.locationsId.isNullOrEmpty()) {
+            val locations = item.locationsId.map { locationService.getLocationById(it) }
+            newItem.locations = locations.toMutableSet()
         }
+        itemRepository.save(newItem)
     }
 
     override fun getAllItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity> {

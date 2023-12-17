@@ -1,6 +1,7 @@
 package com.sharingmap.location
 
 import com.sharingmap.city.CityEntity
+import com.sharingmap.item.ItemEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.OnDelete
@@ -22,7 +23,10 @@ class LocationEntity(
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "city_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    var city: CityEntity
+    var city: CityEntity,
+
+    @ManyToMany(mappedBy = "locations")
+    val items: Set<ItemEntity> = HashSet()
 
 ) {
     @Id

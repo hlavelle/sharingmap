@@ -120,7 +120,7 @@ class ItemController(private val itemService: ItemService) {
             id = itemEntity.id,
             name = itemEntity.name,
             text = itemEntity.text,
-            locationId = itemEntity.location?.id,
+            locationsId = itemEntity.locations.mapNotNull { it.id },
             imagesId = itemEntity.images?.mapNotNull { it.id } ?: listOf(),
             createdAt = itemEntity.createdAt,
             updatedAt = itemEntity.updatedAt,
