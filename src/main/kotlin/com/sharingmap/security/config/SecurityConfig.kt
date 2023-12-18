@@ -70,7 +70,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/resetPassword/**", permitAll)
                 authorize("/refreshToken", permitAll)
 
-                authorize("{id}/image/urls", authenticated)
+                authorize("{itemId}/image/urls", authenticated)
                 authorize("user/image/urls", authenticated)
                 authorize("/users/update", authenticated) //
 

@@ -122,7 +122,7 @@ class AuthenticationController (
         }
     }
 
-    @GetMapping("/logout")  //TODO  посмотреть, как нормально логаут сделать
+    @GetMapping("/logout")
     fun logout(@RequestParam("id") userId: UUID) : ResponseEntity<Any>{
         refreshTokenService.deleteByUserId(userId)
         return ResponseEntity.ok().body("You logged out")
