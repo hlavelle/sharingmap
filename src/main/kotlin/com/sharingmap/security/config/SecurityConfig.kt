@@ -63,12 +63,14 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
 
                 authorize("/current", permitAll)
                 authorize("/login", permitAll)
+                authorize("/is_auth", authenticated)
                 authorize("/logout", authenticated)
 
 
                 authorize("/signup/**", permitAll)
                 authorize("/resetPassword/**", permitAll)
                 authorize("/refreshToken", permitAll)
+                authorize("/items/{itemId}/delete", authenticated)
 
                 authorize("{itemId}/image/urls", authenticated)
                 authorize("user/image/urls", authenticated)
@@ -96,7 +98,6 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/locations/delete/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/locations/update/{id}", hasAuthority("ROLE_ADMIN"))
 
-                authorize("/users/{userId}/contacts", authenticated)
                 authorize("/users/myself", authenticated)
                 authorize("/users/all", hasAuthority("ROLE_ADMIN"))
                 authorize("/users/admin/{id}", hasAuthority("ROLE_ADMIN"))

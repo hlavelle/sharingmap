@@ -43,9 +43,11 @@ class UserController(private val userService: UserService) {
         return try {
             val user = userService.getUserById(id)
 
-            val userInfo = GetOtherUserDto(username = user.username,
-                bio = user.bio?:"",
-                hasImage = user.image != null)
+            val userInfo = GetOtherUserDto(
+                    id = id,
+                    username = user.username,
+                    bio = user.bio?:"",
+                    hasImage = user.image != null)
             ResponseEntity.ok(userInfo)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
@@ -86,7 +88,7 @@ class UserController(private val userService: UserService) {
     fun deleteUser(@RequestParam id: UUID): ResponseEntity<Any> {
         return try {
             userService.deleteUser(id)
-            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+            ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
@@ -100,7 +102,7 @@ class UserController(private val userService: UserService) {
     fun updateUser(@RequestParam id: UUID, @RequestBody userDto: UserDto): ResponseEntity<Any> {
         return try {
             userService.updateUser(id, userDto)
-            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+            ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)

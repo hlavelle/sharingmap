@@ -53,7 +53,7 @@ class LocationController(private val locationService: LocationService) {
     fun deleteLocation(@PathVariable id: Long): ResponseEntity<Any> {
         return try {
             locationService.deleteLocation(id)
-            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+            ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to "Location not found with ID: $id")
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
@@ -66,7 +66,7 @@ class LocationController(private val locationService: LocationService) {
     fun updateLocation(@PathVariable id: Long, @RequestBody location: LocationUpdateDto): ResponseEntity<Any> {
         return try {
             locationService.updateLocation(id, location)
-            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+            ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to "Location not found with ID: $id")
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)

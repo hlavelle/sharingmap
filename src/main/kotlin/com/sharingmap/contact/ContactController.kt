@@ -44,8 +44,7 @@ class ContactController(private val contactService: ContactService) {
     @PreAuthorize("#id == principal.id")
     fun createContact(@RequestParam id: UUID, @RequestBody contact: ContactDto): ResponseEntity<Any> {
         return try {
-            contactService.createContact(id, contact)
-            ResponseEntity.status(HttpStatus.CREATED).body("Contact created successfully")
+            ResponseEntity.status(HttpStatus.OK).body(contactService.createContact(id, contact))
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
@@ -59,7 +58,7 @@ class ContactController(private val contactService: ContactService) {
     fun deleteContact(@RequestParam id: UUID, @PathVariable contactId: UUID): ResponseEntity<Any> {
         return try {
             contactService.deleteContact(contactId)
-            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+            ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to "Contact not found with ID: $contactId")
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
@@ -68,15 +67,15 @@ class ContactController(private val contactService: ContactService) {
         }
     }
 
-    @PutMapping("/contacts/update/{contactId}")
+    @PutMapping("/contacts/update")
     @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    fun updateContact(@RequestParam id: UUID, @PathVariable contactId: UUID, @RequestBody contact: ContactUpdateDto)
+    fun updateContact(@RequestParam id: UUID, @RequestBody contact: ContactUpdateDto)
     : ResponseEntity<Any> {
         return try {
-            contactService.updateContact(contactId, contact)
-            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+            ResponseEntity.status(HttpStatus.OK).body(contactService.updateContact(contact.id, contact))
         } catch (ex: NoSuchElementException) {
-            val errorResponse = mapOf("error" to "Contact not found with ID: $contactId")
+            val id = contact.id;
+            val errorResponse = mapOf("error" to "Contact not found with ID: $id")
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
         } catch (ex: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")

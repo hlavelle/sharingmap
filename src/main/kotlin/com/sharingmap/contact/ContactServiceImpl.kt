@@ -25,11 +25,11 @@ class ContactServiceImpl(private val contactRepository: ContactRepository,
         return contactRepository.findAllByUser(user)
     }
 
-    override fun createContact(id: UUID, contact: ContactDto) {
+    override fun createContact(id: UUID, contact: ContactDto) : ContactEntity {
         val user = userService.getUserById(id)
         val newContact = ContactEntity(contact = contact.contact,
             type = contact.type, user = user)
-        contactRepository.save(newContact)
+        return contactRepository.save(newContact)
     }
 
     override fun deleteContact(id: UUID) {
@@ -37,13 +37,13 @@ class ContactServiceImpl(private val contactRepository: ContactRepository,
         contactRepository.deleteById(id)
     }
 
-    override fun updateContact(id: UUID, contact: ContactUpdateDto) {
+    override fun updateContact(id: UUID, contact: ContactUpdateDto) : ContactEntity {
         val newContact = contactRepository.findById(id)
             .orElseThrow { NoSuchElementException("Contact not found with ID: $id") }
 
         if (contact.contact != null) newContact.contact = contact.contact
         if (contact.type != null) newContact.type = contact.type
 
-        contactRepository.save(newContact)
+        return contactRepository.save(newContact)
     }
 }
