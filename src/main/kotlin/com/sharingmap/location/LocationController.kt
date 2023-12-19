@@ -25,8 +25,8 @@ class LocationController(private val locationService: LocationService) {
     @GetMapping("/locations/{cityId}/all")
     fun getAllLocationsByCity(@PathVariable cityId: Long): ResponseEntity<Any> {
         return try {
-            val locations = locationService.getAllLocationsByCity(cityId)
-            ResponseEntity.ok(locations)
+            val locationInfoDtos = locationService.getAllLocationsByCity(cityId).map { LocationInfoDto(it) }
+            ResponseEntity.ok(locationInfoDtos)
         } catch (ex: CityNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
