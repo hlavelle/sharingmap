@@ -98,6 +98,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/locations/delete/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/locations/update/{id}", hasAuthority("ROLE_ADMIN"))
 
+                authorize("/users/{userId}/contacts", authenticated)
                 authorize("/users/myself", authenticated)
                 authorize("/users/all", hasAuthority("ROLE_ADMIN"))
                 authorize("/users/admin/{id}", hasAuthority("ROLE_ADMIN"))
