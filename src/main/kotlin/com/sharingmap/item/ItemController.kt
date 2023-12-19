@@ -70,7 +70,7 @@ class ItemController(private val itemService: ItemService) {
     fun deleteItem(@RequestParam id: UUID, @PathVariable itemId: UUID): ResponseEntity<Any> {
         return try {
             itemService.deleteItem(itemId)
-            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+            ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to "Item not found with ID: $itemId")
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
@@ -84,7 +84,7 @@ class ItemController(private val itemService: ItemService) {
     fun updateItem(@RequestParam id: UUID, @PathVariable itemId: UUID, @RequestBody item: ItemUpdateDto): ResponseEntity<Any> {
         return try {
             itemService.updateItem(itemId, item)
-            ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
+            ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)

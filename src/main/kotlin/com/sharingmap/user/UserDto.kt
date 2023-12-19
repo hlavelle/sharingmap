@@ -15,6 +15,7 @@ data class UserDto(
 )
 
 data class GetOtherUserDto(
+    val id: UUID,
     val username: String,
     val bio: String,
     val hasImage: Boolean

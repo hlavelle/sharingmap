@@ -63,12 +63,14 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
 
                 authorize("/current", permitAll)
                 authorize("/login", permitAll)
+                authorize("/is_auth", authenticated)
                 authorize("/logout", authenticated)
 
 
                 authorize("/signup/**", permitAll)
                 authorize("/resetPassword/**", permitAll)
                 authorize("/refreshToken", permitAll)
+                authorize("/items/{itemId}/delete", authenticated)
 
                 authorize("{itemId}/image/urls", authenticated)
                 authorize("user/image/urls", authenticated)
