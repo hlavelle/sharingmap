@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableMethodSecurity
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                      private val bCryptPasswordEncoder: BCryptPasswordEncoder,
                      private val userDetailsService: UserDetailsService,
