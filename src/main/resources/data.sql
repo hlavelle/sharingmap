@@ -19,9 +19,9 @@ INSERT INTO users VALUES ('dc94023b-8658-42e6-bcdc-2c810feb07af', 'i am user', n
 INSERT INTO users VALUES ('0bae6c74-23bf-4703-873c-82ac8ca89f80', 'i am admin', now(), 'admin@mail.com', true, false, '$2a$12$X3Ci24kRUjPtChLrk6KTaOR02PooC2FnIe76QdhwRCggaXSvci1YO', 'ROLE_ADMIN', now(), 'admin') ON CONFLICT DO NOTHING;
 INSERT INTO users VALUES ('60747caf-d37d-424b-9daf-30096fa2c061', 'There are some info', now(), 'thereis@mail.com', true, false, '$2a$12$X3Ci24kRUjPtChLrk6KTaOR02PooC2FnIe76QdhwRCggaXSvci1YO', 'ROLE_ADMIN', now(), 'other_username') ON CONFLICT DO NOTHING;
 
-INSERT INTO contacts VALUES (gen_random_uuid(), '89111111111', now(), 'TELEGRAM', now(), 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO contacts VALUES (gen_random_uuid(), '89222222222', now(), 'TELEGRAM', now(), 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO contacts VALUES (gen_random_uuid(), '89111111111', now(), 'PHONE', now(), '60747caf-d37d-424b-9daf-30096fa2c061') ON CONFLICT DO NOTHING;
+INSERT INTO contacts VALUES ('2697388a-0c04-4882-8d4b-8aa41df37240', '89111111111', now(), 'TELEGRAM', now(), 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO contacts VALUES ('4f51606a-8dd4-4acd-a68a-f9720267be3a', '89222222222', now(), 'TELEGRAM', now(), 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO contacts VALUES ('cac50114-b6da-4286-97e3-84016d93d8b3', '89111111111', now(), 'PHONE', now(), '60747caf-d37d-424b-9daf-30096fa2c061') ON CONFLICT DO NOTHING;
 
 INSERT INTO locations VALUES (1, now(), 'Бульвар Рокоссовского', 'METRO', now(), 1) ON CONFLICT DO NOTHING;
 INSERT INTO locations VALUES (2, now(), 'Черкизовская', 'METRO', now(), 1) ON CONFLICT DO NOTHING;
@@ -382,25 +382,25 @@ INSERT INTO locations VALUES (356, now(), 'Одинцово', 'METRO', now(), 1)
 
 INSERT INTO items VALUES ('b0d569d5-5a7f-41d2-af3a-1cfe4478a97f', now(), 'item1', 'desc1', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
 INSERT INTO items VALUES ('114cce42-278f-47cf-b551-dfbb0a6bd1d5', now(), 'item2', 'desc2', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'Item with long long lon long long long name', 'The description of the name', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item3', 'desc3', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item4', 'desc4', now(), 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
-INSERT INTO items VALUES (gen_random_uuid(), now(), 'item_item', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('18eaa1a1-2842-4a10-9ed0-b004d8f59006', now(), 'Item with long long lon long long long name', 'The description of the name', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('bf91aa97-6f42-47fa-8842-b8e97d26596f', now(), 'item3', 'desc3', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('0fa0bd59-1184-4879-8933-383b729d322b', now(), 'item4', 'desc4', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('8269a7cf-e4a5-4d84-85f4-371e70197ab5', now(), 'чайник', 'desc4', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('006df9e2-be78-4ace-bac2-3100f988191f', now(), 'кружка', 'desc4', now(), 1, 1, 'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('143dea21-bf60-4ded-806c-54e858f93c7e', now(), 'книга', 'desc4', now(), 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('d28859b4-95c0-41d1-8430-d62967c1b05f', now(), 'цветок', 'desc4', now(), 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('d8e823fe-6150-4b75-8be7-5470b86466f2', now(), 'пульт', 'desc4', now(), 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('edec5c04-6bfa-401a-8933-d078119f7ac8', now(), 'юбка', 'desc4', now(), 1, 1,'dc94023b-8658-42e6-bcdc-2c810feb07af') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('b98e4852-3eee-454d-a535-c537f16e9849', now(), 'телефон', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('ce2d417e-d0cb-43ba-b6c4-097017ed0f07', now(), 'веник', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('926a0b29-7d32-4551-8308-9b3536a5f3f0', now(), 'кошачий корм', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('de1a7433-20e5-44a8-88c6-ce6a557c01d5', now(), 'рюкзак', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('636cbdef-604b-46d3-ab07-b1742a81c516', now(), 'мультиварка', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('92dc10ce-8531-4e50-b83a-c3b0ae5f6e76', now(), 'ковер', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('dda745d5-39ac-41b8-8f75-73a2b1bc2f35', now(), 'стол', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('675df9ba-d334-43ea-a879-3024c319950d', now(), 'блузка', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('ec631934-acac-4964-a0c3-88cfeaf38405', now(), 'рубашка', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
+INSERT INTO items VALUES ('542a2b72-cf0a-4fca-a655-36a0b03222d5', now(), 'батон', 'therdescdesc', now(), 1, 1,'0bae6c74-23bf-4703-873c-82ac8ca89f80') ON CONFLICT DO NOTHING;
 
 
 INSERT INTO item_images VALUES ('71a2c9da-dca7-4044-986d-1504eaa1ed13', now(), false, now(),'114cce42-278f-47cf-b551-dfbb0a6bd1d5') ON CONFLICT DO NOTHING;
