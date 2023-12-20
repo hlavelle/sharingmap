@@ -20,13 +20,13 @@ class UserServiceImpl(
     override fun getAllUsers(): List<UserEntity> = userRepository.findAll().toList()
 
 
-    override fun deleteUser(id: UUID) {
-        val user = getUserById(id)
+    override fun deleteUser(userId: UUID) {
+        val user = getUserById(userId)
         userRepository.delete(user)
     }
 
-    override fun updateUser(id: UUID, userDto: UserDto) {
-        val newUser = getUserById(id)
+    override fun updateUser(userId: UUID, userDto: UserDto) {
+        val newUser = getUserById(userId)
         if (userDto.username != null) newUser.username = userDto.username!!
         if (userDto.bio != null) newUser.bio = userDto.bio
         userRepository.save(newUser)
