@@ -106,7 +106,14 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
 
                 authorize("/items/create", authenticated)
 
+                authorize("/contacts/myself", authenticated)
                 authorize("/contacts/{id}", authenticated)
+                authorize("/contacts/create", authenticated)
+                authorize("/contacts/update", authenticated)
+                authorize("/contacts/delete/{contactId}", authenticated)
+                authorize("/admin/contacts/create/{userId}", hasAuthority("ROLE_ADMIN"))
+                authorize("/admin/contacts/delete/{contactId}", hasAuthority("ROLE_ADMIN"))
+                authorize("/admin/contacts/update", hasAuthority("ROLE_ADMIN"))
 
                 authorize(anyRequest, authenticated)
 

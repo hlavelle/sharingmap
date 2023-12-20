@@ -25,25 +25,49 @@ class ContactServiceImpl(private val contactRepository: ContactRepository,
         return contactRepository.findAllByUser(user)
     }
 
-    override fun createContact(id: UUID, contact: ContactDto) : ContactEntity {
-        val user = userService.getUserById(id)
+    override fun createContact(userId: UUID, contact: ContactDto) : ContactDto {
+        val user = userService.getUserById(userId)
         val newContact = ContactEntity(contact = contact.contact,
             type = contact.type, user = user)
-        return contactRepository.save(newContact)
+        contactRepository.save(newContact)
+        return ContactDto(contact = newContact.contact, type = newContact.type, id = newContact.id)
     }
 
-    override fun deleteContact(id: UUID) {
-        contactRepository.findById(id).orElseThrow { NoSuchElementException("Contact not found with ID: $id") }
-        contactRepository.deleteById(id)
+    override fun adminDeleteContact(contactId: UUID) {
+        contactRepository.findById(contactId).orElseThrow { NoSuchElementException("Contact not found with ID: $contactId") }
+        contactRepository.deleteById(contactId)
     }
 
-    override fun updateContact(id: UUID, contact: ContactUpdateDto) : ContactEntity {
-        val newContact = contactRepository.findById(id)
-            .orElseThrow { NoSuchElementException("Contact not found with ID: $id") }
+    override fun deleteContact(userId: UUID, contactId: UUID) {
+        val contact = contactRepository.findById(contactId)
+            .orElseThrow{ NoSuchElementException("Contact not found with ID: $contactId") }
+        if (userId != contact.user.id) {
+            throw IllegalArgumentException("This user does not have permission to delete this contact.")
+        }
+        contactRepository.deleteById(contactId)
+    }
+
+    override fun adminUpdateContact(contact: ContactUpdateDto) : ContactEntity {
+        val newContact = contactRepository.findById(contact.id)
+            .orElseThrow { NoSuchElementException("Contact not found with ID: ${contact.id}") }
 
         if (contact.contact != null) newContact.contact = contact.contact
         if (contact.type != null) newContact.type = contact.type
 
         return contactRepository.save(newContact)
+    }
+
+    override fun updateContact(userId: UUID, contact: ContactUpdateDto) : ContactDto {
+        val newContact = contactRepository.findById(contact.id)
+            .orElseThrow { NoSuchElementException("Contact not found with ID: ${contact.id}") }
+        if (userId != newContact.user.id) {
+            throw IllegalArgumentException("This user does not have permission to update this contact.")
+        }
+
+        if (contact.contact != null) newContact.contact = contact.contact
+        if (contact.type != null) newContact.type = contact.type
+
+        contactRepository.save(newContact)
+        return ContactDto(contact = newContact.contact, type = newContact.type, id = newContact.id)
     }
 }
