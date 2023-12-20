@@ -52,8 +52,8 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
     }
 
     @Transactional
-    override fun createItem(id: UUID, item: ItemCreateDto): ItemEntity? {
-        val user = userService.getUserById(id)
+    override fun createItem(userId: UUID, item: ItemCreateDto): ItemEntity? {
+        val user = userService.getUserById(userId)
         val categories = item.categoriesId.map {  categoryService.getCategoryById(it) }
         val subcategory = subcategoryService.getSubcategoryById(item.subcategoryId)
         val city = cityService.getCityById(item.cityId)
@@ -71,14 +71,46 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         return newItem
     }
 
-    override fun deleteItem(id: UUID) {
-        itemRepository.findById(id).orElseThrow { NoSuchElementException("Item not found with ID: $id") }
-        itemRepository.deleteById(id)
+    override fun adminDeleteItem(itemId: UUID) {
+        itemRepository.findById(itemId).orElseThrow { NoSuchElementException("Item not found with ID: $itemId") }
+        itemRepository.deleteById(itemId)
     }
 
-    override fun updateItem(itemId: UUID, item: ItemUpdateDto) {
-        val newItem = itemRepository.findById(itemId)
-            .orElseThrow { java.util.NoSuchElementException("Item not found with ID: $itemId") }
+    override fun deleteItem(userId: UUID, itemId: UUID) {
+        val item = itemRepository.findById(itemId).orElseThrow { NoSuchElementException("Item not found with ID: $itemId") }
+        if (userId != item.user?.id) {
+            throw IllegalArgumentException("This user does not have permission to delete this item.")
+        }
+        itemRepository.deleteById(itemId)
+    }
+
+    override fun adminUpdateItem(item: ItemUpdateDto) {
+        val newItem = itemRepository.findById(item.id)
+            .orElseThrow { java.util.NoSuchElementException("Item not found with ID: ${item.id}") }
+
+        if (item.name != null) newItem.name = item.name
+        if (item.text != null) newItem.text = item.text
+        if (!item.categoriesId.isNullOrEmpty()) {
+            val categories = item.categoriesId.map { categoryService.getCategoryById(it) }
+            newItem.categories = categories.toMutableSet()
+        }
+        if (item.cityId != null) {
+            val city = cityService.getCityById(item.cityId)
+            newItem.city = city
+        }
+        if (!item.locationsId.isNullOrEmpty()) {
+            val locations = item.locationsId.map { locationService.getLocationById(it) }
+            newItem.locations = locations.toMutableSet()
+        }
+        itemRepository.save(newItem)
+    }
+
+    override fun updateItem(userId: UUID, item: ItemUpdateDto) {
+        val newItem = itemRepository.findById(item.id)
+            .orElseThrow { java.util.NoSuchElementException("Item not found with ID: ${item.id}") }
+        if (userId != newItem.user?.id) {
+            throw IllegalArgumentException("This user does not have permission to update this contact.")
+        }
         if (item.name != null) newItem.name = item.name
         if (item.text != null) newItem.text = item.text
         if (!item.categoriesId.isNullOrEmpty()) {

@@ -33,5 +33,6 @@ data class ItemUpdateDto(
     val text: String?,
     val categoriesId: List<Long>?,
     val cityId: Long?,
-    val locationsId: List<Long>?
+    val locationsId: List<Long>?,
+    val id: UUID
 )

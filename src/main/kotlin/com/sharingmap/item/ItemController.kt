@@ -1,5 +1,6 @@
 package com.sharingmap.item
 
+import com.sharingmap.user.UserEntity
 import com.sharingmap.user.UserNotFoundException
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
@@ -7,6 +8,7 @@ import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.TransactionException
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -14,13 +16,13 @@ import java.util.*
 @RestController
 class ItemController(private val itemService: ItemService) {
 
-    @GetMapping("/items/{id}")
-    fun getItemById(@PathVariable id: UUID): ResponseEntity<Any> {
+    @GetMapping("/items/{itemId}")
+    fun getItemById(@PathVariable itemId: UUID): ResponseEntity<Any> {
         return try {
-            val item = toItemDto(itemService.getItemById(id))
+            val item = toItemDto(itemService.getItemById(itemId))
             ResponseEntity.ok(item)
         } catch (ex: NoSuchElementException) {
-            val errorResponse = mapOf("error" to "Item not found with ID: $id")
+            val errorResponse = mapOf("error" to "Item not found with ID: $itemId")
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
         } catch (ex: Exception) {
             val errorResponse = mapOf("error" to "Internal Server Error")
@@ -47,10 +49,16 @@ class ItemController(private val itemService: ItemService) {
     }
 
     @PostMapping("/items/create")
-    @PreAuthorize("#id == principal.id")
-    fun createItem(@RequestParam id: UUID, @Valid @RequestBody item: ItemCreateDto): ResponseEntity<Any>  {
+    fun createItem(@RequestBody item: ItemCreateDto): ResponseEntity<Any>  {
         return try {
-            val createdItem = itemService.createItem(id, item)
+            if (!SecurityContextHolder.getContext().authentication.isAuthenticated) {
+                ResponseEntity.badRequest()
+            }
+            val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
+            if (user.id == null) {
+                ResponseEntity.notFound()
+            }
+            val createdItem = user.id?.let { itemService.createItem(it, item) }
             val itemId = createdItem?.id
             ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
         } catch (ex: NoSuchElementException) {
@@ -65,12 +73,21 @@ class ItemController(private val itemService: ItemService) {
         }
     }
 
-    @DeleteMapping("/items/{itemId}/delete")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    fun deleteItem(@RequestParam id: UUID, @PathVariable itemId: UUID): ResponseEntity<Any> {
+    @DeleteMapping("/items/delete/{itemId}")
+    fun deleteItem(@PathVariable itemId: UUID): ResponseEntity<Any> {
         return try {
-            itemService.deleteItem(itemId)
+            if (!SecurityContextHolder.getContext().authentication.isAuthenticated) {
+                ResponseEntity.badRequest()
+            }
+            val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
+            if (user.id == null) {
+                ResponseEntity.notFound()
+            }
+            user.id?.let { itemService.deleteItem(it, itemId) }
             ResponseEntity.status(HttpStatus.OK).body(null)
+        } catch (ex: IllegalArgumentException) {
+            val errorResponse = mapOf("error" to ex.message)
+            ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse)
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to "Item not found with ID: $itemId")
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
@@ -79,12 +96,21 @@ class ItemController(private val itemService: ItemService) {
         }
     }
 
-    @PutMapping("/items/{itemId}/update")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    fun updateItem(@RequestParam id: UUID, @PathVariable itemId: UUID, @RequestBody item: ItemUpdateDto): ResponseEntity<Any> {
+    @PutMapping("/items/update")
+    fun updateItem(@RequestBody item: ItemUpdateDto): ResponseEntity<Any> {
         return try {
-            itemService.updateItem(itemId, item)
+            if (!SecurityContextHolder.getContext().authentication.isAuthenticated) {
+                ResponseEntity.badRequest()
+            }
+            val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
+            if (user.id == null) {
+                ResponseEntity.notFound()
+            }
+            user.id?.let { itemService.updateItem(it, item) }
             ResponseEntity.status(HttpStatus.OK).body(null)
+        } catch (ex: IllegalArgumentException) {
+            val errorResponse = mapOf("error" to ex.message)
+            ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse)
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
