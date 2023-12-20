@@ -82,16 +82,6 @@ class AuthenticationController (
         return ResponseEntity.status(HTTP_NOT_FOUND)
     }
 
-    @GetMapping("/current") //TODO подумать, что с этим делать
-    fun current(): UserEntity? {
-        try {
-            return SecurityContextHolder.getContext().authentication.principal as UserEntity
-        } catch (e: NullPointerException) {
-            LOGGER.error(e.localizedMessage)
-        }
-        return null
-    }
-
     @GetMapping("/is_auth")
     fun isAuth(): ResponseEntity<Any>? {
         try {

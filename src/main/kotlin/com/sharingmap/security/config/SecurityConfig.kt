@@ -56,7 +56,6 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/v3/api-docs/**", permitAll)
                 authorize("/v3/api-docs.yaml", permitAll)
 
-                authorize("/current", permitAll)
                 authorize("/login", permitAll)
                 authorize("/is_auth", authenticated)
                 authorize("/logout", authenticated)
