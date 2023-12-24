@@ -27,7 +27,7 @@ class UserServiceImpl(
         userRepository.delete(user)
     }
 
-    override fun makeUserDisabled(userId: UUID) { //TODO не работает из-за ManyToMany у категории и локации
+    override fun makeUserDisabled(userId: UUID) {
         val user = getUserById(userId)
         user.enabled = false
         userRepository.save(user)
