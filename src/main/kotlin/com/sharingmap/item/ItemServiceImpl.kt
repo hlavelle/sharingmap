@@ -27,27 +27,28 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         return itemRepository.findById(id).orElseThrow { NoSuchElementException("Item not found with ID: $id") }
     }
 
-    override fun getAllItems(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): Page<ItemEntity> {
+    override fun getAllItemsByEnabledUsers(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): Page<ItemEntity> {
         val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
         val pageable = PageRequest.of(page, size, sort)
+        val enabled = true
 
         return when {
             categoryId != 0L && subcategoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndCityId(categoryId, subcategoryId, cityId, pageable)
+                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndCityIdAndUserEnabled(categoryId, subcategoryId, cityId, enabled, pageable)
             categoryId != 0L && subcategoryId != 0L ->
-                itemRepository.findAllByCategoriesIdAndSubcategoryId(categoryId, subcategoryId, pageable)
+                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndUserEnabled(categoryId, subcategoryId, enabled, pageable)
             categoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoriesIdAndCityId(categoryId, cityId, pageable)
+                itemRepository.findAllByCategoriesIdAndCityIdAndUserEnabled(categoryId, cityId, enabled, pageable)
             categoryId != 0L ->
-                itemRepository.findAllByCategoriesId(categoryId, pageable)
+                itemRepository.findAllByCategoriesIdAndUserEnabled(categoryId, enabled, pageable)
             subcategoryId != 0L && cityId != 0L ->
-                itemRepository.findAllBySubcategoryIdAndCityId(subcategoryId, cityId, pageable)
+                itemRepository.findAllBySubcategoryIdAndCityIdAndUserEnabled(subcategoryId, cityId, enabled, pageable)
             subcategoryId != 0L ->
-                itemRepository.findAllBySubcategoryId(subcategoryId, pageable)
+                itemRepository.findAllBySubcategoryIdAndUserEnabled(subcategoryId, enabled, pageable)
             cityId != 0L ->
-                itemRepository.findAllByCityId(cityId, pageable)
+                itemRepository.findAllByCityIdAndUserEnabled(cityId, enabled, pageable)
             else ->
-                itemRepository.findAll(pageable)
+                itemRepository.findAllByUserEnabled(enabled, pageable)
         }
     }
 

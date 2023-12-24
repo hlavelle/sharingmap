@@ -1,5 +1,6 @@
 package com.sharingmap.user
 
+import com.sharingmap.item.ItemRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -10,6 +11,7 @@ import java.util.*
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
+    private val itemRepository: ItemRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder
     ) : UserService {
 
@@ -20,9 +22,15 @@ class UserServiceImpl(
     override fun getAllUsers(): List<UserEntity> = userRepository.findAll().toList()
 
 
-    override fun deleteUser(userId: UUID) {
+    override fun deleteUser(userId: UUID) { //TODO не работает из-за ManyToMany у категории и локации
         val user = getUserById(userId)
         userRepository.delete(user)
+    }
+
+    override fun makeUserDisabled(userId: UUID) { //TODO не работает из-за ManyToMany у категории и локации
+        val user = getUserById(userId)
+        user.enabled = false
+        userRepository.save(user)
     }
 
     override fun updateUser(userId: UUID, userDto: UserDto) {

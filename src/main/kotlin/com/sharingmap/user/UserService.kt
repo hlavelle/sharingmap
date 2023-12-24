@@ -7,6 +7,7 @@ interface UserService : UserDetailsService {
     fun getUserById(id: UUID): UserEntity
     fun getAllUsers(): List<UserEntity>
     fun deleteUser(userId: UUID)
+    fun makeUserDisabled(userId: UUID)
     fun updateUser(userId: UUID, userDto: UserDto)
     fun changePassword(id: UUID, password: String)
 }

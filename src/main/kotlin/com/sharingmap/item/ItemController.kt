@@ -39,7 +39,7 @@ class ItemController(private val itemService: ItemService) {
                     @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int
     ): ResponseEntity<Any> {
         return try {
-            val items = itemService.getAllItems(categoryId, subcategoryId, cityId, page, size)
+            val items = itemService.getAllItemsByEnabledUsers(categoryId, subcategoryId, cityId, page, size)
             val itemDtos = items.map { toItemDto(it) }
             ResponseEntity.ok(itemDtos)
         } catch (ex: Exception) {

@@ -68,7 +68,7 @@ class UserController(private val userService: UserService) {
             if (user.id == null) {
                 ResponseEntity.notFound()
             }
-            user.id?.let { userService.deleteUser(it) }
+            user.id?.let { userService.makeUserDisabled(it) }
             ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
