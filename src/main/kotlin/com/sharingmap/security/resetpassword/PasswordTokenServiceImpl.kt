@@ -40,23 +40,23 @@ class PasswordTokenServiceImpl(
     }
 
     @Transactional
-    override fun confirmToken(token: String, tokenId: String): String {
+    override fun confirmToken(token: String, tokenId: String, deleteConfirmationToken: Boolean): ConfirmResult {
         val confirmationToken = getToken(UUID.fromString(tokenId))
 
-        return if (confirmationToken.isPresent && confirmationToken.get().token == token) {
-            val user: UserEntity = confirmationToken.get().user
-            val expiredAt: LocalDateTime? = confirmationToken.get().expiresAt
-            if (expiredAt != null) {
-                check(!expiredAt.isBefore(LocalDateTime.now())) { "token expired" }
-            }
-            user.enabled = true
-
-            deleteToken(UUID.fromString(tokenId))
-
-            "confirmed"
-        } else {
-            "can't confirm"
+        if (!confirmationToken.isPresent || confirmationToken.get().token != token) {
+            return ConfirmResult.Failed
         }
+        val user: UserEntity = confirmationToken.get().user
+        val expiredAt: LocalDateTime? = confirmationToken.get().expiresAt
+        if (expiredAt != null && expiredAt.isBefore(LocalDateTime.now())) {
+            deleteToken(UUID.fromString(tokenId))
+            return ConfirmResult.Expired
+        }
+        if (deleteConfirmationToken) {
+            user.enabled = true
+            deleteToken(UUID.fromString(tokenId))
+        }
+        return ConfirmResult.Ok
     }
 
     override fun getToken(tokenId: UUID): Optional<PasswordTokenEntity> {
