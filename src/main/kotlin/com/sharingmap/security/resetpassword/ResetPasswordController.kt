@@ -6,6 +6,7 @@ import com.sharingmap.security.email.EmailServiceImpl
 import com.sharingmap.security.email.EmailValidator
 import com.sharingmap.user.UserService
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -37,11 +38,21 @@ class ResetPasswordController(
         ))
     }
 
-    @PostMapping("/resetPassword/change")
-    fun confirmPasswordToken(@RequestBody request: ResetPasswordRequest): String {
-        passwordTokenService.confirmToken(request.token, request.tokenId)
+    @PostMapping("/resetPassword/confirm")
+    fun confirmPasswordToken(@RequestBody request: CheckTokenRequest): ResponseEntity<Any> {
+        return when (passwordTokenService.confirmToken(request.token, request.tokenId, false)) {
+            ConfirmResult.Ok -> ResponseEntity.status(HttpStatus.OK).body(null)
+            ConfirmResult.Expired -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("expired")
+            ConfirmResult.Failed -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed")
+        }
+    }
 
+    @PostMapping("/resetPassword/change")
+    fun changePasswordRequest(@RequestBody request: ResetPasswordRequest): ResponseEntity<Any> {
+        if (passwordTokenService.confirmToken(request.token, request.tokenId, true) != ConfirmResult.Ok) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("confirm_failed")
+        }
         userService.changePassword(UUID.fromString(request.userId), request.password)
-        return "password changed"
+        return ResponseEntity.status(HttpStatus.OK).body(null)
     }
 }
