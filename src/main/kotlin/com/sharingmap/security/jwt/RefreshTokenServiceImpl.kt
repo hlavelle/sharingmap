@@ -13,7 +13,7 @@ class RefreshTokenServiceImpl(
     private val refreshTokenRepository: RefreshTokenRepository,
 
     @Value("\${sharingmap.app.expiration-refresh}")
-    val refreshTokenDurationMs: Int
+    val refreshTokenDuration: Int
 ) : RefreshTokenService {
     override fun findByToken(token: String): RefreshTokenEntity? {
         return refreshTokenRepository.findByToken(token)
@@ -21,7 +21,7 @@ class RefreshTokenServiceImpl(
 
     override fun createRefreshToken(userId: UUID): String {
         var refreshToken = RefreshTokenEntity(UUID.randomUUID().toString(), userRepository.findById(userId).get(),
-            Instant.now().plusMillis(refreshTokenDurationMs.toLong()))
+            Instant.now().plusSeconds(refreshTokenDuration.toLong()))
         refreshToken = refreshTokenRepository.save(refreshToken)
         return refreshToken.token
     }
