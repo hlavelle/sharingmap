@@ -19,18 +19,22 @@ class UserServiceImpl(
         return userRepository.findById(id).orElseThrow { UserNotFoundException("User not found with ID: $id") }
     }
 
-    override fun getAllUsers(): List<UserEntity> = userRepository.findAll().toList()
+    override fun getAllUsers(): List< UserEntity> = userRepository.findAll().toList()
 
 
     override fun deleteUser(userId: UUID) { //TODO не работает из-за ManyToMany у категории и локации
         val user = getUserById(userId)
-        userRepository.delete(user)
-    }
+        val userItems = ArrayList(itemRepository.findAllByUser(user))
 
-    override fun makeUserDisabled(userId: UUID) {
-        val user = getUserById(userId)
-        user.enabled = false
-        userRepository.save(user)
+        val iterator = userItems.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            iterator.remove()
+
+            item.user = null
+            itemRepository.delete(item)
+        }
+        userRepository.delete(user)
     }
 
     override fun updateUser(userId: UUID, userDto: UserDto) {

@@ -35,7 +35,7 @@ class UserAdminController(private val userService: UserService) {
     @DeleteMapping("/admin/users/delete/{userId}")
     fun adminDeleteUser(@PathVariable userId: UUID): ResponseEntity<Any> {
         return try {
-            userService.makeUserDisabled(userId) //TODO починить удаление
+            userService.deleteUser(userId)
             ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)

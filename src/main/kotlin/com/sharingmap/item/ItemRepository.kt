@@ -10,6 +10,7 @@ import java.util.*
 @Repository
 interface ItemRepository : JpaRepository <ItemEntity, UUID> {
     fun findAllByUserId(userId: UUID, pageable: Pageable): Page<ItemEntity>
+    fun findAllByUser(user: UserEntity): List<ItemEntity>
     fun findAllByCategoriesIdAndSubcategoryIdAndCityIdAndUserEnabled(categoryId: Long, subcategoryId: Long, cityId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
     fun findAllByCategoriesIdAndSubcategoryIdAndUserEnabled(categoryId: Long, subcategoryId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
     fun findAllByCategoriesIdAndCityIdAndUserEnabled(categoryId: Long, cityId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
