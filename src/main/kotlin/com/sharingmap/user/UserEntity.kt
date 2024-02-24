@@ -15,7 +15,7 @@ import java.util.UUID
 @Table(name = "users")
 class UserEntity(
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, unique = false, length = 20)
     private var username: String,
 
     @Column(nullable = false, unique = true)
