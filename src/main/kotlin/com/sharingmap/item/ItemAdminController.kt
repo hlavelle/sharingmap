@@ -28,7 +28,7 @@ class ItemAdminController(private val itemService: ItemService) {
         }
     }
 
-    @DeleteMapping("/admin/items/delete")
+    @DeleteMapping("/admin/items/delete/{itemId}")
     fun adminDeleteItem(@PathVariable itemId: UUID): ResponseEntity<Any> {
         return try {
             itemService.adminDeleteItem(itemId)
