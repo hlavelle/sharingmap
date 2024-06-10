@@ -31,6 +31,11 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
             .addFilterAfter(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling().authenticationEntryPoint(authEntryPointJwt)
             .and()
+            .formLogin()
+            .loginProcessingUrl("/login1")
+            .defaultSuccessUrl("/admin", true)
+            .failureUrl("/login1")
+            .and()
             .cors().and()
             .csrf().disable()
 
