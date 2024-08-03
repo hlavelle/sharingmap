@@ -26,15 +26,16 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
 {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        val baseUrl: String = "lmcdkmcdvnkjadasckmvskmvdksdvv"
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .addFilterAfter(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling().authenticationEntryPoint(authEntryPointJwt)
             .and()
-            .formLogin()
+            .formLogin().permitAll()
             .loginProcessingUrl("/login1")
             .defaultSuccessUrl("/admin", true)
-            .failureUrl("/login1")
+            .failureUrl("/errorPage")
             .and()
             .cors().and()
             .csrf().disable()
@@ -72,8 +73,8 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("{itemId}/image/urls", authenticated)
                 authorize("user/image/urls", authenticated)
 
-                authorize("/settings/{id}", permitAll)
-                authorize("/settings/all", permitAll)
+                authorize("/settings/{id}", hasAuthority("ROLE_ADMIN"))
+                authorize("/settings/all", hasAuthority("ROLE_ADMIN"))
                 authorize("/settings/create", hasAuthority("ROLE_ADMIN"))
                 authorize("/settings/delete/{id}", hasAuthority("ROLE_ADMIN"))
                 authorize("/settings/update/{id}", hasAuthority("ROLE_ADMIN"))
@@ -122,6 +123,8 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize("/admin/contacts/create/{userId}", hasAuthority("ROLE_ADMIN"))
                 authorize("/admin/contacts/delete/{contactId}", hasAuthority("ROLE_ADMIN"))
                 authorize("/admin/contacts/update", hasAuthority("ROLE_ADMIN"))
+                authorize("/$baseUrl/**", permitAll)
+                authorize("/**", permitAll)
 
                 authorize(anyRequest, authenticated)
 
