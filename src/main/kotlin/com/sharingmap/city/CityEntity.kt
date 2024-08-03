@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 @Table(name = "cities")
 class CityEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "city_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
     @Column(name = "city_name", unique = true)

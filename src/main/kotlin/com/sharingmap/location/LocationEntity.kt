@@ -14,6 +14,10 @@ import java.util.*
 @Entity
 @Table(name = "locations")
 class LocationEntity(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
+
     @Column(name = "location_name", unique = false)
     var name: String,
 
@@ -28,16 +32,11 @@ class LocationEntity(
 
     @JsonIgnore
     @ManyToMany(mappedBy = "locations")
-    val items: Set<ItemEntity> = HashSet()
-
-) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "location_generator")
-    var id: Long? = null
+    val items: Set<ItemEntity> = HashSet(),
 
     @CreationTimestamp
-    var createdAt: LocalDateTime? = null
+    var createdAt: LocalDateTime? = null,
 
     @UpdateTimestamp
-    var updatedAt: LocalDateTime? = null
-}
+    var updatedAt: LocalDateTime? = null,
+)

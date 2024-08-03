@@ -31,7 +31,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-
+    implementation("tech.ailef:snap-admin:0.2.1")
     implementation("aws.sdk.kotlin:s3:0.25.0-beta"){
         exclude("com.squareup.okhttp3:okhttp")
     }
@@ -57,6 +57,4 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
-
-
 }
