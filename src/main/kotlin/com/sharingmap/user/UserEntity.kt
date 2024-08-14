@@ -29,6 +29,8 @@ class UserEntity(
     @Column(nullable = false)
     private var password: String,
 
+    var giftedItems: Int = 0,
+
     var bio: String? = null,
 
     var locked: Boolean = false,

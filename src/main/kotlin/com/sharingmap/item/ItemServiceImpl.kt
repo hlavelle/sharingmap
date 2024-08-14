@@ -27,28 +27,28 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         return itemRepository.findById(id).orElseThrow { NoSuchElementException("Item not found with ID: $id") }
     }
 
-    override fun getAllItemsByEnabledUsers(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): Page<ItemEntity> {
+    override fun getAllActiveItemsByEnabledUsers(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): Page<ItemEntity> {
         val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
         val pageable = PageRequest.of(page, size, sort)
         val enabled = true
 
         return when {
             categoryId != 0L && subcategoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndCityIdAndUserEnabled(categoryId, subcategoryId, cityId, enabled, pageable)
+                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndCityIdAndStateAndUserEnabled(categoryId, subcategoryId, cityId, State.ACTIVE, enabled, pageable)
             categoryId != 0L && subcategoryId != 0L ->
-                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndUserEnabled(categoryId, subcategoryId, enabled, pageable)
+                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndStateAndUserEnabled(categoryId, subcategoryId, State.ACTIVE, enabled, pageable)
             categoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoriesIdAndCityIdAndUserEnabled(categoryId, cityId, enabled, pageable)
+                itemRepository.findAllByCategoriesIdAndCityIdAndStateAndUserEnabled(categoryId, cityId, State.ACTIVE, enabled, pageable)
             categoryId != 0L ->
-                itemRepository.findAllByCategoriesIdAndUserEnabled(categoryId, enabled, pageable)
+                itemRepository.findAllByCategoriesIdAndStateAndUserEnabled(categoryId, State.ACTIVE, enabled, pageable)
             subcategoryId != 0L && cityId != 0L ->
-                itemRepository.findAllBySubcategoryIdAndCityIdAndUserEnabled(subcategoryId, cityId, enabled, pageable)
+                itemRepository.findAllBySubcategoryIdAndCityIdAndStateAndUserEnabled(subcategoryId, cityId, State.ACTIVE, enabled, pageable)
             subcategoryId != 0L ->
-                itemRepository.findAllBySubcategoryIdAndUserEnabled(subcategoryId, enabled, pageable)
+                itemRepository.findAllBySubcategoryIdAndStateAndUserEnabled(subcategoryId, State.ACTIVE, enabled, pageable)
             cityId != 0L ->
-                itemRepository.findAllByCityIdAndUserEnabled(cityId, enabled, pageable)
+                itemRepository.findAllByCityIdAndStateAndUserEnabled(cityId, State.ACTIVE, enabled, pageable)
             else ->
-                itemRepository.findAllByUserEnabled(enabled, pageable)
+                itemRepository.findAllByStateAndUserEnabled(State.ACTIVE, enabled, pageable)
         }
     }
 
@@ -66,7 +66,8 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
                 city = city,
                 text = item.text,
                 locations = locations.toMutableSet(),
-                user = user
+                user = user,
+                state = State.ACTIVE
             )
         itemRepository.save(newItem)
         return newItem
@@ -77,12 +78,16 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         itemRepository.deleteById(itemId)
     }
 
-    override fun deleteItem(userId: UUID, itemId: UUID) {
+    override fun deleteItem(userId: UUID, itemId: UUID, isGiftedOnSm: Boolean) {
         val item = itemRepository.findById(itemId).orElseThrow { NoSuchElementException("Item not found with ID: $itemId") }
         if (userId != item.user?.id) {
             throw IllegalArgumentException("This user does not have permission to delete this item.")
         }
-        itemRepository.deleteById(itemId)
+        item.state = State.DELETED
+        item.isGiftedOnSM = isGiftedOnSm
+        if (item.isGiftedOnSM) {
+            item.user?.giftedItems = item.user?.giftedItems?.plus(1)!!
+        }
     }
 
     override fun adminUpdateItem(item: ItemUpdateDto) {
@@ -129,11 +134,11 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         itemRepository.save(newItem)
     }
 
-    override fun getAllItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity> {
+    override fun getAllActiveItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity> {
         userService.getUserById(userId)
         val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
         val pageable = PageRequest.of(page, size, sort)
-        val items = itemRepository.findAllByUserId(userId, pageable)
+        val items = itemRepository.findAllByUserIdAndState(userId, State.ACTIVE, pageable)
         if (items.isEmpty) {
             throw NoSuchElementException("No items found for user ID: $userId")
         }

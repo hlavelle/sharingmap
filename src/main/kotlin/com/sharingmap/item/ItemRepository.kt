@@ -9,15 +9,15 @@ import java.util.*
 
 @Repository
 interface ItemRepository : JpaRepository <ItemEntity, UUID> {
-    fun findAllByUserId(userId: UUID, pageable: Pageable): Page<ItemEntity>
+    fun findAllByUserIdAndState(userId: UUID, state: State, pageable: Pageable): Page<ItemEntity>
     fun findAllByUser(user: UserEntity): List<ItemEntity>
-    fun findAllByCategoriesIdAndSubcategoryIdAndCityIdAndUserEnabled(categoryId: Long, subcategoryId: Long, cityId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
-    fun findAllByCategoriesIdAndSubcategoryIdAndUserEnabled(categoryId: Long, subcategoryId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
-    fun findAllByCategoriesIdAndCityIdAndUserEnabled(categoryId: Long, cityId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
-    fun findAllByCategoriesIdAndUserEnabled(categoryId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
-    fun findAllBySubcategoryIdAndCityIdAndUserEnabled(subcategoryId: Long, cityId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
-    fun findAllBySubcategoryIdAndUserEnabled(subcategoryId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
-    fun findAllByCityIdAndUserEnabled(cityId: Long, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
-    fun findAllByUserEnabled(enabled: Boolean, pageable: Pageable): Page<ItemEntity>
+    fun findAllByCategoriesIdAndSubcategoryIdAndCityIdAndStateAndUserEnabled(categoryId: Long, subcategoryId: Long, cityId: Long, state: State, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
+    fun findAllByCategoriesIdAndSubcategoryIdAndStateAndUserEnabled(categoryId: Long, subcategoryId: Long, state: State, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
+    fun findAllByCategoriesIdAndCityIdAndStateAndUserEnabled(categoryId: Long, cityId: Long, state: State, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
+    fun findAllByCategoriesIdAndStateAndUserEnabled(categoryId: Long, state: State, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
+    fun findAllBySubcategoryIdAndCityIdAndStateAndUserEnabled(subcategoryId: Long, cityId: Long, state: State, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
+    fun findAllBySubcategoryIdAndStateAndUserEnabled(subcategoryId: Long, state: State, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
+    fun findAllByCityIdAndStateAndUserEnabled(cityId: Long, state: State, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
+    fun findAllByStateAndUserEnabled(state: State, enabled: Boolean, pageable: Pageable): Page<ItemEntity>
     fun deleteByUser(user: UserEntity)
 }
