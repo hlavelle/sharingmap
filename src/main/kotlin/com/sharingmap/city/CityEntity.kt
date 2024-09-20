@@ -1,11 +1,13 @@
 package com.sharingmap.city
 
+import com.sharingmap.annotations.MyMockable
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 
 @Entity
+@MyMockable
 @Table(name = "cities")
 class CityEntity {
     @Id

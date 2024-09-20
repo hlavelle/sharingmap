@@ -7,6 +7,7 @@ import aws.sdk.kotlin.services.s3.presigners.*
 import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.PutObjectRequest
 import com.sharingmap.item.ItemEntity
+import com.sharingmap.item.State
 import kotlinx.coroutines.runBlocking
 import org.springframework.dao.DataAccessException
 import org.springframework.transaction.TransactionException
@@ -22,7 +23,7 @@ class ItemImageServiceImpl(private val imageRepository: ItemImageRepository) : I
         var result: MutableList<String> = mutableListOf()
         val s3Client = runBlocking { S3Client.fromEnvironment { region = REGION; endpointUrl = ENDPOINT_URL}}
         for (i in 0 until count) {
-            val newImage = ItemImageEntity(entity = ItemEntity(id = objectId))
+            val newImage = ItemImageEntity(entity = ItemEntity(id = objectId, state = State.ACTIVE))
 
             try {
                 val savedImage = imageRepository.save(newImage)
