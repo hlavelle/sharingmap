@@ -17,15 +17,6 @@ import org.mockito.kotlin.whenever
 import java.util.*
 
 class ItemServiceImplTest {
-
-//    val item = ItemEntity(name = "cup",
-//        categories = mock(),
-//        subcategory = mock(),
-//            city = mock(),
-//        text = "item.text",
-//        locations = mock(),
-//        user = mock(),
-//        state = State.ACTIVE)
 //
 //    @Test
 //    fun deletingItem() {
@@ -62,7 +53,7 @@ class ItemServiceImplTest {
     )
 
     @Test
-    fun `deleteItem should delete item and update state when user owns the item`() {
+    fun `deleteItem should delete item and update state and isGiftedOnSM on true when user owns the item`() {
         val userId = UUID.randomUUID()
         val itemId = UUID.randomUUID()
         val mockUser: UserEntity = mock()
@@ -84,6 +75,32 @@ class ItemServiceImplTest {
 
         assertEquals(State.DELETED, item.state)
         assertTrue(item.isGiftedOnSM)
+        verify(mockItemRepository).findById(itemId)
+    }
+
+    @Test
+    fun `deleteItem should delete item and update state and isGiftedOnSM on false when user owns the item`() {
+        val userId = UUID.randomUUID()
+        val itemId = UUID.randomUUID()
+        val mockUser: UserEntity = mock()
+        val item = ItemEntity(
+            name = "Test Item",
+            categories = mutableSetOf(),
+            subcategory = mock(),
+            city = mock(),
+            text = "Test text",
+            locations = mutableSetOf(),
+            user = mockUser,
+            state = State.ACTIVE
+        )
+
+        whenever(mockUser.id).thenReturn(userId)
+        whenever(mockItemRepository.findById(itemId)).thenReturn(Optional.of(item))
+
+        itemService.deleteItem(userId, itemId, false)
+
+        assertEquals(State.DELETED, item.state)
+        assertFalse(item.isGiftedOnSM)
         verify(mockItemRepository).findById(itemId)
     }
 
