@@ -1,6 +1,7 @@
 package com.sharingmap.location
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.sharingmap.annotations.Mockable
 import com.sharingmap.city.CityEntity
 import com.sharingmap.item.ItemEntity
 import jakarta.persistence.*
@@ -12,6 +13,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
+@Mockable
 @Table(name = "locations")
 class LocationEntity(
     @Id

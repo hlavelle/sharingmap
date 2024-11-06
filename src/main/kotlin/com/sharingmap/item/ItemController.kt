@@ -32,14 +32,14 @@ class ItemController(private val itemService: ItemService) {
 
 
     @GetMapping("/items/all")
-    fun getAllItems(@RequestParam(value = "categoryId", defaultValue = "0") categoryId: Long,
+    fun getAllActiveItems(@RequestParam(value = "categoryId", defaultValue = "0") categoryId: Long,
                     @RequestParam(value = "cityId", defaultValue = "1") cityId: Long,
                     @RequestParam(value = "subcategoryId", defaultValue = "1") subcategoryId: Long,
                     @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
                     @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int
     ): ResponseEntity<Any> {
         return try {
-            val items = itemService.getAllItemsByEnabledUsers(categoryId, subcategoryId, cityId, page, size)
+            val items = itemService.getAllActiveItemsByEnabledUsers(categoryId, subcategoryId, cityId, page, size)
             val itemDtos = items.map { toItemDto(it) }
             ResponseEntity.ok(itemDtos)
         } catch (ex: Exception) {
@@ -74,7 +74,9 @@ class ItemController(private val itemService: ItemService) {
     }
 
     @DeleteMapping("/items/delete/{itemId}")
-    fun deleteItem(@PathVariable itemId: UUID): ResponseEntity<Any> {
+    fun deleteItem(@PathVariable itemId: UUID,
+                   @RequestParam(value = "isGiftedOnSM", defaultValue = "false") isGiftedOnSm: Boolean
+    ): ResponseEntity<Any> {
         return try {
             if (!SecurityContextHolder.getContext().authentication.isAuthenticated) {
                 ResponseEntity.badRequest()
@@ -83,7 +85,7 @@ class ItemController(private val itemService: ItemService) {
             if (user.id == null) {
                 ResponseEntity.notFound()
             }
-            user.id?.let { itemService.deleteItem(it, itemId) }
+            user.id?.let { itemService.deleteItem(it, itemId, isGiftedOnSm) }
             ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: IllegalArgumentException) {
             val errorResponse = mapOf("error" to ex.message)
@@ -120,12 +122,12 @@ class ItemController(private val itemService: ItemService) {
     }
 
     @GetMapping("/users/{userId}/items")
-    fun getAllItemsByUserId(@PathVariable(value = "userId") userId: UUID,
+    fun getAllActiveItemsByUserId(@PathVariable(value = "userId") userId: UUID,
                             @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
                             @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int):
             ResponseEntity<Any> {
         return try {
-            val items = itemService.getAllItemsByUserId(userId, page, size)
+            val items = itemService.getAllActiveItemsByUserId(userId, page, size)
             if (items.isEmpty) {
                 val errorResponse = mapOf("error" to "No items found for user ID: $userId")
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)

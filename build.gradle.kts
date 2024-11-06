@@ -18,6 +18,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-test")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -39,13 +40,20 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:5.4.0")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 allOpen {
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.Embeddable")
     annotation("javax.persistence.MappedSuperclass")
+    annotation("com.sharingmap.annotations.Mockable")
 }
+
 
 tasks.withType<JavaExec> {
     environment("AWS_ACCESS_KEY_ID", System.getenv("AWS_ACCESS_KEY_ID"))

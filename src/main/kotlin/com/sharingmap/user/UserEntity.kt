@@ -1,6 +1,7 @@
 package com.sharingmap.user
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.sharingmap.annotations.Mockable
 import com.sharingmap.image.UserImageEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -12,6 +13,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Entity
+@Mockable
 @Table(name = "users")
 class UserEntity(
 
@@ -28,6 +30,8 @@ class UserEntity(
     @JsonIgnore
     @Column(nullable = false)
     private var password: String,
+
+    var giftedItems: Int = 0,
 
     var bio: String? = null,
 

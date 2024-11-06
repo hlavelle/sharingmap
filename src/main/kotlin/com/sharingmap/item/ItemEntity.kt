@@ -1,14 +1,13 @@
 package com.sharingmap.item
 
+import com.sharingmap.annotations.Mockable
 import com.sharingmap.category.CategoryEntity
 import com.sharingmap.city.CityEntity
-import com.sharingmap.contact.ContactEntity
 import com.sharingmap.image.ItemImageEntity
 import com.sharingmap.location.LocationEntity
 import com.sharingmap.subcategory.SubcategoryEntity
 import com.sharingmap.user.UserEntity
 import jakarta.persistence.*
-import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.OnDelete
@@ -19,6 +18,7 @@ import java.util.*
 
 
 @Entity
+@Mockable
 @Table(name = "items")
 class ItemEntity (
     @Id
@@ -47,6 +47,12 @@ class ItemEntity (
 
     var text: String? = null,
 
+    var isGiftedOnSM: Boolean = false,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var state: State,
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "item_location",
@@ -66,6 +72,8 @@ class ItemEntity (
 
     @CreationTimestamp
     var createdAt: LocalDateTime? = null
+
+    var lifetime: LocalDateTime? = null
 
     @UpdateTimestamp
     var updatedAt: LocalDateTime? = null
