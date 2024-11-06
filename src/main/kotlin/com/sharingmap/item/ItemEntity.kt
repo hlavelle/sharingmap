@@ -1,6 +1,6 @@
 package com.sharingmap.item
 
-import com.sharingmap.annotations.MyMockable
+import com.sharingmap.annotations.Mockable
 import com.sharingmap.category.CategoryEntity
 import com.sharingmap.city.CityEntity
 import com.sharingmap.image.ItemImageEntity
@@ -18,7 +18,7 @@ import java.util.*
 
 
 @Entity
-@MyMockable
+@Mockable
 @Table(name = "items")
 class ItemEntity (
     @Id

@@ -1,7 +1,7 @@
 package com.sharingmap.user
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.sharingmap.annotations.MyMockable
+import com.sharingmap.annotations.Mockable
 import com.sharingmap.image.UserImageEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Entity
-@MyMockable
+@Mockable
 @Table(name = "users")
 class UserEntity(
 

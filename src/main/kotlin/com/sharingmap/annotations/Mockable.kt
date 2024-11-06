@@ -1,4 +1,4 @@
 package com.sharingmap.annotations
 
 @Target(AnnotationTarget.CLASS)
-internal annotation class MyMockable
+internal annotation class Mockable

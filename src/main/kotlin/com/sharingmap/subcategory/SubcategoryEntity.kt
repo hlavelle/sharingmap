@@ -1,6 +1,6 @@
 package com.sharingmap.subcategory
 
-import com.sharingmap.annotations.MyMockable
+import com.sharingmap.annotations.Mockable
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 
 @Entity
-@MyMockable
+@Mockable
 @Table(name = "subcategories")
 class SubcategoryEntity (
     @Column(name = "category_name", unique = true)

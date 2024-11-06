@@ -1,6 +1,6 @@
 package com.sharingmap.contact
 
-import com.sharingmap.annotations.MyMockable
+import com.sharingmap.annotations.Mockable
 import com.sharingmap.user.UserEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-@MyMockable
+@Mockable
 @Table(name = "contacts")
 class ContactEntity(
     var contact: String, //TODO validation of phone number or telegram nickname

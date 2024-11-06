@@ -1,7 +1,7 @@
 package com.sharingmap.image
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.sharingmap.annotations.MyMockable
+import com.sharingmap.annotations.Mockable
 import com.sharingmap.item.ItemEntity
 import com.sharingmap.user.UserEntity
 import jakarta.persistence.*
@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-@MyMockable
+@Mockable
 @Table(name = "item_images")
 class ItemImageEntity(
     @Id
