@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.0.6"
-    id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "1.7.22"
-    kotlin("plugin.spring") version "1.7.22"
-    kotlin("plugin.jpa") version "1.7.22"
-    kotlin("plugin.allopen") version "1.8.21"
+    id("org.springframework.boot") version "3.3.5"
+    id("io.spring.dependency-management") version "1.1.6"
+    kotlin("jvm") version "2.0.21"
+    kotlin("plugin.spring") version "2.1.0-RC"
+    kotlin("plugin.jpa") version "2.0.21"
+    kotlin("plugin.allopen") version "2.0.21"
 }
 
 group = "com"
@@ -43,9 +43,9 @@ dependencies {
     testImplementation ("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
+// tasks.test {
+//     useJUnitPlatform()
+// }
 
 allOpen {
     annotation("javax.persistence.Entity")
