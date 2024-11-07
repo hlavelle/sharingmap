@@ -19,7 +19,7 @@ class EmailServiceImpl(private val javaMailSender: JavaMailSender): EmailService
             helper.setText(email, true)
             helper.setTo(to)
             helper.setSubject("Подтверждение почты SharingMap")
-            helper.setFrom("hello@sharingmap.com")
+            helper.setFrom("info@sharingmap.ru")
             javaMailSender.send(mimeMessage)
         } catch (e: MessagingException) {
             LOGGER.error("failed to send email", e)
@@ -34,7 +34,7 @@ class EmailServiceImpl(private val javaMailSender: JavaMailSender): EmailService
             helper.setText(email, true)
             helper.setTo(to)
             helper.setSubject("Забыли пароль SharingMap")
-            helper.setFrom("hello@sharingmap.com")
+            helper.setFrom("info@sharingmap.ru")
             javaMailSender.send(mimeMessage)
         } catch (e: MessagingException) {
             LOGGER.error("failed to send email", e)
