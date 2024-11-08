@@ -22,7 +22,7 @@ public class RefreshTokenEntity (
     val expiryDate: Instant) {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID, generator = "user_generator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null
 }
 

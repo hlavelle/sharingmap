@@ -20,13 +20,13 @@ class ContactEntity(
     @Enumerated(EnumType.STRING)
     var type: TypeContact,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, targetEntity = UserEntity::class)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     var user: UserEntity
 ) {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID, generator = "contact_generator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null
 
     @CreationTimestamp

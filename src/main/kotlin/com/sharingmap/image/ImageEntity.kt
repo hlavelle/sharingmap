@@ -17,10 +17,10 @@ import java.util.*
 @Table(name = "item_images")
 class ItemImageEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID, generator = "item_image_generator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, targetEntity = ItemEntity::class)
     @JoinColumn(name="item_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
@@ -40,7 +40,7 @@ class ItemImageEntity(
 @Table(name = "user_images")
 class UserImageEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID, generator = "item_image_generator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)

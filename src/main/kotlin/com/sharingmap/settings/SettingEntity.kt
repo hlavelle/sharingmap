@@ -11,6 +11,6 @@ class SettingEntity(
     var value: String
 ){
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "setting_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: Long? = null
 }

@@ -18,7 +18,7 @@ class SubcategoryEntity (
 
 ) {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "subcategory_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: Long? = null
 
     var imageUrl: String? = null
