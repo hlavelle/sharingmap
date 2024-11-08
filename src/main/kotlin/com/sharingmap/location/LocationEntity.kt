@@ -27,13 +27,13 @@ class LocationEntity(
     @Enumerated(EnumType.STRING)
     var type: LocationType,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true, targetEntity = CityEntity::class)
     @JoinColumn(name = "city_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     var city: CityEntity,
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "locations")
+    @ManyToMany(mappedBy = "locations", targetEntity = ItemEntity::class)
     val items: Set<ItemEntity> = HashSet(),
 
     @CreationTimestamp

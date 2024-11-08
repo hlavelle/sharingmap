@@ -31,6 +31,7 @@ class UserEntity(
     @Column(nullable = false)
     private var password: String,
 
+    @Column(nullable = true)
     var giftedItems: Int = 0,
 
     var bio: String? = null,
@@ -46,7 +47,7 @@ class UserEntity(
     var updatedAt: LocalDateTime? = null,
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID, generator = "user_generator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null
 ) : UserDetails {
 

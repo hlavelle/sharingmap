@@ -18,11 +18,11 @@ class CategoryEntity(
     var description: String,
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany(mappedBy = "categories", targetEntity = ItemEntity::class)
     val items: Set<ItemEntity> = HashSet()
 ) {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: Long? = null
 
     @CreationTimestamp

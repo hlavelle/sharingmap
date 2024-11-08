@@ -22,14 +22,14 @@ import java.util.*
 @Table(name = "items")
 class ItemEntity (
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID, generator = "item_generator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,
 
     @Column(name = "item_name")
     @get:Size(min = 3, max = 50)
     var name: String? = null,
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryEntity::class)
     @JoinTable(
         name = "item_category",
         joinColumns = [JoinColumn(name = "item_id")],
@@ -37,23 +37,24 @@ class ItemEntity (
     )
     var categories: Set<CategoryEntity> = HashSet(),
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, targetEntity = SubcategoryEntity::class)
     @JoinColumn(name = "subcategory_id", nullable = false)
     var subcategory: SubcategoryEntity? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, targetEntity = CityEntity::class)
     @JoinColumn(name = "city_id", nullable = false)
     var city: CityEntity? = null,
 
     var text: String? = null,
-
+    
+    @Column(nullable = false)
     var isGiftedOnSM: Boolean = false,
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @Enumerated(EnumType.STRING)
-    var state: State,
+    var state: State = State.DRAFT,
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = LocationEntity::class)
     @JoinTable(
         name = "item_location",
         joinColumns = [JoinColumn(name = "item_id")],
@@ -61,13 +62,13 @@ class ItemEntity (
     )
     var locations: Set<LocationEntity> = HashSet(),
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true, targetEntity = UserEntity::class)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     var user: UserEntity? = null
 ) {
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="entity")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="entity", targetEntity = ItemImageEntity::class)
     val images: List<ItemImageEntity>? = null
 
     @CreationTimestamp
