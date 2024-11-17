@@ -75,7 +75,7 @@ class ItemController(private val itemService: ItemService) {
 
     @DeleteMapping("/items/delete/{itemId}")
     fun deleteItem(@PathVariable itemId: UUID,
-                   @RequestParam(value = "from_sm", defaultValue = "false") isGiftedOnSm: Boolean
+                   @RequestParam(value = "isGiftedOnSm", defaultValue = "false") isGiftedOnSm: Boolean
     ): ResponseEntity<Any> {
         return try {
             if (!SecurityContextHolder.getContext().authentication.isAuthenticated) {
