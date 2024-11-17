@@ -85,8 +85,8 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         }
         item.state = State.DELETED
         item.isGiftedOnSM = isGiftedOnSm
-        if (item.isGiftedOnSM) {
-            item.user?.giftedItems = item.user?.giftedItems?.plus(1)!!
+        item.user?.let { user ->
+            user.giftedItems = (user.giftedItems ?: 0) + 1
         }
         itemRepository.save(item)
     }
