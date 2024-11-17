@@ -88,6 +88,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         if (item.isGiftedOnSM) {
             item.user?.giftedItems = item.user?.giftedItems?.plus(1)!!
         }
+        itemRepository.save(item)
     }
 
     override fun adminUpdateItem(item: ItemUpdateDto) {
