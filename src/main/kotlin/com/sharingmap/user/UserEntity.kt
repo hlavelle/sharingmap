@@ -32,7 +32,7 @@ class UserEntity(
     private var password: String,
 
     @Column(nullable = true)
-    var giftedItems: Int = 0,
+    var giftedItems: Int? = 0,
 
     var bio: String? = null,
 
