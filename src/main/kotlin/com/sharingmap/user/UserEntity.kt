@@ -34,6 +34,7 @@ class UserEntity(
     @Column(nullable = true)
     var giftedItems: Int? = 0,
 
+    @Column(columnDefinition = "text")
     var bio: String? = null,
 
     var locked: Boolean = false,
