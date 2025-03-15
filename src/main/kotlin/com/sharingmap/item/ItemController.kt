@@ -2,6 +2,7 @@ package com.sharingmap.item
 
 import com.sharingmap.user.UserEntity
 import com.sharingmap.user.UserNotFoundException
+import com.sharingmap.telegram_notification.*
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import org.springframework.dao.DataAccessException
@@ -14,7 +15,10 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-class ItemController(private val itemService: ItemService) {
+class ItemController(
+    private val itemService: ItemService,
+    private val moderationService: ITelegramService
+        ) {
 
     @GetMapping("/items/{itemId}")
     fun getItemById(@PathVariable itemId: UUID): ResponseEntity<Any> {
@@ -58,8 +62,11 @@ class ItemController(private val itemService: ItemService) {
             if (user.id == null) {
                 ResponseEntity.notFound()
             }
+
             val createdItem = user.id?.let { itemService.createItem(it, item) }
             val itemId = createdItem?.id
+            val itemText = "название: ${createdItem?.name} \n описание: ${createdItem?.text} \n пользователь: ${user?.username} \n город ${createdItem?.city?.name}"
+            moderationService.sendModerationMessage("-1002250304627", itemText)
             ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to ex.message)

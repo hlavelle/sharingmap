@@ -19,18 +19,18 @@ class ItemImageServiceImpl(private val imageRepository: ItemImageRepository) : I
     val BUCKET = "sharing-map-test"
     val ENDPOINT_URL = Url.parse("storage.yandexcloud.net")
 
-    override fun getPresignedUrls(objectId: UUID, count: Int): List<String> {
+    override fun getPresignedUrls(itemId: UUID, count: Int): List<String> {
         var result: MutableList<String> = mutableListOf()
         val s3Client = runBlocking { S3Client.fromEnvironment { region = REGION; endpointUrl = ENDPOINT_URL}}
         for (i in 0 until count) {
-            val newImage = ItemImageEntity(entity = ItemEntity(id = objectId, state = State.ACTIVE))
+            val newImage = ItemImageEntity(entity = ItemEntity(id = itemId, state = State.ACTIVE))
 
             try {
                 val savedImage = imageRepository.save(newImage)
 
                 val unsignedRequest = runBlocking {PutObjectRequest {
                     bucket = BUCKET
-                    key = "$objectId/${savedImage.id}";
+                    key = "$itemId/${savedImage.id}";
                 }.presign(s3Client.config, 1.hours) }
                 result.add(unsignedRequest.url.toString())
 

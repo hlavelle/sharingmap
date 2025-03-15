@@ -5,5 +5,5 @@ interface SubcategoryService {
     abstract fun getAllSubcategories(): List<SubcategoryEntity>
     abstract fun createSubcategory(subcategory: SubcategoryEntity)
     abstract fun deleteSubcategory(id: Long)
-    abstract fun updateSubcategory(category: SubcategoryEntity)
+    abstract fun updateSubcategory(subcategory: SubcategoryEntity)
 }

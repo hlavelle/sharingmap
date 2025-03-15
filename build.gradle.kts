@@ -1,16 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.3.5"
+    id("com.github.ben-manes.versions") version "0.47.0"
+    id("org.springframework.boot") version "3.4.3"
     id("io.spring.dependency-management") version "1.1.6"
-    kotlin("jvm") version "2.0.21"
-    kotlin("plugin.spring") version "2.1.0-RC"
-    kotlin("plugin.jpa") version "2.0.21"
-    kotlin("plugin.allopen") version "2.0.21"
+    kotlin("jvm") version "2.1.20-RC3"
+    kotlin("plugin.spring") version "2.1.20-RC3"
+    kotlin("plugin.jpa") version "2.1.20-RC3"
+    kotlin("plugin.allopen") version "2.1.20-RC3"
 }
 
 group = "com"
-version = "0.0.1-SNAPSHOT"
+version = "0.5.1"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -28,10 +29,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("io.jsonwebtoken:jjwt:0.2")
-    implementation("org.reactivestreams:reactive-streams:1.0.0")
+    implementation("org.reactivestreams:reactive-streams:1.0.4")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
-    implementation("javax.xml.bind:jaxb-api:2.3.1")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.0")
+    implementation("jakarta.activation:jakarta.activation-api:2.1.0")
     implementation("tech.ailef:snap-admin:0.2.1")
     implementation("aws.sdk.kotlin:s3:0.25.0-beta"){
         exclude("com.squareup.okhttp3:okhttp")
@@ -41,6 +43,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation ("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    implementation("org.telegram:telegrambots:6.8.0")
+    implementation("org.telegram:telegrambots-spring-boot-starter:6.8.0")
 }
 
 // tasks.test {
@@ -60,9 +64,9 @@ tasks.withType<JavaExec> {
     environment("AWS_SECRET_ACCESS_KEY", System.getenv("AWS_SECRET_ACCESS_KEY"))
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-Xjsr305=strict")
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
