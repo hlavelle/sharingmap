@@ -10,6 +10,4 @@ export MAIL_PASSWORD=$(echo "$lockbox_output" | awk '/MAIL_PASSWORD/{getline; pr
 export APP_SECRET=$(echo "$lockbox_output" | awk '/TEST_APP_SECRET/{getline; print $2}')
 export TG_BOT_SECRET_TOKEN=$(echo "$lockbox_output" | awk '/TELEGRAM_BOT_SECRET_TOKEN/{getline; print $2}')
 
-cd ~/sm/test/sharingmap
-
-./gradlew bootRun --args='--spring.profiles.active=test'
+java -jar /app/application.jar --spring.profiles.active=test
