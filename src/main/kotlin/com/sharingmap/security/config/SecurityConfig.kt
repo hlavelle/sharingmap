@@ -38,7 +38,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
             .csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests {
                 authorize ->
-                authorize.requestMatchers("/send").permitAll()
+                authorize.requestMatchers("/ping").permitAll()
                 authorize.requestMatchers("/cities/{id}").permitAll()
                 authorize.requestMatchers("/cities/all").permitAll()
                 authorize.requestMatchers("/categories/{id}").permitAll()
