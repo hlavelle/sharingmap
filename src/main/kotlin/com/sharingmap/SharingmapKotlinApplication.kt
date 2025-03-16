@@ -8,7 +8,6 @@ import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
 import tech.ailef.snapadmin.external.SnapAdminAutoConfiguration
 
-@ImportAutoConfiguration(SnapAdminAutoConfiguration::class)
 @SpringBootApplication
 @ComponentScan(basePackages = arrayOf("com.sharingmap.*"))
 class SharingmapKotlinApplication

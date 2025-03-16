@@ -162,7 +162,8 @@ class ItemController(
             categoriesId = itemEntity.categories.mapNotNull { it.id },
             subcategoryId = itemEntity.subcategory?.id,
             cityId = itemEntity.city?.id,
-            userId = itemEntity.user?.id
+            userId = itemEntity.user?.id,
+            username = itemEntity.user?.username ?: "NO_VALUE"
         )
     }
 }
