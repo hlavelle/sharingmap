@@ -24,7 +24,7 @@ class UserController(private val userService: UserService) {
             val info = UserInfoDto(
             username = user.username,
             bio = user.bio ?: "",
-            id = user.id!!,
+            id = user.id,
             email = user.email,
             hasImage = user.image != null
             )

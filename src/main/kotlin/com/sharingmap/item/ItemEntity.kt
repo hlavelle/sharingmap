@@ -23,11 +23,11 @@ import java.util.*
 class ItemEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID? = null,
+    var id: UUID,
 
     @Column(name = "item_name")
     @get:Size(min = 3, max = 50)
-    var name: String? = null,
+    var name: String,
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryEntity::class)
     @JoinTable(
@@ -43,7 +43,7 @@ class ItemEntity (
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, targetEntity = CityEntity::class)
     @JoinColumn(name = "city_id", nullable = false)
-    var city: CityEntity? = null,
+    var city: CityEntity,
 
     var text: String? = null,
     

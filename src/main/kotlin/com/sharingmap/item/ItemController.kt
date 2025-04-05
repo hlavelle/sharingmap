@@ -1,14 +1,16 @@
 package com.sharingmap.item
 
+import com.sharingmap.image.ImageService
+import com.sharingmap.image.ItemImageEntity
+import com.sharingmap.image.UserImageEntity
 import com.sharingmap.user.UserEntity
 import com.sharingmap.user.UserNotFoundException
 import com.sharingmap.telegram_notification.*
-import jakarta.validation.Valid
+import com.sharingmap.user.UserService
 import jakarta.validation.constraints.Min
 import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.TransactionException
 import org.springframework.web.bind.annotation.*
@@ -17,7 +19,9 @@ import java.util.*
 @RestController
 class ItemController(
     private val itemService: ItemService,
-    private val moderationService: ITelegramService
+    private val moderationService: ITelegramService,
+    private val itemImageService: ImageService<ItemImageEntity>,
+    private val userService: UserService
         ) {
 
     @GetMapping("/items/{itemId}")
@@ -59,13 +63,10 @@ class ItemController(
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
 
-            val createdItem = user.id?.let { itemService.createItem(it, item) }
+            val createdItem = user.id.let { itemService.createItem(it, item) }
             val itemId = createdItem?.id
-            val itemText = "название: ${createdItem?.name} \n описание: ${createdItem?.text} \n пользователь: ${user?.username} \n город ${createdItem?.city?.name}"
+            val itemText = "название: ${createdItem?.name} \n описание: ${createdItem?.text} \n пользователь: ${user.username} \n город ${createdItem?.city?.name}"
             moderationService.sendModerationMessage("-1002250304627", itemText)
             ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
         } catch (ex: NoSuchElementException) {
@@ -89,10 +90,7 @@ class ItemController(
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
-            user.id?.let { itemService.deleteItem(it, itemId, isGiftedOnSm) }
+            user.id.let { itemService.deleteItem(it, itemId, isGiftedOnSm) }
             ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: IllegalArgumentException) {
             val errorResponse = mapOf("error" to ex.message)
@@ -156,14 +154,15 @@ class ItemController(
             name = itemEntity.name,
             text = itemEntity.text,
             locationsId = itemEntity.locations.mapNotNull { it.id },
-            imagesId = itemEntity.images?.mapNotNull { it.id } ?: listOf(),
+            imagesId = itemEntity.images?.map { it.id } ?: listOf(),
             createdAt = itemEntity.createdAt,
             updatedAt = itemEntity.updatedAt,
             categoriesId = itemEntity.categories.mapNotNull { it.id },
             subcategoryId = itemEntity.subcategory?.id,
-            cityId = itemEntity.city?.id,
+            cityId = itemEntity.city.id,
             userId = itemEntity.user?.id,
-            username = itemEntity.user?.username ?: "NO_VALUE"
+            user = itemEntity.user?.let{user->userService.toItemUserDto(user)},
+            itemPhoto = itemEntity.images?.map { itemImageService.toImageDto(it) }
         )
     }
 }

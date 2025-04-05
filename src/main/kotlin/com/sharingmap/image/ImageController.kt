@@ -15,15 +15,15 @@ import java.util.*
 
 @RestController
 class ImageController (
-    private val itemImageService: ItemImageService,
-    private val userImageService: UserImageService,
+    private val imageService: ImageService<ItemImageEntity>,
+    private val userImageService: ImageService<UserImageEntity>,
     private val userService: UserService
 ){
     @GetMapping("/{itemId}/images")
     fun getImagesByItem(@PathVariable(value = "itemId") @Min(1) itemId: UUID): ResponseEntity<Any> {
         return try {
 
-            val items = itemImageService.getItemImages(itemId)
+            val items = imageService.getImages(itemId)
             if (items.isEmpty()) {
                 val errorResponse = mapOf("error" to "No images are found for item ID: $itemId")
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
@@ -41,7 +41,7 @@ class ImageController (
         @RequestParam(value = "count", defaultValue = "1") @Min(1) count: Int,
     ): ResponseEntity<Any> {
         return try {
-            val urls = itemImageService.getPresignedUrls(itemId, count)
+            val urls = imageService.getPresignedUrls(itemId, count)
             if (urls.isEmpty()) {
                 val errorResponse = mapOf("error" to "Failed to get urls from s3")
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
@@ -57,7 +57,7 @@ class ImageController (
     fun getImagesUrls(
         @PathVariable(value = "imageId") imageId: UUID,
     ): ResponseEntity<Any> {
-        val result = itemImageService.setImageUploaded(imageId)
+        val result = imageService.setImageUploaded(imageId)
         if (!result) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to save $imageId");
         }
@@ -75,12 +75,13 @@ class ImageController (
             if (user.id == null) {
                 ResponseEntity.notFound()
             }
-            val url = user.id?.let { userImageService.getPresignedUrlAndReplace(it) }
+            val urls = user.id?.let { userImageService.getPresignedUrls(it, 1) }
+            val url = urls?.first()
             if (url?.isEmpty() == true) {
                 val errorResponse = mapOf("error" to "Failed to get urls from s3")
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
             } else {
-                var result: MutableList<String> = mutableListOf()
+                val result: MutableList<String> = mutableListOf()
                 result.add(url!!)
                 ResponseEntity.ok(result)
             }

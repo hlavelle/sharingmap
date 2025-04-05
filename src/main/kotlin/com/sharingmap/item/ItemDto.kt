@@ -1,8 +1,7 @@
 package com.sharingmap.item
 
-import com.sharingmap.image.ItemImageEntity
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
+import com.sharingmap.image.ImageDto
+import com.sharingmap.user.ItemUserDto
 import java.time.LocalDateTime
 import java.util.*
 
@@ -18,7 +17,8 @@ data class ItemDto(
     val subcategoryId: Long?,
     val cityId: Long?,
     val userId: UUID?,
-    val username: String?,
+    val user: ItemUserDto?,
+    val itemPhoto: List<ImageDto>?
     )
 
 data class ItemCreateDto(

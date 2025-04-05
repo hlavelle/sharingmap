@@ -1,5 +1,6 @@
 package com.sharingmap.user
 
+import com.sharingmap.image.ImageDto
 import java.util.*
 
 data class UserInfoDto (
@@ -18,5 +19,11 @@ data class GetOtherUserDto(
     val id: UUID,
     val username: String,
     val bio: String,
-    val hasImage: Boolean
+    val hasImage: Boolean,
+)
+
+data class ItemUserDto(
+    val id: UUID,
+    val username: String,
+    val photo: ImageDto?
 )
