@@ -62,4 +62,13 @@ class UserServiceImpl(
             id = user.id,
             photo = user.image?.let { userImageService.toImageDto(it) } )
     }
+
+    override fun toUserInfoDto(user: UserEntity): UserInfoDto {
+        return UserInfoDto(
+            id = user.id,
+            username = user.username,
+            bio = user.bio.toString(),
+            hasImage = user.image != null,
+            photo = user.image?.let { userImageService.toImageDto(it) } )
+    }
 }
