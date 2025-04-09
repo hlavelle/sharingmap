@@ -67,8 +67,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             text = item.text,
             locations = locations.toMutableSet(),
             user = user,
-            state = State.ACTIVE,
-            id = UUID.randomUUID()
+            state = State.ACTIVE
         )
         itemRepository.save(newItem)
         return newItem

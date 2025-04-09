@@ -39,3 +39,5 @@ out/
 *.log
 *.env
 .env.*
+*.p12
+*.gz

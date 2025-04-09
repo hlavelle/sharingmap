@@ -22,8 +22,8 @@ import java.util.*
 @Table(name = "items")
 class ItemEntity (
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID,
+//    @GeneratedValue(strategy = GenerationType.UUID)
+    var id: UUID = UUID.randomUUID(),
 
     @Column(name = "item_name")
     @get:Size(min = 3, max = 50)

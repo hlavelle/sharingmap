@@ -21,7 +21,6 @@ enum class ImageResolution {
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 abstract class BaseImageEntity (
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     open var id: UUID = UUID.randomUUID(),
 
     @CreationTimestamp
