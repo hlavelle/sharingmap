@@ -67,7 +67,7 @@ class UserServiceImpl(
         return UserInfoDto(
             id = user.id,
             username = user.username,
-            bio = user.bio.toString(),
+            bio = user.bio,
             hasImage = user.image != null,
             photo = user.image?.let { userImageService.toImageDto(it) } )
     }

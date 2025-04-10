@@ -48,7 +48,7 @@ class UserEntity(
     var updatedAt: LocalDateTime? = null,
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+//    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID = UUID.randomUUID()
 ) : UserDetails {
     @OneToOne(fetch = FetchType.LAZY, mappedBy="entity")

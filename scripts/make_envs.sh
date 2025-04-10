@@ -32,7 +32,7 @@ PG_PASSWORD=$(yc lockbox payload get --id e6qflue1o0pd06f2en24 --key PROD_PG_PAS
 MAIL_PASSWORD=$(yc lockbox payload get --id e6qflue1o0pd06f2en24 --key MAIL_PASSWORD)
 PG_USERNAME=sm_admin
 APP_SECRET=$(yc lockbox payload get --id e6qflue1o0pd06f2en24 --key PROD_APP_SECRET)
-TG_BOT_SECRET_TOKEN=$(yc lockbox payload get --id e6qflue1o0pd06f2en24 --key TELEGRAM_BOT_SECRET_TOKEN)
+TG_BOT_PROD_SECRET_TOKEN=$(yc lockbox payload get --id e6qflue1o0pd06f2en24 --key TG_BOT_PROD_SECRET_TOKEN)
 EOF
 
 chmod 600 ./.env.dev

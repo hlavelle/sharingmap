@@ -6,7 +6,7 @@ import java.util.*
 data class UserInfoDto (
     var id: UUID,
     var username: String,
-    var bio: String,
+    var bio: String?,
     var hasImage: Boolean,
     val photo: ImageDto?
 )
