@@ -48,15 +48,14 @@ class UserEntity(
     var updatedAt: LocalDateTime? = null,
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID? = null
+//    @GeneratedValue(strategy = GenerationType.UUID)
+    var id: UUID = UUID.randomUUID()
 ) : UserDetails {
-
     @OneToOne(fetch = FetchType.LAZY, mappedBy="entity")
     val image: UserImageEntity? = null
 
     override fun getAuthorities(): Collection<GrantedAuthority?>? {
-        return listOf(SimpleGrantedAuthority(role!!.name))
+        return listOf(SimpleGrantedAuthority(role.name))
     }
 
     fun setPassword(password: String) {
@@ -79,5 +78,4 @@ class UserEntity(
     fun assignRole(roleUser: Role) {
         this.role = roleUser
     }
-
 }

@@ -1,10 +1,12 @@
 package com.sharingmap.user
 
+import com.sharingmap.image.UserImageServiceImpl
 import com.sharingmap.item.ItemRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import org.telegram.telegrambots.meta.api.objects.UserProfilePhotos
 import java.util.*
 
 
@@ -12,7 +14,8 @@ import java.util.*
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val itemRepository: ItemRepository,
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val userImageService: UserImageServiceImpl
     ) : UserService {
 
     override fun getUserById(id: UUID): UserEntity {
@@ -20,7 +23,6 @@ class UserServiceImpl(
     }
 
     override fun getAllUsers(): List< UserEntity> = userRepository.findAll().toList()
-
 
     override fun deleteUser(userId: UUID) { //TODO не работает из-за ManyToMany у категории и локации
         val user = getUserById(userId)
@@ -52,5 +54,21 @@ class UserServiceImpl(
 
     override fun loadUserByUsername(email: String?): UserDetails {
         return userRepository.findByEmail(email) ?: throw UsernameNotFoundException("User not found")
+    }
+
+    override fun toItemUserDto(user: UserEntity): ItemUserDto {
+        return ItemUserDto(
+            username = user.username,
+            id = user.id,
+            photo = user.image?.let { userImageService.toImageDto(it) } )
+    }
+
+    override fun toUserInfoDto(user: UserEntity): UserInfoDto {
+        return UserInfoDto(
+            id = user.id,
+            username = user.username,
+            bio = user.bio,
+            hasImage = user.image != null,
+            photo = user.image?.let { userImageService.toImageDto(it) } )
     }
 }

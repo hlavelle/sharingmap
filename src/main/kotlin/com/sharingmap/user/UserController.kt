@@ -21,13 +21,7 @@ class UserController(private val userService: UserService) {
             if (user.id == null) {
                 ResponseEntity.notFound()
             }
-            val info = UserInfoDto(
-            username = user.username,
-            bio = user.bio ?: "",
-            id = user.id!!,
-            email = user.email,
-            hasImage = user.image != null
-            )
+            val info = userService.toUserInfoDto(user)
             ResponseEntity.ok(info)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
@@ -43,11 +37,7 @@ class UserController(private val userService: UserService) {
         return try {
             val user = userService.getUserById(id)
 
-            val userInfo = GetOtherUserDto(
-                    id = id,
-                    username = user.username,
-                    bio = user.bio?:"",
-                    hasImage = user.image != null)
+            val userInfo = userService.toUserInfoDto(user)
             ResponseEntity.ok(userInfo)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)

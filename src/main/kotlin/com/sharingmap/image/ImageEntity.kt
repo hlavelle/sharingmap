@@ -2,6 +2,7 @@ package com.sharingmap.image
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.sharingmap.annotations.Mockable
+import com.sharingmap.item.ItemDto
 import com.sharingmap.item.ItemEntity
 import com.sharingmap.user.UserEntity
 import jakarta.persistence.*
@@ -12,48 +13,50 @@ import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 import java.util.*
 
+enum class ImageResolution {
+    SMALL, LOW, NORMAL, HIGH
+}
+
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+abstract class BaseImageEntity (
+    @Id
+    open var id: UUID = UUID.randomUUID(),
+
+    @CreationTimestamp
+    open var createdDate: LocalDateTime = LocalDateTime.now(),
+
+    @UpdateTimestamp
+    var updateDate: LocalDateTime = LocalDateTime.now(),
+
+    open var isLoaded: Boolean = false,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "resolution", nullable = false)
+    open var resolution: ImageResolution = ImageResolution.NORMAL
+)
+
 @Entity
 @Mockable
 @Table(name = "item_images")
 class ItemImageEntity(
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID? = null,
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false, targetEntity = ItemEntity::class)
-    @JoinColumn(name="item_id", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-//    @Column(name = "entity_id", unique = false, nullable = false)
-    var entity: ItemEntity? = null
-) {
-    @CreationTimestamp
-    var createdDate: LocalDateTime? = null
+    var entity: ItemEntity,
 
-    @UpdateTimestamp
-    var updateDate: LocalDateTime? = null
-
-    var isLoaded: Boolean? = false
-}
+    id: UUID = UUID.randomUUID()
+) : BaseImageEntity(id = id)
 
 @Entity
 @Table(name = "user_images")
 class UserImageEntity(
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID? = null,
-
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="entity_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, targetEntity = UserEntity::class)
+    @JoinColumn(name = "entity_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    var entity: UserEntity? = null
-) {
-    @CreationTimestamp
-    var createdDate: LocalDateTime? = null
+    var entity: UserEntity,
 
-    @UpdateTimestamp
-    var updateDate: LocalDateTime? = null
-
-    var isLoaded: Boolean? = false
-}
+    id: UUID = UUID.randomUUID()
+) : BaseImageEntity(id = id)

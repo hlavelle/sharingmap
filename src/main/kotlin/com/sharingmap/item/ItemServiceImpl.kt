@@ -60,15 +60,15 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         val city = cityService.getCityById(item.cityId)
         val locations = item.locationsId.map { locationService.getLocationById(it) }
         val newItem = ItemEntity(
-                name = item.name,
-                categories = categories.toMutableSet(),
-                subcategory = subcategory,
-                city = city,
-                text = item.text,
-                locations = locations.toMutableSet(),
-                user = user,
-                state = State.ACTIVE
-            )
+            name = item.name,
+            categories = categories.toMutableSet(),
+            subcategory = subcategory,
+            city = city,
+            text = item.text,
+            locations = locations.toMutableSet(),
+            user = user,
+            state = State.ACTIVE
+        )
         itemRepository.save(newItem)
         return newItem
     }

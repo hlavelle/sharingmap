@@ -38,7 +38,7 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
 
         if (userFromDB != null) {
             if (!userFromDB.enabled) {
-                userFromDB.id?.let { userService.deleteUser(it) }
+                userFromDB.id.let { userService.deleteUser(it) }
             } else {
                 throw IllegalStateException("Email already taken.") //TODO сделать нормальные исключения
             }

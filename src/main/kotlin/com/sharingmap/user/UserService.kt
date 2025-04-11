@@ -9,4 +9,6 @@ interface UserService : UserDetailsService {
     fun deleteUser(userId: UUID)
     fun updateUser(userId: UUID, userDto: UserDto)
     fun changePassword(id: UUID, password: String)
+    fun toItemUserDto(user: UserEntity): ItemUserDto
+    fun toUserInfoDto(user: UserEntity): UserInfoDto
 }

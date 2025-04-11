@@ -37,3 +37,7 @@ out/
 .vscode/
 
 *.log
+*.env
+.env.*
+*.p12
+*.gz
