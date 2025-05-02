@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  sharingmap:
+    image: cr.yandex/crppopintc7ff3b906c5/sharingmap:latest
+    container_name: sharingmap_${SM_ENV:-test}
+    ports:
+      - "8095:8095"
+      - "8086:8086"
+      - "8195:8195"
+    env_file:
+      - .env.${SM_ENV:-test}
+    environment:
+      - ENVIRONMENT=${SM_ENV:-test}
+    volumes:
+      - ~/.postgresql/root.crt:/root/.postgresql/root.crt:ro
