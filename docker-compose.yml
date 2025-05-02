@@ -4,9 +4,7 @@ services:
     image: cr.yandex/crppopintc7ff3b906c5/sharingmap:latest
     container_name: sharingmap_${SM_ENV:-test}
     ports:
-      - "8095:8095"
-      - "8086:8086"
-      - "8195:8195"
+      - "${SHARINGMAP_PORT}:${SHARINGMAP_PORT}"
     env_file:
       - .env.${SM_ENV:-test}
     environment:
