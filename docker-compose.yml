@@ -6,7 +6,7 @@ services:
     ports:
       - "${SHARINGMAP_PORT}:${SHARINGMAP_PORT}"
     env_file:
-      - .env.${SM_ENV:-test}
+      - scripts/.env.${SM_ENV:-test}
     environment:
       - ENVIRONMENT=${SM_ENV:-test}
     volumes:
