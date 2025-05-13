@@ -10,7 +10,10 @@ class CategoryServiceImpl(private val categoryRepository: CategoryRepository) : 
         return categoryRepository.findById(id).orElseThrow { NoSuchElementException("Category not found with ID: $id") }
     }
 
-    override fun getAllCategories(): List<CategoryEntity> = categoryRepository.findAll().toList()
+    override fun getAllCategories(): List<CategoryEntity> =
+        categoryRepository.findAll().sortedWith(
+            compareBy<CategoryEntity> { it.position ?: 100 }
+        )
 
     override fun createCategory(category: CategoryEntity) {
         categoryRepository.save(category)

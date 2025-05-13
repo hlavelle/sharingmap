@@ -45,6 +45,7 @@ dependencies {
     testImplementation ("org.mockito.kotlin:mockito-kotlin:5.4.0")
     implementation("org.telegram:telegrambots:6.8.0")
     implementation("org.telegram:telegrambots-spring-boot-starter:6.8.0")
+    implementation("org.springframework.retry:spring-retry")
 }
 
 // tasks.test {

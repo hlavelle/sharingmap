@@ -30,4 +30,7 @@ class CategoryEntity(
 
     @UpdateTimestamp
     var updatedAt: LocalDateTime? = null
+
+    @Column(name = "position")
+    var position: Int? = 100
 }
