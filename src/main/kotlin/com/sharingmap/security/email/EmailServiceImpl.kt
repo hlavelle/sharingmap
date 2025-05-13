@@ -13,16 +13,14 @@ import org.springframework.retry.annotation.Recover
 
 @Service
 @Async
-class EmailServiceImpl(private val javaMailSender: JavaMailSender,
-        @Value("\${spring.mail.properties.mail.smtp.connectiontimeout:5000}")
-        val connectionTimeout: Long): EmailService {
+class EmailServiceImpl(private val javaMailSender: JavaMailSender): EmailService {
 
     val LOGGER = LoggerFactory.getLogger(EmailServiceImpl::class.java)
 
     @Retryable(
         value = [MessagingException::class],
         maxAttempts = 3,
-        backoff = Backoff(delayExpression = "#{@emailServiceImpl.connectionTimeout}")
+        backoff = Backoff(delay = 10000)
     )
     override fun sendConfirmationLetter(to: String, email: String) {
         try {
@@ -42,7 +40,7 @@ class EmailServiceImpl(private val javaMailSender: JavaMailSender,
     @Retryable(
         value = [MessagingException::class],
         maxAttempts = 3,
-        backoff = Backoff(delayExpression = "#{@emailServiceImpl.connectionTimeout}")
+        backoff = Backoff(delay = 10000)
     )
     override fun sendResetPasswordLetter(to: String, email: String) {
         try {
