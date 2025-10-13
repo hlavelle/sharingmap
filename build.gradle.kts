@@ -46,6 +46,9 @@ dependencies {
     implementation("org.telegram:telegrambots:6.8.0")
     implementation("org.telegram:telegrambots-spring-boot-starter:6.8.0")
     implementation("org.springframework.retry:spring-retry")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("com.google.firebase:firebase-admin:9.2.0")
 }
 
 // tasks.test {

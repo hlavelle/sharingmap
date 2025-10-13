@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 class CityEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Long = -1
 
     @Column(name = "city_name", unique = true)
     var name: String? = null

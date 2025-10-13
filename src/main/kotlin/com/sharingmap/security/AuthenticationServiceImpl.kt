@@ -31,21 +31,28 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
 ) : AuthenticationService {
 
     override fun createUser(request: RegistrationRequest): UserEntity {
-        val isValidEmail = request.email.let { emailValidator.test(it) }
-        if (!isValidEmail) throw IllegalStateException("Email isn't valid.")
+        if (!emailValidator.test(request.email)) {
+            throw IllegalArgumentException("The provided email is invalid.")
+        }
 
-        val userFromDB: UserEntity? = userRepository.findByEmail(request.email)
-
-        if (userFromDB != null) {
-            if (!userFromDB.enabled) {
-                userFromDB.id.let { userService.deleteUser(it) }
+        val existingUser = userRepository.findByEmail(request.email)
+        if (existingUser != null) {
+            if (!existingUser.enabled) {
+                userService.deleteUser(existingUser.id)
             } else {
-                throw IllegalStateException("Email already taken.") //TODO сделать нормальные исключения
+                throw IllegalStateException("Email already taken.")
             }
         }
-        val user = UserEntity(request.username, request.email, Role.ROLE_USER, bCryptPasswordEncoder.encode(request.password))
-        userRepository.save(user)
-        return user
+
+        val encodedPassword = bCryptPasswordEncoder.encode(request.password)
+        val newUser = UserEntity(
+            username = request.username,
+            email = request.email,
+            role = Role.ROLE_USER,
+            password = encodedPassword
+        )
+        userRepository.save(newUser)
+        return newUser
     }
 
     @Transactional

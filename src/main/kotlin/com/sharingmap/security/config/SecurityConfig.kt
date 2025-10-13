@@ -81,6 +81,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize.requestMatchers("/users/{userId}/contacts").authenticated()
                 authorize.requestMatchers("/users/{userId}/items").permitAll()
                 authorize.requestMatchers("/users/update").authenticated()
+                authorize.requestMatchers("/address/**").authenticated()
                 authorize.requestMatchers("/users/{id}").permitAll()
                 authorize.requestMatchers("/users/myself").authenticated()
                 authorize.requestMatchers("/users/delete").authenticated()

@@ -18,7 +18,8 @@ data class ItemDto(
     val cityId: Long?,
     val userId: UUID?,
     val user: ItemUserDto?,
-    val itemPhoto: List<ImageDto>?
+    val itemPhoto: List<ImageDto>?,
+    val addressInfo: String?
     )
 
 data class ItemCreateDto(
@@ -27,7 +28,8 @@ data class ItemCreateDto(
     val categoriesId: List<Long>,
     val subcategoryId: Long,
     val cityId: Long,
-    val locationsId: List<Long>
+    val locationsId: List<Long>,
+    val addressId: UUID
     )
 
 data class ItemUpdateDto(

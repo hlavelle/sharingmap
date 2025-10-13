@@ -1,5 +1,6 @@
 package com.sharingmap.item
 
+import com.sharingmap.adresses.AddressEntity
 import com.sharingmap.annotations.Mockable
 import com.sharingmap.category.CategoryEntity
 import com.sharingmap.city.CityEntity
@@ -65,7 +66,12 @@ class ItemEntity (
     @ManyToOne(fetch = FetchType.LAZY, optional = true, targetEntity = UserEntity::class)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    var user: UserEntity? = null
+    var user: UserEntity? = null,
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true, targetEntity = AddressEntity::class)
+    @JoinColumn(name = "address_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    var address: AddressEntity? = null
 ) {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy="entity", targetEntity = ItemImageEntity::class)

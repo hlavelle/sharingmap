@@ -1,10 +1,10 @@
 package com.sharingmap.item
 
+import com.sharingmap.adresses.AddressService
 import com.sharingmap.category.CategoryService
 import com.sharingmap.city.CityService
 import com.sharingmap.location.LocationService
 import com.sharingmap.subcategory.SubcategoryService
-import com.sharingmap.user.UserNotFoundException
 import com.sharingmap.user.UserService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -20,45 +20,42 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
                       private val subcategoryService: SubcategoryService,
                       private val cityService: CityService,
                       private val userService: UserService,
-                      private val locationService: LocationService
+                      private val locationService: LocationService,
+                      private val addressService: AddressService
 ) : ItemService {
 
     override fun getItemById(id: UUID): ItemEntity {
         return itemRepository.findById(id).orElseThrow { NoSuchElementException("Item not found with ID: $id") }
     }
 
-    override fun getAllActiveItemsByEnabledUsers(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): Page<ItemEntity> {
+    override fun getAllActiveItemsByEnabledUsers(
+        categoryId: Long,
+        subcategoryId: Long,
+        cityId: Long,
+        page: Int,
+        size: Int
+    ): Page<ItemEntity> {
         val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
         val pageable = PageRequest.of(page, size, sort)
-        val enabled = true
 
-        return when {
-            categoryId != 0L && subcategoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndCityIdAndStateAndUserEnabled(categoryId, subcategoryId, cityId, State.ACTIVE, enabled, pageable)
-            categoryId != 0L && subcategoryId != 0L ->
-                itemRepository.findAllByCategoriesIdAndSubcategoryIdAndStateAndUserEnabled(categoryId, subcategoryId, State.ACTIVE, enabled, pageable)
-            categoryId != 0L && cityId != 0L ->
-                itemRepository.findAllByCategoriesIdAndCityIdAndStateAndUserEnabled(categoryId, cityId, State.ACTIVE, enabled, pageable)
-            categoryId != 0L ->
-                itemRepository.findAllByCategoriesIdAndStateAndUserEnabled(categoryId, State.ACTIVE, enabled, pageable)
-            subcategoryId != 0L && cityId != 0L ->
-                itemRepository.findAllBySubcategoryIdAndCityIdAndStateAndUserEnabled(subcategoryId, cityId, State.ACTIVE, enabled, pageable)
-            subcategoryId != 0L ->
-                itemRepository.findAllBySubcategoryIdAndStateAndUserEnabled(subcategoryId, State.ACTIVE, enabled, pageable)
-            cityId != 0L ->
-                itemRepository.findAllByCityIdAndStateAndUserEnabled(cityId, State.ACTIVE, enabled, pageable)
-            else ->
-                itemRepository.findAllByStateAndUserEnabled(State.ACTIVE, enabled, pageable)
-        }
+        return itemRepository.findActiveItemsByFilters(
+            categoryId = categoryId,
+            subcategoryId = subcategoryId,
+            cityId = cityId,
+            state = State.ACTIVE,
+            enabled = true,
+            pageable = pageable
+        )
     }
 
     @Transactional
-    override fun createItem(userId: UUID, item: ItemCreateDto): ItemEntity? {
+    override fun createItem(userId: UUID, item: ItemCreateDto): ItemEntity {
         val user = userService.getUserById(userId)
         val categories = item.categoriesId.map {  categoryService.getCategoryById(it) }
         val subcategory = subcategoryService.getSubcategoryById(item.subcategoryId)
         val city = cityService.getCityById(item.cityId)
         val locations = item.locationsId.map { locationService.getLocationById(it) }
+        val address = addressService.findById(item.addressId)
         val newItem = ItemEntity(
             name = item.name,
             categories = categories.toMutableSet(),
@@ -67,7 +64,8 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             text = item.text,
             locations = locations.toMutableSet(),
             user = user,
-            state = State.ACTIVE
+            state = State.ACTIVE,
+            address = address
         )
         itemRepository.save(newItem)
         return newItem
@@ -85,8 +83,10 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         }
         item.state = State.DELETED
         item.isGiftedOnSM = isGiftedOnSm
-        item.user?.let { user ->
-            user.giftedItems = (user.giftedItems ?: 0) + 1
+        if (isGiftedOnSm) {
+            item.user?.let { user ->
+                user.giftedItems = (user.giftedItems ?: 0) + 1
+            }
         }
         itemRepository.save(item)
     }

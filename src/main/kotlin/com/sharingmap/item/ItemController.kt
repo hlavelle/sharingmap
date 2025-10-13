@@ -65,9 +65,9 @@ class ItemController(
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
 
             val createdItem = user.id.let { itemService.createItem(it, item) }
-            val itemId = createdItem?.id
-            val itemText = "название: ${createdItem?.name} \n описание: ${createdItem?.text} \n пользователь: ${user.username} \n город ${createdItem?.city?.name}"
-            moderationService.sendModerationMessage("-1002250304627", itemText)
+            val itemId = createdItem.id
+            val itemText = "название: ${createdItem.name} \n описание: ${createdItem.text} \n пользователь: ${user.username} \n город ${createdItem.city.name}"
+            moderationService.sendModerationMessage("-1002250304627", itemText, itemId)
             ResponseEntity.status(HttpStatus.CREATED).body(itemId.toString())
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to ex.message)
@@ -162,7 +162,8 @@ class ItemController(
             cityId = itemEntity.city.id,
             userId = itemEntity.user?.id,
             user = itemEntity.user?.let{user->userService.toItemUserDto(user)},
-            itemPhoto = itemEntity.images?.map { itemImageService.toImageDto(it) }
+            itemPhoto = itemEntity.images?.map { itemImageService.toImageDto(it) },
+            addressInfo = itemEntity.address?.description
         )
     }
 }
