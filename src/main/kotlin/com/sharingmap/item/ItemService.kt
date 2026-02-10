@@ -5,7 +5,14 @@ import java.util.*
 
 interface ItemService {
     fun getItemById(id: UUID): ItemEntity
-    fun getAllActiveItemsByEnabledUsers(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): Page<ItemEntity>
+    fun getAllActiveItemsByEnabledUsers(
+        categoryId: Long,
+        subcategoryId: Long,
+        cityId: Long,
+        query: String,
+        page: Int,
+        size: Int
+    ): Page<ItemEntity>
     fun createItem(userId: UUID, item: ItemCreateDto): ItemEntity
 
     fun adminDeleteItem(itemId: UUID)

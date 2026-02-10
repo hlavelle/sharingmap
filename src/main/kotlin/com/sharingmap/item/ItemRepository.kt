@@ -28,6 +28,11 @@ interface ItemRepository : JpaRepository <ItemEntity, UUID> {
         JOIN i.user u
         WHERE i.state = :state
         AND u.enabled = :enabled
+        AND (
+            :query = '' OR
+            LOWER(i.name) LIKE LOWER(CONCAT('%', :query, '%')) OR
+            LOWER(COALESCE(i.text, '')) LIKE LOWER(CONCAT('%', :query, '%'))
+        )
         AND (:categoryId = 0L OR EXISTS (
             SELECT 1 FROM i.categories c WHERE c.id = :categoryId
         ))
@@ -38,6 +43,7 @@ interface ItemRepository : JpaRepository <ItemEntity, UUID> {
         @Param("categoryId") categoryId: Long,
         @Param("subcategoryId") subcategoryId: Long,
         @Param("cityId") cityId: Long,
+        @Param("query") query: String,
         @Param("state") state: State,
         @Param("enabled") enabled: Boolean,
         pageable: Pageable
