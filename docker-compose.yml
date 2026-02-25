@@ -1,13 +1,65 @@
-version: "3.8"
 services:
-  sharingmap:
-    image: cr.yandex/crppopintc7ff3b906c5/sharingmap:latest
-    container_name: sharingmap_${SM_ENV:-test}
-    ports:
-      - "${SHARINGMAP_PORT}:${SHARINGMAP_PORT}"
-    env_file:
-      - scripts/.env.${SM_ENV:-test}
+  db:
+    image: postgres:16-alpine
+    container_name: sharingmap_db_local
     environment:
-      - ENVIRONMENT=${SM_ENV:-test}
+      POSTGRES_DB: sm_local
+      POSTGRES_USER: sm_local_admin
+      POSTGRES_PASSWORD: sm_local_password
+    ports:
+      - "55432:5432"
     volumes:
-      - ~/.postgresql/root.crt:/root/.postgresql/root.crt:ro
+      - sharingmap_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sm_local_admin -d sm_local"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  sharingmap:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sharingmap_local
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: test
+      PG_CONNECTION_STRING: jdbc:postgresql://db:5432/sm_local
+      PG_USERNAME: sm_local_admin
+      PG_PASSWORD: sm_local_password
+      SPRING_MAIL_HOST: localhost
+      SPRING_MAIL_PORT: 1025
+      MAIL_PASSWORD: stub
+      APP_SECRET: local-app-secret
+      TG_BOT_SECRET_TOKEN: stub
+      BUCKET_TEST: sharing-map-test-local
+      CLOUD_STORAGE_ENDPOINTURL: localhost
+      CLOUD_STORAGE_REGION: local
+      AWS_ACCESS_KEY_ID: stub
+      AWS_SECRET_ACCESS_KEY: stub
+    ports:
+      - "8095:8095"
+
+  frontend:
+    image: ghcr.io/cirruslabs/flutter:stable
+    container_name: sharingmap_frontend_local
+    working_dir: /app
+    depends_on:
+      - sharingmap
+    environment:
+      CI: "true"
+    volumes:
+      - ../sharing_map:/app
+    command: >
+      /bin/bash -lc "
+      flutter config --enable-web &&
+      flutter pub get &&
+      flutter run -d web-server --web-hostname 0.0.0.0 --web-port 3000
+      "
+    ports:
+      - "3000:3000"
+
+volumes:
+  sharingmap_postgres_data:

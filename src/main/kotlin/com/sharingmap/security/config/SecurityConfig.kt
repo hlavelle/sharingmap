@@ -83,6 +83,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize.requestMatchers("/locations/delete/{id}").hasAuthority("ROLE_ADMIN")
                 authorize.requestMatchers("/users/{userId}/contacts").authenticated()
                 authorize.requestMatchers("/users/{userId}/items").permitAll()
+                authorize.requestMatchers("/users/{id}/transferred-items/count").authenticated()
                 authorize.requestMatchers("/users/update").authenticated()
                 authorize.requestMatchers("/address/**").authenticated()
                 authorize.requestMatchers("/users/{id}").permitAll()
