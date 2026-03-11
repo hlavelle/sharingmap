@@ -14,7 +14,7 @@ import kotlin.time.Duration.Companion.hours
 @ConfigurationProperties(prefix = "cloud.storage")
 abstract class ImageService<E> {
     private val regionConfig = "ru-central1"
-    private val bucketConfig = "sharing-map-test"
+    private val bucketConfig = "sharing-map-external"
     private val endpointUrlConfig = "storage.yandexcloud.net"
 
     fun getPresignedUrls(objectId: UUID, count: Int): List<String> {

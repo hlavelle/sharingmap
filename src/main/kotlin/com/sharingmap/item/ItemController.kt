@@ -43,11 +43,19 @@ class ItemController(
     fun getAllActiveItems(@RequestParam(value = "categoryId", defaultValue = "0") categoryId: Long,
                     @RequestParam(value = "cityId", defaultValue = "1") cityId: Long,
                     @RequestParam(value = "subcategoryId", defaultValue = "1") subcategoryId: Long,
+                    @RequestParam(value = "query", defaultValue = "") query: String,
                     @RequestParam(value = "page", defaultValue = "0") @Min(0) page: Int,
                     @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int
     ): ResponseEntity<Any> {
         return try {
-            val items = itemService.getAllActiveItemsByEnabledUsers(categoryId, subcategoryId, cityId, page, size)
+            val items = itemService.getAllActiveItemsByEnabledUsers(
+                categoryId,
+                subcategoryId,
+                cityId,
+                query.trim(),
+                page,
+                size
+            )
             val itemDtos = items.map { toItemDto(it) }
             ResponseEntity.ok(itemDtos)
         } catch (ex: Exception) {
@@ -162,7 +170,7 @@ class ItemController(
             cityId = itemEntity.city.id,
             userId = itemEntity.user?.id,
             user = itemEntity.user?.let{user->userService.toItemUserDto(user)},
-            itemPhoto = itemEntity.images?.map { itemImageService.toImageDto(it) },
+            itemPhoto = itemEntity.images?.map { itemImageService.toImageDto(it) } ?: listOf(),
             addressInfo = itemEntity.address?.description
         )
     }

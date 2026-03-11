@@ -19,9 +19,20 @@ class RefreshTokenServiceImpl(
         return refreshTokenRepository.findByToken(token)
     }
 
+    @Transactional
+    @Synchronized
     override fun createRefreshToken(userId: UUID): String {
-        var refreshToken = RefreshTokenEntity(UUID.randomUUID().toString(), userRepository.findById(userId).get(),
-            Instant.now().plusSeconds(refreshTokenDuration.toLong()))
+        val user = userRepository.findById(userId).get()
+        val newTokenValue = UUID.randomUUID().toString()
+        val newExpiry = Instant.now().plusSeconds(refreshTokenDuration.toLong())
+        var refreshToken = refreshTokenRepository.findByUserId(userId)
+            ?: RefreshTokenEntity(
+                newTokenValue,
+                user,
+                newExpiry
+            )
+        refreshToken.token = newTokenValue
+        refreshToken.expiryDate = newExpiry
         refreshToken = refreshTokenRepository.save(refreshToken)
         return refreshToken.token
     }
@@ -36,6 +47,6 @@ class RefreshTokenServiceImpl(
 
     @Transactional
     override fun deleteByUserId(userId: UUID): Int {
-        return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get())
+        return refreshTokenRepository.deleteByUserId(userId)
     }
 }

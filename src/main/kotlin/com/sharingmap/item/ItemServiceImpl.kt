@@ -32,6 +32,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         categoryId: Long,
         subcategoryId: Long,
         cityId: Long,
+        query: String,
         page: Int,
         size: Int
     ): Page<ItemEntity> {
@@ -42,6 +43,7 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             categoryId = categoryId,
             subcategoryId = subcategoryId,
             cityId = cityId,
+            query = query,
             state = State.ACTIVE,
             enabled = true,
             pageable = pageable

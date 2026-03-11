@@ -11,7 +11,7 @@ import java.util.*
 @Table(name = "refreshtokens")
 public class RefreshTokenEntity (
     @Column(nullable = false, unique = true)
-    val token: String,
+    var token: String,
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -19,10 +19,9 @@ public class RefreshTokenEntity (
     var user: UserEntity,
 
     @Column(nullable = false)
-    val expiryDate: Instant) {
+    var expiryDate: Instant) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null
 }
-

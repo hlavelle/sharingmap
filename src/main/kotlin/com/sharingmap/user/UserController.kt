@@ -48,6 +48,16 @@ class UserController(private val userService: UserService) {
         }
     }
 
+    @GetMapping("/users/{id}/transferred-items/count")
+    fun getTransferredItemsCount(@PathVariable id: UUID): ResponseEntity<Any> {
+        return try {
+            ResponseEntity.ok(mapOf("count" to 100))
+        } catch (ex: Exception) {
+            val errorResponse = mapOf("error" to "Internal Server Error")
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse)
+        }
+    }
+
     @DeleteMapping("/users/delete")
     fun deleteUser(): ResponseEntity<Any> {
         return try {
