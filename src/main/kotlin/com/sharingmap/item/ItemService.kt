@@ -5,7 +5,21 @@ import java.util.*
 
 interface ItemService {
     fun getItemById(id: UUID): ItemEntity
-    fun getAllActiveItemsByEnabledUsers(categoryId: Long, subcategoryId: Long, cityId: Long, page: Int, size: Int): Page<ItemEntity>
+    fun getAllActiveItemsByEnabledUsers(
+        categoryId: Long,
+        subcategoryId: Long,
+        cityId: Long,
+        page: Int,
+        size: Int
+    ): Page<ItemEntity>
+    fun searchActiveItemsByEnabledUsers(
+        query: String?,
+        categoryId: Long,
+        subcategoryId: Long,
+        cityId: Long,
+        page: Int,
+        size: Int
+    ): Page<ItemEntity>
     fun createItem(userId: UUID, item: ItemCreateDto): ItemEntity
 
     fun adminDeleteItem(itemId: UUID)
@@ -14,4 +28,5 @@ interface ItemService {
     fun adminUpdateItem(item: ItemUpdateDto)
     fun updateItem(userId: UUID, item: ItemUpdateDto)
     fun getAllActiveItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity>
+    fun reindexEmbeddings(): com.sharingmap.search.ReindexResult
 }

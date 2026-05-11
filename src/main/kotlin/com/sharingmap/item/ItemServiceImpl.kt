@@ -4,11 +4,13 @@ import com.sharingmap.adresses.AddressService
 import com.sharingmap.category.CategoryService
 import com.sharingmap.city.CityService
 import com.sharingmap.location.LocationService
+import com.sharingmap.search.ItemEmbeddingService
+import com.sharingmap.search.ReindexResult
 import com.sharingmap.subcategory.SubcategoryService
 import com.sharingmap.user.UserService
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -21,7 +23,8 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
                       private val cityService: CityService,
                       private val userService: UserService,
                       private val locationService: LocationService,
-                      private val addressService: AddressService
+                      private val addressService: AddressService,
+                      private val itemEmbeddingService: ItemEmbeddingService
 ) : ItemService {
 
     override fun getItemById(id: UUID): ItemEntity {
@@ -35,16 +38,37 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         page: Int,
         size: Int
     ): Page<ItemEntity> {
-        val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
-        val pageable = PageRequest.of(page, size, sort)
-
-        return itemRepository.findActiveItemsByFilters(
+        val pageable = PageRequest.of(page, size)
+        val idsPage = itemRepository.findActiveItemIdsByFilters(
             categoryId = categoryId,
             subcategoryId = subcategoryId,
             cityId = cityId,
             state = State.ACTIVE,
             enabled = true,
             pageable = pageable
+        )
+        return hydratePage(idsPage)
+    }
+
+    override fun searchActiveItemsByEnabledUsers(
+        query: String?,
+        categoryId: Long,
+        subcategoryId: Long,
+        cityId: Long,
+        page: Int,
+        size: Int
+    ): Page<ItemEntity> {
+        val normalizedQuery = query?.trim().orEmpty()
+        if (normalizedQuery.isBlank()) {
+            return getAllActiveItemsByEnabledUsers(categoryId, subcategoryId, cityId, page, size)
+        }
+        return itemEmbeddingService.semanticSearch(
+            query = normalizedQuery,
+            categoryId = categoryId,
+            subcategoryId = subcategoryId,
+            cityId = cityId,
+            page = page,
+            size = size
         )
     }
 
@@ -68,14 +92,18 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             address = address
         )
         itemRepository.save(newItem)
+        itemEmbeddingService.upsertEmbedding(newItem)
         return newItem
     }
 
+    @Transactional
     override fun adminDeleteItem(itemId: UUID) {
         itemRepository.findById(itemId).orElseThrow { NoSuchElementException("Item not found with ID: $itemId") }
+        itemEmbeddingService.deleteEmbedding(itemId)
         itemRepository.deleteById(itemId)
     }
 
+    @Transactional
     override fun deleteItem(userId: UUID, itemId: UUID, isGiftedOnSm: Boolean) {
         val item = itemRepository.findById(itemId).orElseThrow { NoSuchElementException("Item not found with ID: $itemId") }
         if (userId != item.user?.id) {
@@ -89,8 +117,10 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             }
         }
         itemRepository.save(item)
+        itemEmbeddingService.deleteEmbedding(itemId)
     }
 
+    @Transactional
     override fun adminUpdateItem(item: ItemUpdateDto) {
         val newItem = itemRepository.findById(item.id)
             .orElseThrow { java.util.NoSuchElementException("Item not found with ID: ${item.id}") }
@@ -110,8 +140,10 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             newItem.locations = locations.toMutableSet()
         }
         itemRepository.save(newItem)
+        itemEmbeddingService.upsertEmbedding(newItem)
     }
 
+    @Transactional
     override fun updateItem(userId: UUID, item: ItemUpdateDto) {
         val newItem = itemRepository.findById(item.id)
             .orElseThrow { java.util.NoSuchElementException("Item not found with ID: ${item.id}") }
@@ -133,17 +165,30 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
             newItem.locations = locations.toMutableSet()
         }
         itemRepository.save(newItem)
+        itemEmbeddingService.upsertEmbedding(newItem)
     }
 
     override fun getAllActiveItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity> {
         userService.getUserById(userId)
-        val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
-        val pageable = PageRequest.of(page, size, sort)
-        val items = itemRepository.findAllByUserIdAndState(userId, State.ACTIVE, pageable)
+        val pageable = PageRequest.of(page, size)
+        val items = hydratePage(itemRepository.findActiveItemIdsByUserId(userId, State.ACTIVE, pageable))
         if (items.isEmpty) {
             throw NoSuchElementException("No items found for user ID: $userId")
         }
         return items
+    }
+
+    override fun reindexEmbeddings(): ReindexResult {
+        return itemEmbeddingService.reindexAllActiveItems()
+    }
+
+    private fun hydratePage(idsPage: Page<UUID>): Page<ItemEntity> {
+        if (idsPage.content.isEmpty()) {
+            return PageImpl(emptyList(), idsPage.pageable, idsPage.totalElements)
+        }
+        val itemsById = itemRepository.findAllByIdIn(idsPage.content).associateBy { it.id }
+        val orderedItems = idsPage.content.mapNotNull { itemsById[it] }
+        return PageImpl(orderedItems, idsPage.pageable, idsPage.totalElements)
     }
 
 }

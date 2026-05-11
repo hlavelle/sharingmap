@@ -13,6 +13,7 @@ class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: Conf
                                    private val userRepository: UserRepository
 )
     : ConfirmationTokenService {
+    private val fixedConfirmationCode = "1234"
 
     override fun saveConfirmationToken(token: ConfirmationTokenEntity) {
         confirmationTokenRepository.save(token)
@@ -34,7 +35,7 @@ class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: Conf
 
         saveConfirmationToken(confirmationToken)
 
-        buildEmail(user.username, token).let { emailService.sendConfirmationLetter(user.email, it) }
+        // Email sending is disabled for local/dev usage.
         return confirmationToken
     }
 
@@ -52,10 +53,7 @@ class ConfirmationTokenServiceImpl(private val confirmationTokenRepository: Conf
     }
 
     override fun getRandomString() : String {
-        val allowedChars = ('0'..'9')
-        return (1..4)
-            .map { allowedChars.random() }
-            .joinToString("")
+        return fixedConfirmationCode
     }
 
     private fun buildEmail(name: String, confirmationCode: String): String {
