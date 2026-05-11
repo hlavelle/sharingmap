@@ -54,4 +54,14 @@ class ItemAdminController(private val itemService: ItemService) {
         }
     }
 
+    @PostMapping("/admin/items/reindex-embeddings")
+    fun reindexEmbeddings(): ResponseEntity<Any> {
+        return try {
+            ResponseEntity.ok(itemService.reindexEmbeddings())
+        } catch (ex: Exception) {
+            val errorResponse = mapOf("error" to "Internal Server Error")
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse)
+        }
+    }
+
 }

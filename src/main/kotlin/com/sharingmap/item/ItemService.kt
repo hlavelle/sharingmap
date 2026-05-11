@@ -9,7 +9,14 @@ interface ItemService {
         categoryId: Long,
         subcategoryId: Long,
         cityId: Long,
-        query: String,
+        page: Int,
+        size: Int
+    ): Page<ItemEntity>
+    fun searchActiveItemsByEnabledUsers(
+        query: String?,
+        categoryId: Long,
+        subcategoryId: Long,
+        cityId: Long,
         page: Int,
         size: Int
     ): Page<ItemEntity>
@@ -21,4 +28,5 @@ interface ItemService {
     fun adminUpdateItem(item: ItemUpdateDto)
     fun updateItem(userId: UUID, item: ItemUpdateDto)
     fun getAllActiveItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity>
+    fun reindexEmbeddings(): com.sharingmap.search.ReindexResult
 }
