@@ -6,6 +6,6 @@ import java.util.UUID
 
 @Repository
 interface AddressRepository : JpaRepository<AddressEntity, UUID> {
-    fun findAllByUserId(userId: UUID): List<AddressEntity>
-    fun existsByIdAndUserId(addressId: UUID, userId: UUID): Boolean
+    fun findAllByUserIdAndState(userId: UUID, state: AddressState): List<AddressEntity>
+    fun existsByIdAndUserIdAndState(addressId: UUID, userId: UUID, state: AddressState): Boolean
 }

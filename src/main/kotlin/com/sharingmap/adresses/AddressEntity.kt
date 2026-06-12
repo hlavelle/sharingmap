@@ -5,10 +5,17 @@ import com.sharingmap.city.CityEntity
 import com.sharingmap.location.LocationEntity
 import com.sharingmap.user.UserEntity
 import jakarta.persistence.*
+import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.time.LocalDateTime
 import java.util.*
+
+enum class AddressState {
+    ACTIVE,
+    DELETED
+}
+
 @Entity
 @Mockable
 @Table(name = "addresses")
@@ -39,6 +46,11 @@ class AddressEntity(
     @JoinColumn(name = "city_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     var city: CityEntity,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "state", nullable = false, length = 20)
+    @ColumnDefault("'ACTIVE'")
+    var state: AddressState = AddressState.ACTIVE,
 
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now(),

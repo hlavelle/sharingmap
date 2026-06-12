@@ -58,10 +58,10 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize.requestMatchers("/is_auth").authenticated()
                 authorize.requestMatchers("/resetPassword/**").permitAll()
                 authorize.requestMatchers("/signup/**").permitAll()
-                authorize.requestMatchers("{itemId}/image/urls").authenticated()
+                authorize.requestMatchers("/user/photo/urls").authenticated()
+                authorize.requestMatchers("/{itemId}/image/urls").authenticated()
                 authorize.requestMatchers("/refreshToken").permitAll()
                 authorize.requestMatchers("/settings/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("user/image/urls").authenticated()
                 authorize.requestMatchers("/settings/create").hasAuthority("ROLE_ADMIN")
                 authorize.requestMatchers("/settings/all").hasAuthority("ROLE_ADMIN")
                 authorize.requestMatchers("/settings/update/{id}").hasAuthority("ROLE_ADMIN")
@@ -103,7 +103,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                 authorize.requestMatchers("/contacts/delete/{contactId}").authenticated()
                 authorize.requestMatchers("/admin/contacts/update").hasAuthority("ROLE_ADMIN")
                 authorize.requestMatchers("/admin/contacts/delete/{contactId}").hasAuthority("ROLE_ADMIN")
-                authorize.anyRequest().authenticated()
+                authorize.anyRequest().permitAll()
             }
 
         return http.build()

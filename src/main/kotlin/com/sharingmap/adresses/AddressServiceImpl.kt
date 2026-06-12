@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.UUID
+
 @Service
 @Transactional
 class AddressServiceImpl(
@@ -19,7 +20,7 @@ class AddressServiceImpl(
 
     @Transactional(readOnly = true)
     override fun findAllByUserId(userId: UUID): List<AddressResponseDto> {
-        val addresses = addressRepository.findAllByUserId(userId)
+        val addresses = addressRepository.findAllByUserIdAndState(userId, AddressState.ACTIVE)
         return addresses.map { it.toResponseDto() }
     }
 
@@ -27,6 +28,9 @@ class AddressServiceImpl(
     override fun findById(id: UUID): AddressEntity {
         val address = addressRepository.findById(id)
             .orElseThrow { EntityNotFoundException("Address not found with id: $id") }
+        if (address.state == AddressState.DELETED) {
+            throw EntityNotFoundException("Address not found with id: $id")
+        }
         return address
     }
 
@@ -49,7 +53,8 @@ class AddressServiceImpl(
             description = createAddressDto.description,
             user = user,
             locations = locations.toSet(),
-            city = city
+            city = city,
+            state = AddressState.ACTIVE
         )
 
         val savedAddress = addressRepository.save(address)
@@ -59,6 +64,10 @@ class AddressServiceImpl(
     override fun updateAddress(id: UUID, updateAddressDto: UpdateAddressDto): AddressResponseDto {
         val address = addressRepository.findById(id)
             .orElseThrow { EntityNotFoundException("Address not found with id: $id") }
+
+        if (address.state == AddressState.DELETED) {
+            throw EntityNotFoundException("Address not found with id: $id")
+        }
 
         // Update fields if provided
         updateAddressDto.name?.let { address.name = it }
@@ -86,10 +95,17 @@ class AddressServiceImpl(
     }
 
     override fun deleteAddress(id: UUID) {
-        if (!addressRepository.existsById(id)) {
+        val address = addressRepository.findById(id)
+            .orElseThrow { EntityNotFoundException("Address not found with id: $id") }
+
+        if (address.state == AddressState.DELETED) {
             throw EntityNotFoundException("Address not found with id: $id")
         }
-        addressRepository.deleteById(id)
+
+        // Soft delete: change the state instead of removing the row
+        address.state = AddressState.DELETED
+        address.updatedAt = LocalDateTime.now()
+        addressRepository.save(address)
     }
 
     private fun AddressEntity.toResponseDto(): AddressResponseDto {
@@ -106,6 +122,6 @@ class AddressServiceImpl(
     }
 
     override fun isAddressOwnedByUser(id: UUID, id2: UUID): Boolean {
-        return addressRepository.existsByIdAndUserId(id, id2)
+        return addressRepository.existsByIdAndUserIdAndState(id, id2, AddressState.ACTIVE)
     }
 }
