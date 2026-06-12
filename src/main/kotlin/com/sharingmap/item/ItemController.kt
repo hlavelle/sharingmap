@@ -110,10 +110,7 @@ class ItemController(
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
-            user.id?.let { itemService.updateItem(it, item) }
+            user.id.let { itemService.updateItem(it, item) }
             ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: IllegalArgumentException) {
             val errorResponse = mapOf("error" to ex.message)

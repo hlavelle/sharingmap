@@ -1,13 +1,41 @@
 version: "3.8"
 services:
-  sharingmap:
-    image: cr.yandex/crppopintc7ff3b906c5/sharingmap:latest
-    container_name: sharingmap_${SM_ENV:-test}
+  sharingmap-test:
+    image: cr.yandex/crppopintc7ff3b906c5/sharingmap:${TEST_TAG:-latest}
+    container_name: sharingmap_test
+    restart: unless-stopped
     ports:
-      - "${SHARINGMAP_PORT}:${SHARINGMAP_PORT}"
-    env_file:
-      - scripts/.env.${SM_ENV:-test}
+      - "8095:8095"
+    env_file: scripts/.env.test
     environment:
-      - ENVIRONMENT=${SM_ENV:-test}
+      - ENVIRONMENT=test
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/firebase-service-account.json
     volumes:
       - ~/.postgresql/root.crt:/root/.postgresql/root.crt:ro
+      - ./scripts/firebase-service-account.json:/app/firebase-service-account.json:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8095/ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 30s
+
+  sharingmap-prod:
+    image: cr.yandex/crppopintc7ff3b906c5/sharingmap:${PROD_TAG:-latest}
+    container_name: sharingmap_prod
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    env_file: scripts/.env.prod
+    environment:
+      - ENVIRONMENT=prod
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/firebase-service-account.json
+    volumes:
+      - ~/.postgresql/root.crt:/root/.postgresql/root.crt:ro
+      - ./scripts/firebase-service-account.json:/app/firebase-service-account.json:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8086/ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 30s

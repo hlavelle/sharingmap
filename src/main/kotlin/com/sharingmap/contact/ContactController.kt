@@ -49,11 +49,8 @@ class ContactController(private val contactService: ContactService) {
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
-            val contacts = user.id?.let { contactService.getAllUserContacts(it) }
-            val contactDtos = contacts?.map { toContactDto(it) }
+            val contacts = user.id.let { contactService.getAllUserContacts(it) }
+            val contactDtos = contacts.map { toContactDto(it) }
             ResponseEntity.ok(contactDtos)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
@@ -71,10 +68,7 @@ class ContactController(private val contactService: ContactService) {
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
-            ResponseEntity.status(HttpStatus.OK).body(user.id?.let { contactService.createContact(it, contact) })
+            ResponseEntity.status(HttpStatus.OK).body(user.id.let { contactService.createContact(it, contact) })
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
@@ -90,10 +84,7 @@ class ContactController(private val contactService: ContactService) {
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
-            user.id?.let { contactService.deleteContact(it, contactId) }
+            user.id.let { contactService.deleteContact(it, contactId) }
             ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to "Contact not found with ID: $contactId")
@@ -114,10 +105,7 @@ class ContactController(private val contactService: ContactService) {
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
-            ResponseEntity.status(HttpStatus.OK).body(user.id?.let { contactService.updateContact(it, contact) })
+            ResponseEntity.status(HttpStatus.OK).body(user.id.let { contactService.updateContact(it, contact) })
         } catch (ex: NoSuchElementException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)

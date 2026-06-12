@@ -18,9 +18,6 @@ class UserController(private val userService: UserService) {
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
             val info = userService.toUserInfoDto(user)
             ResponseEntity.ok(info)
         } catch (ex: UserNotFoundException) {
@@ -55,10 +52,7 @@ class UserController(private val userService: UserService) {
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
-            user.id?.let { userService.deleteUser(it) }
+            user.id.let { userService.deleteUser(it) }
             ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
@@ -75,10 +69,7 @@ class UserController(private val userService: UserService) {
                 ResponseEntity.badRequest()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
-            user.id?.let { userService.updateUser(it, userDto) }
+            user.id.let { userService.updateUser(it, userDto) }
             ResponseEntity.status(HttpStatus.OK).body(null)
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)

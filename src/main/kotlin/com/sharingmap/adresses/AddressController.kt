@@ -75,7 +75,7 @@ class AddressController(
         }
     }
 
-    @PutMapping("/address/update/{id}")  // Changed to PUT for better REST practices
+    @PutMapping("/address/update/{id}")
     fun updateAddress(
         @PathVariable id: UUID,
         @Valid @RequestBody updateAddressDto: UpdateAddressDto

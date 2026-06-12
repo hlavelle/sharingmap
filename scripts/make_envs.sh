@@ -35,6 +35,10 @@ APP_SECRET=$(yc lockbox payload get --id e6qflue1o0pd06f2en24 --key PROD_APP_SEC
 TG_BOT_PROD_SECRET_TOKEN=$(yc lockbox payload get --id e6qflue1o0pd06f2en24 --key TG_BOT_PROD_SECRET_TOKEN)
 EOF
 
+yc lockbox payload get --id e6qflue1o0pd06f2en24 --key FIREBASE_SA_JSON \
+  > ./firebase-service-account.json
+chmod 600 ./firebase-service-account.json
+
 chmod 600 ./.env.dev
 chmod 600 ./.env.test
 chmod 600 ./.env.prod

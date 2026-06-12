@@ -64,26 +64,19 @@ class ImageController (
         return ResponseEntity.ok(null)
     }
 
-
-    @GetMapping("/user/image/urls")
+    @GetMapping("/user/photo/urls")
     fun getUserImagesUrl(): ResponseEntity<Any> {
         return try {
             if (!SecurityContextHolder.getContext().authentication.isAuthenticated) {
-                ResponseEntity.badRequest()
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
             }
             val user = SecurityContextHolder.getContext().authentication.principal as UserEntity
-            if (user.id == null) {
-                ResponseEntity.notFound()
-            }
-            val urls = user.id?.let { userImageService.getPresignedUrls(it, 1) }
-            val url = urls?.first()
-            if (url?.isEmpty() == true) {
+            val urls = userImageService.getPresignedUrls(user.id!!, 1)
+            if (urls.isEmpty()) {
                 val errorResponse = mapOf("error" to "Failed to get urls from s3")
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
             } else {
-                val result: MutableList<String> = mutableListOf()
-                result.add(url!!)
-                ResponseEntity.ok(result)
+                ResponseEntity.ok(urls)
             }
         } catch (ex: NoSuchElementException) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).build()

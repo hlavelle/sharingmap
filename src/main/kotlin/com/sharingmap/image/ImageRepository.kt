@@ -15,6 +15,7 @@ interface ItemImageRepository : JpaRepository<ItemImageEntity, UUID> {
 @Repository
 interface UserImageRepository : JpaRepository<UserImageEntity, UUID> {
     fun findAllByEntityId(itemId: UUID): List<UserImageEntity>
+    fun findByEntityId(userId: UUID): UserImageEntity?
 
 //    @Query("UPDATE images SET is_loaded = true WHERE item_id = ?itemId")
 //    fun setImageUploaded(itemId: UUID): Int

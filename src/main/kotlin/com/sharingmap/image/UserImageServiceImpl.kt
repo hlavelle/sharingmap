@@ -1,6 +1,5 @@
 package com.sharingmap.image
 
-import aws.smithy.kotlin.runtime.net.Url
 import org.springframework.stereotype.Service
 import java.util.*
 import com.sharingmap.user.Role
@@ -9,6 +8,12 @@ import com.sharingmap.user.UserEntity
 @Service
 class UserImageServiceImpl(private val repository: UserImageRepository) : ImageService<UserImageEntity>() {
     override fun saveImageAndGetId(objectId: UUID): UUID {
+        val existingImage = repository.findByEntityId(objectId)
+
+        if (existingImage != null) {
+            return existingImage.id
+        }
+
         val newImage = UserImageEntity(
             id = objectId,
             entity = UserEntity(id = objectId, username = "", password = "", email = "", role = Role.ROLE_USER))
