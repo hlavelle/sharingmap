@@ -1,0 +1,57 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]        # → auto-deploy to test
+  workflow_dispatch:        # → manual deploy (e.g. prod)
+    inputs:
+      environment:
+        type: choice
+        options: [test, prod]
+        default: prod
+
+env:
+  REGISTRY: cr.yandex/crppopintc7ff3b906c5
+  IMAGE: sharingmap
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: meta
+        run: echo "tag=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to Yandex CR
+        run: echo '${{ secrets.YC_SA_JSON_KEY }}' | docker login cr.yandex -u json_key --password-stdin
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ steps.meta.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_ENV: ${{ github.event_name == 'push' && 'test' || inputs.environment }}
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ubuntu
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/sm/sharingmap
+            ./remote-deploy.sh ${{ env.DEPLOY_ENV }} ${{ needs.build.outputs.tag }}
