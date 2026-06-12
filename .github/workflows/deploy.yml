@@ -50,8 +50,8 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VM_HOST }}
-          username: ubuntu
+          username: gepard332
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            cd /home/ubuntu/sm/sharingmap
+            cd /home/gepard332/sm/sharingmap
             ./remote-deploy.sh ${{ env.DEPLOY_ENV }} ${{ needs.build.outputs.tag }}
