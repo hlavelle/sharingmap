@@ -9,10 +9,14 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.ResourceLoader
 
 @Configuration
 class FirebaseConfig(
-    @Value("\${firebase.service-account-path:firebase-service-account.json}")
+    private val resourceLoader: ResourceLoader,
+
+    // Default to classpath for local dev, override in Docker via env/property
+    @Value("\${firebase.service-account-path:classpath:firebase-service-account.json}")
     private val serviceAccountPath: String,
 
     @Value("\${firebase.project-id:sharingmap-9ad66}")
@@ -27,9 +31,9 @@ class FirebaseConfig(
             return
         }
 
-        val resource = ClassPathResource(serviceAccountPath)
+        val resource = resourceLoader.getResource(serviceAccountPath)
         require(resource.exists()) {
-            "Firebase service account file not found at classpath:$serviceAccountPath"
+            "Firebase service account file not found at: $serviceAccountPath"
         }
 
         resource.inputStream.use { stream ->
