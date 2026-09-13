@@ -183,6 +183,10 @@ class SecurityConfigTest {
         "GET,    /admin/users/all",
         "POST,   /admin/items/create/11111111-1111-1111-1111-111111111111",
         "PUT,    /admin/items/update",
+        // Sending push is an operational tool, not a user action (P1-T4).
+        "POST,   /api/notifications/send/user",
+        "POST,   /api/notifications/send/topic",
+        "POST,   /api/notifications/send/token",
     )
     @DisplayName("a plain user cannot reach admin surface")
     fun adminSurfaceRejectsUser(method: String, path: String) =
@@ -196,6 +200,7 @@ class SecurityConfigTest {
         "GET,    /settings/all",
         "GET,    /admin/users/all",
         "PUT,    /admin/items/update",
+        "POST,   /api/notifications/send/user",
     )
     @DisplayName("an admin can reach admin surface")
     fun adminSurfaceAllowsAdmin(method: String, path: String) = assertAllowed(method, path, asAdmin())
@@ -225,6 +230,20 @@ class SecurityConfigTest {
     @DisplayName("writes and personal data require a session")
     fun protectedEndpointsRejectAnonymous(method: String, path: String) =
         assertUnauthorized(method, path)
+
+    /**
+     * A signed-in user manages their **own** device tokens, so these are authenticated
+     * rather than admin — the ownership check lives in the query
+     * (`deleteByTokenAndUserId`), not in the matcher. known-issues #4.
+     */
+    @ParameterizedTest(name = "ROLE_USER {0} {1} is allowed")
+    @CsvSource(
+        "POST,   /api/notifications/tokens",
+        "DELETE, /api/notifications/tokens/some-device-token",
+    )
+    @DisplayName("a user may manage their own device tokens")
+    fun ownDeviceTokensAllowedForUser(method: String, path: String) =
+        assertAllowed(method, path, asUser())
 
     /**
      * `GET /logout` never reaches [com.sharingmap.security.AuthenticationController.logout].

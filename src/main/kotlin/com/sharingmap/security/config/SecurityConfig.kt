@@ -122,6 +122,11 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
                     HttpMethod.DELETE, *REFERENCE_DATA
                 ).hasAuthority(ROLE_ADMIN)
 
+                // ── Push notifications ──
+                // Sending is an operational tool, not a user-facing action. Token
+                // registration below it only needs a session, which `anyRequest()` gives.
+                authorize.requestMatchers("/api/notifications/send/**").hasAuthority(ROLE_ADMIN)
+
                 // ── Parked: the Thymeleaf admin console login (decision D5) ──
                 // `admin/` is unused and unmaintained, so its form login is closed off
                 // rather than left reachable. `denyAll` rather than `authenticated`

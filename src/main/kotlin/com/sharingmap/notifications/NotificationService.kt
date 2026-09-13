@@ -45,9 +45,16 @@ class NotificationService(
         }
     }
 
+    /**
+     * Removes one of [userId]'s own device tokens.
+     *
+     * A no-op when the token does not exist or belongs to someone else — deliberately
+     * indistinguishable, so this cannot be used to probe for tokens. Previously this
+     * deleted by token alone, which let any caller unregister any device (known-issues #4).
+     */
     @Transactional
-    fun unregisterToken(token: String) {
-        fcmTokenRepository.deleteByToken(token)
+    fun unregisterToken(userId: UUID, token: String) {
+        fcmTokenRepository.deleteByTokenAndUserId(token, userId)
     }
 
     @Transactional

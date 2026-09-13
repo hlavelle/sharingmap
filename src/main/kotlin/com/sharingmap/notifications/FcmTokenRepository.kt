@@ -18,6 +18,17 @@ interface FcmTokenRepository : JpaRepository<FcmTokenEntity, Long> {
     @Query("DELETE FROM FcmTokenEntity t WHERE t.token = :token")
     fun deleteByToken(@Param("token") token: String)
 
+    /**
+     * Deletes a token only if it belongs to [userId].
+     *
+     * Scoped in the query rather than read-then-check so a caller cannot learn whether
+     * someone else's token exists, and so there is no window between the check and the
+     * delete. See known-issues #4.
+     */
+    @Modifying
+    @Query("DELETE FROM FcmTokenEntity t WHERE t.token = :token AND t.userId = :userId")
+    fun deleteByTokenAndUserId(@Param("token") token: String, @Param("userId") userId: UUID)
+
     @Modifying
     @Query("DELETE FROM FcmTokenEntity t WHERE t.userId = :userId")
     fun deleteAllByUserId(@Param("userId") userId: UUID)
