@@ -70,16 +70,11 @@ class AuthenticationServiceImpl(private val userRepository: UserRepository,
             SecurityContextHolder.getContext().authentication = authentication
 
             val authToken = jwtTokenProvider.createAuthToken(user.email, user.role)
-            val refreshToken = user.id?.let { refreshTokenService.createRefreshToken(it) }
+            val refreshToken = user.id.let { refreshTokenService.createRefreshToken(it) }
 
             confirmationTokenService.deleteToken(UUID.fromString(tokenId))
 
-            if (refreshToken != null) {
-                LoginResponse(user.username, user.email, user.enabled,
-                    refreshToken, authToken)
-            } else {
-                throw IllegalStateException("refresh token didn't create")
-            }
+            LoginResponse(user.username, user.email, user.enabled, refreshToken, authToken)
         } else {
             throw IllegalStateException("can't confirm")
         }

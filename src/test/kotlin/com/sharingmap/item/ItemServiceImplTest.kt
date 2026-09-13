@@ -1,13 +1,12 @@
 package com.sharingmap.item
 
+import com.sharingmap.adresses.AddressService
 import com.sharingmap.category.CategoryService
 import com.sharingmap.city.CityService
 import com.sharingmap.location.LocationService
-import com.sharingmap.subcategory.SubcategoryEntity
 import com.sharingmap.subcategory.SubcategoryService
 import com.sharingmap.user.UserEntity
 import com.sharingmap.user.UserService
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -17,24 +16,6 @@ import org.mockito.kotlin.whenever
 import java.util.*
 
 class ItemServiceImplTest {
-//
-//    @Test
-//    fun deletingItem() {
-//        val mockItemRepository: ItemRepository = mock()
-//        val mockCategoryService: CategoryService = mock()
-//        val mockSubcategoryService: SubcategoryService = mock()
-//        val mockCityService: CityService = mock()
-//        val mockUserService: UserService = mock()
-//        val mockLocationService: LocationService = mock()
-//
-//        val userUuid = UUID.randomUUID()
-//        val itemUuid = UUID.randomUUID()
-//        whenever(mockItemRepository.findById(userUuid)).thenReturn(Optional.of(item))
-//        val itemService = ItemServiceImpl(mockItemRepository, mockCategoryService, mockSubcategoryService,
-//            mockCityService, mockUserService, mockLocationService)
-//        itemService.deleteItem(userUuid, itemUuid, true)
-//        assertEquals(State.DELETED, item.state)
-//    }
 
     private val mockItemRepository: ItemRepository = mock()
     private val mockCategoryService: CategoryService = mock()
@@ -42,14 +23,17 @@ class ItemServiceImplTest {
     private val mockCityService: CityService = mock()
     private val mockUserService: UserService = mock()
     private val mockLocationService: LocationService = mock()
+    private val mockAddressService: AddressService = mock()
 
+    // Argument order must match ItemServiceImpl's constructor exactly.
     private val itemService = ItemServiceImpl(
         mockItemRepository,
         mockCategoryService,
         mockSubcategoryService,
         mockCityService,
         mockUserService,
-        mockLocationService
+        mockLocationService,
+        mockAddressService
     )
 
     @Test
