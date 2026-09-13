@@ -14,6 +14,18 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.http.HttpMethod
+
+/** Authorities are stored with the `ROLE_` prefix already, so this is `hasAuthority`, not `hasRole`. */
+private const val ROLE_ADMIN = "ROLE_ADMIN"
+
+/**
+ * Reference data: readable by anyone, writable only by an admin. Listed once so the
+ * POST/PUT/DELETE rules cannot drift apart from each other.
+ */
+private val REFERENCE_DATA = arrayOf(
+    "/cities/**", "/categories/**", "/subcategories/**", "/locations/**"
+)
 
 
 @Configuration
@@ -36,74 +48,96 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter,
             }
             .cors { cors -> cors.disable() }
             .csrf { csrf -> csrf.disable() }
-            .authorizeHttpRequests {
-                authorize ->
-                authorize.requestMatchers("/ping").permitAll()
-                authorize.requestMatchers("/cities/{id}").permitAll()
-                authorize.requestMatchers("/cities/all").permitAll()
-                authorize.requestMatchers("/categories/{id}").permitAll()
-                authorize.requestMatchers("/categories/all").permitAll()
-                authorize.requestMatchers("/locations/{id}").permitAll()
-                authorize.requestMatchers("/subcategories/{id}").permitAll()
-                authorize.requestMatchers("/locations/{cityId}/all").permitAll()
-                authorize.requestMatchers("/items/all").permitAll()
-                authorize.requestMatchers("/subcategories/all").permitAll()
-                authorize.requestMatchers("/swagger-ui.html").permitAll()
-                authorize.requestMatchers("/items/{id}").permitAll()
-                authorize.requestMatchers("/v3/api-docs/**").permitAll()
-                authorize.requestMatchers("/swagger-ui/**").permitAll()
-                authorize.requestMatchers("/login").permitAll()
-                authorize.requestMatchers("/v3/api-docs.yaml").permitAll()
-                authorize.requestMatchers("/logout").authenticated()
-                authorize.requestMatchers("/is_auth").authenticated()
-                authorize.requestMatchers("/resetPassword/**").permitAll()
-                authorize.requestMatchers("/signup/**").permitAll()
-                authorize.requestMatchers("/user/photo/urls").authenticated()
-                authorize.requestMatchers("/{itemId}/image/urls").authenticated()
-                authorize.requestMatchers("/refreshToken").permitAll()
-                authorize.requestMatchers("/settings/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/settings/create").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/settings/all").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/settings/update/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/settings/delete/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/cities/delete/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/cities/update/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/categories/update/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/cities/create").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/categories/create").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/categories/delete/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/subcategories/delete/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/subcategories/update/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/locations/create").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/subcategories/create").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/locations/update/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/locations/delete/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/users/{userId}/contacts").authenticated()
-                authorize.requestMatchers("/users/{userId}/items").permitAll()
-                authorize.requestMatchers("/users/update").authenticated()
-                authorize.requestMatchers("/address/**").authenticated()
-                authorize.requestMatchers("/users/{id}").permitAll()
-                authorize.requestMatchers("/users/myself").authenticated()
-                authorize.requestMatchers("/users/delete").authenticated()
-                authorize.requestMatchers("/admin/users/{id}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/admin/users/all").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/admin/users/update/{userId}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/admin/users/delete/{userId}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/items/update").authenticated()
-                authorize.requestMatchers("/items/create").authenticated()
-                authorize.requestMatchers("/admin/items/create/{userId}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/items/delete/{itemId}").authenticated()
-                authorize.requestMatchers("/admin/items/update").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/admin/items/delete/{itemId}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/contacts/{id}").authenticated()
-                authorize.requestMatchers("/contacts/myself").authenticated()
-                authorize.requestMatchers("/contacts/update").authenticated()
-                authorize.requestMatchers("/contacts/create").authenticated()
-                authorize.requestMatchers("/admin/contacts/create/{userId}").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/contacts/delete/{contactId}").authenticated()
-                authorize.requestMatchers("/admin/contacts/update").hasAuthority("ROLE_ADMIN")
-                authorize.requestMatchers("/admin/contacts/delete/{contactId}").hasAuthority("ROLE_ADMIN")
-                authorize.anyRequest().permitAll()
+            .authorizeHttpRequests { authorize ->
+                // ─────────────────────────────────────────────────────────────────
+                //  ORDER MATTERS. Spring Security evaluates these top to bottom and
+                //  stops at the first match.
+                //
+                //  Two rules keep this correct:
+                //   1. Qualify writes by HTTP method. `/cities/{id}` also matches
+                //      `/cities/create`, so an unqualified public GET pattern used to
+                //      shadow the admin POST rule below it (known-issues #1).
+                //   2. Where two rules share a method, the NARROWER path must come
+                //      first — see `/users/myself` below.
+                //
+                //  The chain ends in `anyRequest().authenticated()`, so a new endpoint
+                //  is private until someone deliberately opens it. It used to end in
+                //  `permitAll()`, which made forgetting a matcher a security hole.
+                // ─────────────────────────────────────────────────────────────────
+
+                // ── Public: health ──
+                authorize.requestMatchers(HttpMethod.GET, "/ping").permitAll()
+
+                // ── Public: authentication and account recovery ──
+                authorize.requestMatchers(
+                    HttpMethod.POST,
+                    "/login",
+                    "/signup",
+                    "/signup/confirm",
+                    "/refreshToken",
+                    "/resetPassword",
+                    "/resetPassword/confirm",
+                    "/resetPassword/change"
+                ).permitAll()
+                authorize.requestMatchers(
+                    HttpMethod.GET, "/signup/confirm/resentConfirmationToken"
+                ).permitAll()
+
+                // ── Public: API documentation ──
+                authorize.requestMatchers(
+                    HttpMethod.GET,
+                    "/swagger-ui.html", "/swagger-ui/**",
+                    "/v3/api-docs", "/v3/api-docs/**", "/v3/api-docs.yaml"
+                ).permitAll()
+
+                // ⚠ MUST precede the public `/users/{id}` rule below. Both are GET, so
+                //   method qualification does not separate them, and "myself" matches
+                //   the `{id}` placeholder. Declared narrower-first instead.
+                authorize.requestMatchers(HttpMethod.GET, "/users/myself").authenticated()
+
+                // ── Public reads: browsing is anonymous by design ──
+                authorize.requestMatchers(
+                    HttpMethod.GET,
+                    "/items/all", "/items/{itemId}",
+                    "/users/{id}", "/users/{userId}/items",
+                    "/cities/all", "/cities/{id}",
+                    "/categories/all", "/categories/{id}",
+                    "/subcategories/all", "/subcategories/{id}",
+                    "/locations/{id}", "/locations/{cityId}/all"
+                ).permitAll()
+
+                // ── Admin ──
+                authorize.requestMatchers("/admin/**").hasAuthority(ROLE_ADMIN)
+                authorize.requestMatchers("/settings/**").hasAuthority(ROLE_ADMIN)
+
+                // Reference-data writes. Method-qualified so the public GET rules above
+                // cannot shadow them — this is the actual fix for known-issues #1.
+                authorize.requestMatchers(
+                    HttpMethod.POST, *REFERENCE_DATA
+                ).hasAuthority(ROLE_ADMIN)
+                authorize.requestMatchers(
+                    HttpMethod.PUT, *REFERENCE_DATA
+                ).hasAuthority(ROLE_ADMIN)
+                authorize.requestMatchers(
+                    HttpMethod.DELETE, *REFERENCE_DATA
+                ).hasAuthority(ROLE_ADMIN)
+
+                // ── Parked: the Thymeleaf admin console login (decision D5) ──
+                // `admin/` is unused and unmaintained, so its form login is closed off
+                // rather than left reachable. `denyAll` rather than `authenticated`
+                // because a login endpoint you must already be logged in to reach is
+                // nonsense — this states the intent. Delete these two lines to revive it,
+                // and fix the cookie lifetimes first (known-issues #28).
+                authorize.requestMatchers(HttpMethod.GET, "/login1").denyAll()
+                authorize.requestMatchers(HttpMethod.POST, "/loginValidate").denyAll()
+
+                // ── Everything else needs a session ──
+                // Covers: /items/create|update|delete, /users/update|delete,
+                // /contacts/**, /address/**, /logout, /is_auth, the image URL endpoints,
+                // and /api/notifications/** (which had NO matcher at all and was
+                // therefore fully public — see known-issues #4, tightened further in
+                // migration task P1-T4).
+                authorize.anyRequest().authenticated()
             }
 
         return http.build()
