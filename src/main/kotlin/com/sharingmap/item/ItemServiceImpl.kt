@@ -135,15 +135,22 @@ class ItemServiceImpl(private val itemRepository: ItemRepository,
         itemRepository.save(newItem)
     }
 
+    /**
+     * A user's ACTIVE items, newest first.
+     *
+     * An empty page is a valid answer, not an error. This used to throw
+     * [NoSuchElementException] when the page was empty, which the controller turned into a
+     * 404 — so "this user has posted nothing" was indistinguishable from "no such user",
+     * and paging past the last page 404'd. The Flutter client read that as a failure and
+     * showed «Ошибка…» instead of the empty state. See known-issues #15.
+     *
+     * An unknown user still 404s: [UserService.getUserById] throws below.
+     */
     override fun getAllActiveItemsByUserId(userId: UUID, page: Int, size: Int): Page<ItemEntity> {
         userService.getUserById(userId)
         val sort = Sort.by(Sort.Direction.DESC, "updatedAt")
         val pageable = PageRequest.of(page, size, sort)
-        val items = itemRepository.findAllByUserIdAndState(userId, State.ACTIVE, pageable)
-        if (items.isEmpty) {
-            throw NoSuchElementException("No items found for user ID: $userId")
-        }
-        return items
+        return itemRepository.findAllByUserIdAndState(userId, State.ACTIVE, pageable)
     }
 
 }

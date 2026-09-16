@@ -39,6 +39,8 @@ dependencies {
         exclude("com.squareup.okhttp3:okhttp")
     }
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
+    implementation("org.flywaydb:flyway-core")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
@@ -51,9 +53,9 @@ dependencies {
     implementation("com.google.firebase:firebase-admin:9.2.0")
 }
 
-// tasks.test {
-//     useJUnitPlatform()
-// }
+tasks.test {
+    useJUnitPlatform()
+}
 
 allOpen {
     annotation("javax.persistence.Entity")
