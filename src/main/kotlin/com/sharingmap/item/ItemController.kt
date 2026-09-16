@@ -129,14 +129,10 @@ class ItemController(
                             @RequestParam(value = "size", defaultValue = "10") @Min(1) size: Int):
             ResponseEntity<Any> {
         return try {
+            // An empty page is a 200, not a 404 — see known-issues #15. Only an unknown
+            // user is a 404, and that comes from UserNotFoundException below.
             val items = itemService.getAllActiveItemsByUserId(userId, page, size)
-            if (items.isEmpty) {
-                val errorResponse = mapOf("error" to "No items found for user ID: $userId")
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
-            } else {
-                val itemDtos = items.map { toItemDto(it) }
-                ResponseEntity.ok(itemDtos)
-            }
+            ResponseEntity.ok(items.map { toItemDto(it) })
         } catch (ex: UserNotFoundException) {
             val errorResponse = mapOf("error" to ex.message)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
